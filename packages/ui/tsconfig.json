@@ -1,0 +1,8 @@
+{
+	"extends": "@erteam/tooling-config/typescript/vue.json",
+	"compilerOptions": {
+		"paths": {
+			"#ui/*": ["./src/*"]
+		}
+	}
+}

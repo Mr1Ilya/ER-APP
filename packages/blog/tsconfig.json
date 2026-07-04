@@ -1,0 +1,3 @@
+{
+	"extends": "@erteam/tooling-config/typescript/base.json"
+}

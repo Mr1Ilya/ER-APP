@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="100%" viewBox="0 0 1000 175" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve">
+    <!-- Stylized Ender Crystal/Portal Core (End-Rage style) -->
+    <g transform="translate(10, 0)">
+        <!-- Outer glowing orbit -->
+        <circle cx="75" cy="85" r="55" fill="var(--color-brand)" opacity="0.1" />
+        <!-- Dash ring (Tech-sci-fi style) -->
+        <circle cx="75" cy="85" r="55" fill="none" stroke="var(--color-brand)" stroke-width="8" stroke-dasharray="30 20" stroke-linecap="round" />
+        <!-- Inner ring -->
+        <circle cx="75" cy="85" r="35" fill="none" stroke="var(--color-brand)" stroke-width="3" opacity="0.3" stroke-dasharray="10 10" />
+        <!-- Sharp Ender Crystal (overlapping shards) -->
+        <polygon points="75,30 95,85 75,140 55,85" fill="var(--color-brand)" />
+        <polygon points="75,40 85,85 75,130 65,85" fill="#ffffff" opacity="0.25" />
+        <line x1="75" y1="30" x2="75" y2="140" stroke="#ffffff" stroke-width="2" opacity="0.4" />
+    </g>
+    <!-- Text -->
+    <text x="170" y="122" font-family="'Outfit', 'Inter', system-ui, -apple-system, sans-serif" font-size="95" font-weight="900" letter-spacing="3">
+        <tspan fill="currentColor">END-RAGE </tspan>
+        <tspan fill="var(--color-brand)">APP</tspan>
+    </text>
+</svg>
