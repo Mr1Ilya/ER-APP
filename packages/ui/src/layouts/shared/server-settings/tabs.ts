@@ -69,7 +69,7 @@ export const serverSettingsTabDefinitions: ServerSettingsTabDefinition[] = [
 		icon: CardIcon,
 		href: ({ serverId }) => `/settings/billing#server-${serverId}`,
 		external: true,
-		shown: ({ isOwner }) => isOwner,
+		shown: () => false,
 	},
 	{
 		id: 'admin-billing',
@@ -77,6 +77,6 @@ export const serverSettingsTabDefinitions: ServerSettingsTabDefinition[] = [
 		icon: ModrinthIcon,
 		href: ({ ownerId }) => `/admin/billing/${ownerId}`,
 		external: true,
-		shown: ({ isAdmin }) => isAdmin,
+		shown: () => false,
 	},
 ]
