@@ -56,6 +56,39 @@ jobs:
       - name: Install Node.js dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Set application version from tag
+        shell: bash
+        run: |
+          VERSION="${{ github.ref_name }}"
+          # Remove leading 'v' if present
+          VERSION="${VERSION#v}"
+          # If version is not semver-like (e.g. branch name "main"), fall back to "1.0.0"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            VERSION="1.0.0"
+          fi
+          echo "Setting application version to $VERSION"
+          node -e "
+            const fs = require('fs');
+            
+            // Update frontend package.json
+            const pkgPath = 'apps/app-frontend/package.json';
+            const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+            pkg.version = '$VERSION';
+            fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, '\t') + '\n', 'utf8');
+            
+            // Update app Cargo.toml
+            const appCargoPath = 'apps/app/Cargo.toml';
+            let appCargo = fs.readFileSync(appCargoPath, 'utf8');
+            appCargo = appCargo.replace(/version\s*=\s*\"1\.0\.0-local\"/g, 'version = \"' + '$VERSION' + '\"');
+            fs.writeFileSync(appCargoPath, appCargo, 'utf8');
+            
+            // Update app-lib Cargo.toml
+            const libCargoPath = 'packages/app-lib/Cargo.toml';
+            let libCargo = fs.readFileSync(libCargoPath, 'utf8');
+            libCargo = libCargo.replace(/version\s*=\s*\"1\.0\.0-local\"/g, 'version = \"' + '$VERSION' + '\"');
+            fs.writeFileSync(libCargoPath, libCargo, 'utf8');
+          "
+
       - name: Build Web Application frontend
         run: pnpm --filter @erteam/app-frontend build
 
