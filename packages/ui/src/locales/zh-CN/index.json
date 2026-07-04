@@ -2586,16 +2586,16 @@
     "defaultMessage": "服务器更改时保持文件更新"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "获取 Modrinth App"
+    "defaultMessage": "获取 EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App 将自动打开……"
+    "defaultMessage": "EndRage Launcher 将自动打开……"
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "正在打开 Modrinth App"
+    "defaultMessage": "正在打开 EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "为何使用 Modrinth App"
+    "defaultMessage": "为何使用 EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "发生错误"
@@ -4380,7 +4380,7 @@
     "defaultMessage": "安装过程中发生意外错误。"
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Modrinth Hosting 目前尚不支持此版本的 Minecraft 或加载器。"
+    "defaultMessage": "EndRage Hosting 目前尚不支持此版本的 Minecraft 或加载器。"
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "正在安装组件……"
@@ -4413,16 +4413,16 @@
     "defaultMessage": "已经有服务器了吗？"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "深入了解 Modrinth Hosting"
+    "defaultMessage": "深入了解 EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "添加服务器"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "安装模组、邀请好友并一起畅玩，这一切都能在 Modrinth App 中轻松完成。"
+    "defaultMessage": "安装模组、邀请好友并一起畅玩，这一切都能在 EndRage Launcher 中轻松完成。"
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "目前还没有服务器"
@@ -4434,7 +4434,7 @@
     "defaultMessage": "一键安装模组"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "邀请好友并直接在 Modrinth App 中为他们完成设置。"
+    "defaultMessage": "邀请好友并直接在 EndRage Launcher 中为他们完成设置。"
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "与好友同乐"
@@ -4599,7 +4599,7 @@
     "defaultMessage": "搜索 {count} {count, plural, other {个服务器}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "他们现在可以在这里找到！"
@@ -4677,7 +4677,7 @@
     "defaultMessage": "不可隐藏"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "你的 Modrinth Hosting 购买已完成。"
+    "defaultMessage": "你的 EndRage Hosting 购买已完成。"
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "购买成功"
@@ -4767,7 +4767,7 @@
     "defaultMessage": "你希望服务器位于何处？"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "没有想要的地区？<link>推荐 Modrinth Hosting 的下一个服务区域！</link>"
+    "defaultMessage": "没有想要的地区？<link>推荐 EndRage Hosting 的下一个服务区域！</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "东南亚"
@@ -4866,7 +4866,7 @@
     "defaultMessage": "你的服务器已准备就绪。以下是开始游戏需要做的操作！"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "欢迎来到 Modrinth Hosting"
+    "defaultMessage": "欢迎来到 EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "你已达到速率限制。请稍后再试。"

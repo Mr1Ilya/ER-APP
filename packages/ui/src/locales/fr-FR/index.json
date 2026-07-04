@@ -4263,7 +4263,7 @@
     "defaultMessage": "Une erreur inattendue est survenue lors de l'installation."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Cette version de Minecraft ou ce loader n'est peut-être pas encore bien pris en charge par Modrinth Hosting."
+    "defaultMessage": "Cette version de Minecraft ou ce loader n'est peut-être pas encore bien pris en charge par EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Installation des add-ons..."
@@ -4296,16 +4296,16 @@
     "defaultMessage": "Vous avez déjà un serveur ?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "En savoir plus à propos de Modrinth Hosting"
+    "defaultMessage": "En savoir plus à propos de EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Nouveau serveur"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Des mods, des potes, et beaucoup de fun, tout depuis Modrinth App."
+    "defaultMessage": "Des mods, des potes, et beaucoup de fun, tout depuis EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Aucun serveur pour le moment"
@@ -4317,7 +4317,7 @@
     "defaultMessage": "Installez des mods en un clic"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Invitez vos amis et aidez-les à se lancer directement dans Modrinth App."
+    "defaultMessage": "Invitez vos amis et aidez-les à se lancer directement dans EndRage Launcher."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Jouez avec des amis"
@@ -4428,7 +4428,7 @@
     "defaultMessage": "Détails de l'erreur :"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Si vous avez acheté votre serveur Modrinth Hosting récemment, alors il fait actuellement la queue et apparaîtra ici dès qu'il est près. <warning>N'essayez pas d'acheter un nouveau serveur.</warning>"
+    "defaultMessage": "Si vous avez acheté votre serveur EndRage Hosting récemment, alors il fait actuellement la queue et apparaîtra ici dès qu'il est près. <warning>N'essayez pas d'acheter un nouveau serveur.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Si vous avez besoin de soutien personnalisé à propos du status de votre serveur, veuillez contacter Modrinth Support."
@@ -4482,7 +4482,7 @@
     "defaultMessage": "Rechercher {count} {count, plural, one {serveur} other {serveurs}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Ils peuvent maintenant être trouvés ici !"
@@ -4560,7 +4560,7 @@
     "defaultMessage": "Obligatoire"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Votre achat de Modrinth Hosting a été complété avec succès."
+    "defaultMessage": "Votre achat de EndRage Hosting a été complété avec succès."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Achat effectué avec succès"
@@ -4749,7 +4749,7 @@
     "defaultMessage": "Votre serveur est prêt. Voici quoi faire pour commencer la partie !"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Bienvenue sur Modrinth Hosting"
+    "defaultMessage": "Bienvenue sur EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Trop de requêtes. Veuillez réessayer plus tard."
@@ -5445,10 +5445,10 @@
     "defaultMessage": "Pionnier des Shaders"
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Cet utilisateur a participé à un test alpha fermé de Modrinth Hosting avant le lancement de la bêta de Modrinth Hosting en novembre 2024."
+    "defaultMessage": "Cet utilisateur a participé à un test alpha fermé de EndRage Hosting avant le lancement de la bêta de EndRage Hosting en novembre 2024."
   },
   "user.profile.badge.hosting-alpha.name": {
-    "defaultMessage": "Testeur Alpha de Modrinth Hosting"
+    "defaultMessage": "Testeur Alpha de EndRage Hosting"
   },
   "user.profile.badge.moderator.about.1": {
     "defaultMessage": "Cet utilisateur travaille pour Modrinth en tant que modérateur de contenu."

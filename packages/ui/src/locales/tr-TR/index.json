@@ -2448,13 +2448,13 @@
     "defaultMessage": "Modrinth Uygulaması Edin"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App otomatik olarak açılacak..."
+    "defaultMessage": "EndRage Launcher otomatik olarak açılacak..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Modrinth App açılıyor"
+    "defaultMessage": "EndRage Launcher açılıyor"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Neden Modrinth App kullanmalısın"
+    "defaultMessage": "Neden EndRage Launcher kullanmalısın"
   },
   "notification.error.title": {
     "defaultMessage": "Bir hata oluştu"
@@ -4221,7 +4221,7 @@
     "defaultMessage": "Kurulum sırasında beklenmeyen bir hata oluştu."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Minecraft veya yükleyicinin bu sürümü henüz Modrinth Hosting tarafından desteklenmemektedir."
+    "defaultMessage": "Minecraft veya yükleyicinin bu sürümü henüz EndRage Hosting tarafından desteklenmemektedir."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Eklentiler yükleniyor..."
@@ -4254,16 +4254,16 @@
     "defaultMessage": "Zaten sunucunuz var mı?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Modrinth Hosting hakkında daha fazla bilgi edinin"
+    "defaultMessage": "EndRage Hosting hakkında daha fazla bilgi edinin"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Yeni sunucu"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Mod kur, arkadaş davet et, birlikte oyna ve hepsini Modrinth App'ten yap."
+    "defaultMessage": "Mod kur, arkadaş davet et, birlikte oyna ve hepsini EndRage Launcher'ten yap."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Daha sunucu yok"
@@ -4275,7 +4275,7 @@
     "defaultMessage": "Tek-tıklamada mod kurma"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Arkadaşlarınızı davet edin ve onları doğrudan Modrinth App'den ayarlayın."
+    "defaultMessage": "Arkadaşlarınızı davet edin ve onları doğrudan EndRage Launcher'den ayarlayın."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Arkadaşlarınızla oynayın"
@@ -4380,7 +4380,7 @@
     "defaultMessage": "Hata detayları:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Modrinth Hosting sunucunuzu yakın zamanda satın aldıysanız, şu anda bir kuyruktadır ve hazır olur olmaz burada görünecektir. <warning>Yeni bir sunucu satın almaya çalışmayın</warning>"
+    "defaultMessage": "EndRage Hosting sunucunuzu yakın zamanda satın aldıysanız, şu anda bir kuyruktadır ve hazır olur olmaz burada görünecektir. <warning>Yeni bir sunucu satın almaya çalışmayın</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Sunucunuzun durumu ile ilgili kişiselleştirilmiş desteğe ihtiyacınız varsa, lütfen Modrinth Destek ile iletişime geçin."
@@ -4434,7 +4434,7 @@
     "defaultMessage": "{count} {count, plural, one {server} other {servers}} sonuç bulundu..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Artık burada bulunabilirler!"
@@ -4512,7 +4512,7 @@
     "defaultMessage": "Görmezden gelinemez"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Modrinth Hosting satın alma işleminiz başarıyla tamamlandı."
+    "defaultMessage": "EndRage Hosting satın alma işleminiz başarıyla tamamlandı."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Satın alım başarılı"
@@ -4602,7 +4602,7 @@
     "defaultMessage": "Sunucunun nerede bulunmasını istersin?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Bölgen listede yok mu? <link>Modrinth Hosting'i gelecekte nerede görmek istediğini bize söyle!</link>"
+    "defaultMessage": "Bölgen listede yok mu? <link>EndRage Hosting'i gelecekte nerede görmek istediğini bize söyle!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Güneydoğu Asya"
@@ -4701,7 +4701,7 @@
     "defaultMessage": "Sunucunuz hazır. İşte oynamaya başlamak için yapmanız gerekenler!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Modrinth Hosting'e Hoş Geldiniz"
+    "defaultMessage": "EndRage Hosting'e Hoş Geldiniz"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Sınırlandırılıyorsunuz. Lütfen sonra tekrar deneyin."
@@ -5394,7 +5394,7 @@
     "defaultMessage": "Erken Shader Kullanıcısı"
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Bu kullanıcı, Modrinth Hosting'in Kasım 2024'te yayınlanacak beta sürümünü piyasaya sürmeden önce gerçekleştirdiğimiz kapalı alfa testine katılmıştır."
+    "defaultMessage": "Bu kullanıcı, EndRage Hosting'in Kasım 2024'te yayınlanacak beta sürümünü piyasaya sürmeden önce gerçekleştirdiğimiz kapalı alfa testine katılmıştır."
   },
   "user.profile.badge.hosting-alpha.name": {
     "defaultMessage": "Modrinth Barındırma Alfa Testi"

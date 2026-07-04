@@ -2244,16 +2244,16 @@
     "defaultMessage": "Зберігання файлів оновленими, попри зміни сервера"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Отримати Modrinth App"
+    "defaultMessage": "Отримати EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App відкриється автоматично…"
+    "defaultMessage": "EndRage Launcher відкриється автоматично…"
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Відкриття Modrinth App"
+    "defaultMessage": "Відкриття EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Навіщо використовувати Modrinth App"
+    "defaultMessage": "Навіщо використовувати EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "Виникла помилка"
@@ -3579,7 +3579,7 @@
     "defaultMessage": "Під час встановлення сталася неочікувана помилка."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Ця версія Minecraft або завантажувача ще не підтримується Modrinth Hosting."
+    "defaultMessage": "Ця версія Minecraft або завантажувача ще не підтримується EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Установлення доповнень…"
@@ -3612,16 +3612,16 @@
     "defaultMessage": "Уже маєте сервер?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Більше про Modrinth Hosting"
+    "defaultMessage": "Більше про EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Новий сервер"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Установлюйте моди, запрошуйте друзів і грайте разом із Modrinth App."
+    "defaultMessage": "Установлюйте моди, запрошуйте друзів і грайте разом із EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Серверів ще немає"
@@ -3633,7 +3633,7 @@
     "defaultMessage": "Установлення в одне натискання"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Запросіть друзів і налаштуйте їх прямо в Modrinth App."
+    "defaultMessage": "Запросіть друзів і налаштуйте їх прямо в EndRage Launcher."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Грайте з друзями"
@@ -3744,7 +3744,7 @@
     "defaultMessage": "Подробиці помилки:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Якщо ви нещодавно придбали свій сервер Modrinth Hosting, він зараз у черзі та з’явиться тут, щойно буде готовий. <warning>Не намагайтеся придбати новий сервер.</warning>"
+    "defaultMessage": "Якщо ви нещодавно придбали свій сервер EndRage Hosting, він зараз у черзі та з’явиться тут, щойно буде готовий. <warning>Не намагайтеся придбати новий сервер.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Якщо вам потрібна персональна підтримка щодо стану вашого сервера, зверніться до служби підтримки Modrinth."
@@ -3798,7 +3798,7 @@
     "defaultMessage": "Пошук {count} {count, plural, one {сервера} few {серверів} many {серверів} other {серверів}}…"
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Тепер їх можна знайти тут!"
@@ -3876,7 +3876,7 @@
     "defaultMessage": "Не можна відхилити"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Ваша покупка Modrinth Hosting була успішно завершена."
+    "defaultMessage": "Ваша покупка EndRage Hosting була успішно завершена."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Успішна покупка"
@@ -3966,7 +3966,7 @@
     "defaultMessage": "Де б ви хотіли розмістити свій сервер?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Регіону немає в списку? <link>Повідомте нам, де ви ще хотіли б побачити Modrinth Hosting!</link>"
+    "defaultMessage": "Регіону немає в списку? <link>Повідомте нам, де ви ще хотіли б побачити EndRage Hosting!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Південно-східна Азія"
@@ -4065,7 +4065,7 @@
     "defaultMessage": "Ваш сервер готовий. Ось що вам потрібно зробити, щоб почати грати!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Ласкаво просимо до Modrinth Hosting"
+    "defaultMessage": "Ласкаво просимо до EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "На вас накладено обмеження через кількість запитів. Спробуйте ще раз пізніше."

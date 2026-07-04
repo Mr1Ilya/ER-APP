@@ -2193,16 +2193,16 @@
     "defaultMessage": "Memastikan fail dikemas kini apabila pelayan berubah"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Dapatkan Modrinth App"
+    "defaultMessage": "Dapatkan EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App akan dibuka secara automatik..."
+    "defaultMessage": "EndRage Launcher akan dibuka secara automatik..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Membuka Modrinth App"
+    "defaultMessage": "Membuka EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Mengapa menggunakan Modrinth App"
+    "defaultMessage": "Mengapa menggunakan EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "Sebuah ralat telah berlaku"
@@ -3678,7 +3678,7 @@
     "defaultMessage": "Versi pek mod ini tidak menyertakan fail yang boleh dimuat turun. Ia mungkin telah dibungkus secara salah."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Versi Minecraft atau pemuat ini belum disokong oleh Modrinth Hosting."
+    "defaultMessage": "Versi Minecraft atau pemuat ini belum disokong oleh EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Sedang memasang tambahan..."
@@ -3711,16 +3711,16 @@
     "defaultMessage": "Sudah mempunyai pelayan?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Ketahui lebih lanjut tentang Modrinth Hosting"
+    "defaultMessage": "Ketahui lebih lanjut tentang EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Pelayan baharu"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Pasang mod, jemput rakan dan main bersama-sama, semuanya dari Modrinth App."
+    "defaultMessage": "Pasang mod, jemput rakan dan main bersama-sama, semuanya dari EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Belum ada pelayan"
@@ -3732,7 +3732,7 @@
     "defaultMessage": "Pemasangan mod sekali klik"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Jemput rakan-rakan dan sediakan mereka terus dalam Modrinth App."
+    "defaultMessage": "Jemput rakan-rakan dan sediakan mereka terus dalam EndRage Launcher."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Main bersama rakan"
@@ -3837,7 +3837,7 @@
     "defaultMessage": "Butiran ralat:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Jika anda baru-baru ini membeli pelayan Modrinth Hosting anda, ia sedang berada dalam barisan dan akan muncul di sini sebaik sahaja ia siap. <warning>Jangan cuba membeli pelayan baharu.</warning>"
+    "defaultMessage": "Jika anda baru-baru ini membeli pelayan EndRage Hosting anda, ia sedang berada dalam barisan dan akan muncul di sini sebaik sahaja ia siap. <warning>Jangan cuba membeli pelayan baharu.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Jika anda memerlukan sokongan peribadi mengenai status pelayan anda, sila hubungi Sokongan Modrinth."
@@ -3885,7 +3885,7 @@
     "defaultMessage": "Cari {count} {count, plural, other {pelayan}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Mereka kini boleh ditemui di sini!"
@@ -3957,7 +3957,7 @@
     "defaultMessage": "Tidak boleh diketepikan"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Pembelian Modrinth Hosting anda telah berjaya diselesaikan."
+    "defaultMessage": "Pembelian EndRage Hosting anda telah berjaya diselesaikan."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Pembelian berjaya"
@@ -4047,7 +4047,7 @@
     "defaultMessage": "Di manakah anda mahu pelayan anda ditempatkan?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Rantau tidak disenaraikan? <link>Beritahu kami di mana anda ingin melihat Modrinth Hosting tersedia!</link>"
+    "defaultMessage": "Rantau tidak disenaraikan? <link>Beritahu kami di mana anda ingin melihat EndRage Hosting tersedia!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Asia Tenggara"
@@ -4104,7 +4104,7 @@
     "defaultMessage": "Pelayan anda sudah sedia. Inilah yang perlu anda lakukan untuk mula bermain!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Selamat Datang ke Modrinth Hosting"
+    "defaultMessage": "Selamat Datang ke EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Anda sedang dihadkan kekerapan. Sila cuba lagi kemudian."
@@ -4746,7 +4746,7 @@
     "defaultMessage": "Pengguna ini telah membantu kami menguji projek Pembayang di Modrinth sebelum kami melancarkannya pada Januari 2023."
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Pengguna ini telah menyertai ujian alfa tertutup Modrinth Hosting sebelum kami melancarkan Modrinth Hosting Beta pada November 2024."
+    "defaultMessage": "Pengguna ini telah menyertai ujian alfa tertutup EndRage Hosting sebelum kami melancarkan EndRage Hosting Beta pada November 2024."
   },
   "user.profile.badge.moderator.about.2": {
     "defaultMessage": "Penyederhana Kandungan di Modrinth menyemak projek, mengendalikan laporan dan membantu memastikan Modrinth selamat."

@@ -1650,16 +1650,16 @@
     "defaultMessage": "Houd de bestanden geupdate wanneer de server verandert"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Krijg de Modrinth App"
+    "defaultMessage": "Krijg de EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "De Modrinth App zal automatisch openen..."
+    "defaultMessage": "De EndRage Launcher zal automatisch openen..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Bezig met de Modrinth App openen"
+    "defaultMessage": "Bezig met de EndRage Launcher openen"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Waarom de Modrinth App gebruiken"
+    "defaultMessage": "Waarom de EndRage Launcher gebruiken"
   },
   "notification.error.title": {
     "defaultMessage": "Er is een fout opgetreden"
@@ -2685,10 +2685,10 @@
     "defaultMessage": "Heb je al een server?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Meer informatie over Modrinth Hosting"
+    "defaultMessage": "Meer informatie over EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Nieuwe server"
@@ -2796,7 +2796,7 @@
     "defaultMessage": "Foutdetails:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Als u onlangs een server bij Modrinth Hosting hebt aangeschaft, staat deze momenteel in de wachtrij en verschijnt hij hier zodra hij klaar is. <warning>Probeer geen nieuwe server aan te schaffen.</warning>"
+    "defaultMessage": "Als u onlangs een server bij EndRage Hosting hebt aangeschaft, staat deze momenteel in de wachtrij en verschijnt hij hier zodra hij klaar is. <warning>Probeer geen nieuwe server aan te schaffen.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Als je persoonlijke ondersteuning nodig hebt met betrekking tot de status van uw server, neem dan contact op met Modrinth Support."
@@ -2844,7 +2844,7 @@
     "defaultMessage": "Zoek {count} {count, plural, one {server} other {servers}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Je vindt ze nu hier!"
@@ -2910,7 +2910,7 @@
     "defaultMessage": "Niet negeerbaar"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Uw aankoop bij Modrinth Hosting is succesvol afgerond."
+    "defaultMessage": "Uw aankoop bij EndRage Hosting is succesvol afgerond."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Aankoop geslaagd"
@@ -2982,7 +2982,7 @@
     "defaultMessage": "Uit welk regio wil je een server?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Staat jouw regio er niet bij? <link>Laat ons weten waar je Modrinth Hosting graag als volgende zou willen zien!</link>"
+    "defaultMessage": "Staat jouw regio er niet bij? <link>Laat ons weten waar je EndRage Hosting graag als volgende zou willen zien!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Southeast Asia"

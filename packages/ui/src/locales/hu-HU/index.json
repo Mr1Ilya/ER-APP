@@ -2109,16 +2109,16 @@
     "defaultMessage": "Tartsd naprakészen a fájlokat, amikor a szerver változik"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Szerezd meg a Modrinth Appot"
+    "defaultMessage": "Szerezd meg a EndRage Launcherot"
   },
   "modal.open-in-app.opening-automatically": {
     "defaultMessage": "A Modrinth alkalmazás automatikusan megnyílik..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "A Modrinth App megnyitása"
+    "defaultMessage": "A EndRage Launcher megnyitása"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Miért használd a Modrinth Appot?"
+    "defaultMessage": "Miért használd a EndRage Launcherot?"
   },
   "notification.error.title": {
     "defaultMessage": "Hiba történt"
@@ -3576,16 +3576,16 @@
     "defaultMessage": "Már van egy szervered?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Tudj meg többet a Modrinth Hostingról"
+    "defaultMessage": "Tudj meg többet a EndRage Hostingról"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Új szerver"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Telepíts modokat, hívd meg a barátaidat, és játsszatok együtt, mindezt a Modrinth Appban."
+    "defaultMessage": "Telepíts modokat, hívd meg a barátaidat, és játsszatok együtt, mindezt a EndRage Launcherban."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Még nincsenek szerverek"
@@ -3594,7 +3594,7 @@
     "defaultMessage": "Modok telepítése egy kattintással"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Hívd meg a barátaidat, és állítsd be őket közvetlenül a Modrinth Appban."
+    "defaultMessage": "Hívd meg a barátaidat, és állítsd be őket közvetlenül a EndRage Launcherban."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Játssz a barátaiddal"
@@ -3663,7 +3663,7 @@
     "defaultMessage": "A hiba részletei:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Ha nemrég vásároltál Modrinth Hosting szervert, az jelenleg a várólistán van, és amint készen áll, itt fog megjelenni. <warning>Ne próbálj új szervert vásárolni.</warning>"
+    "defaultMessage": "Ha nemrég vásároltál EndRage Hosting szervert, az jelenleg a várólistán van, és amint készen áll, itt fog megjelenni. <warning>Ne próbálj új szervert vásárolni.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Ha személyre szabott segítségre van szükséged a szervered állapotával kapcsolatban, kérlek, vedd fel a kapcsolatot a Modrinth ügyfélszolgálatával."
@@ -3690,7 +3690,7 @@
     "defaultMessage": "Keresés {count} szerver között..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Mostantól itt található!"
@@ -3753,7 +3753,7 @@
     "defaultMessage": "Elutasíthatatlan"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "A Modrinth Hosting szolgáltatás megvásárlása sikeresen lezárult."
+    "defaultMessage": "A EndRage Hosting szolgáltatás megvásárlása sikeresen lezárult."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "A vásárlás sikeresen lezárult"
@@ -3828,7 +3828,7 @@
     "defaultMessage": "Hol szeretnéd elhelyezni a szerveredet?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Nincs a listán a régiód? <link>Jelezd nekünk, hogy hol szeretnéd látni legközelebb a Modrinth Hostingot!</link>"
+    "defaultMessage": "Nincs a listán a régiód? <link>Jelezd nekünk, hogy hol szeretnéd látni legközelebb a EndRage Hostingot!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Délkelet-Ázsia"
@@ -3879,7 +3879,7 @@
     "defaultMessage": "A szervered készen áll. Íme, mit kell tenned a játék elkezdéséhez!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Üdvözlünk a Modrinth Hostingnál"
+    "defaultMessage": "Üdvözlünk a EndRage Hostingnál"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "A rendszer korlátozza a lekérdezések számát. Kérlek próbáld újra később."

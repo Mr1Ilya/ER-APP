@@ -2586,16 +2586,16 @@
     "defaultMessage": "Mantiene los archivos actualizados cuando el servidor cambia"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Obtener la Modrinth App"
+    "defaultMessage": "Obtener la EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "La Modrinth App se abrirá automáticamente..."
+    "defaultMessage": "La EndRage Launcher se abrirá automáticamente..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Abriendo la Modrinth App"
+    "defaultMessage": "Abriendo la EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Por qué usar la Modrinth App"
+    "defaultMessage": "Por qué usar la EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "Ha ocurrido un error"
@@ -4380,7 +4380,7 @@
     "defaultMessage": "Se produjo un error inesperado durante la instalación."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Esta versión de Minecraft o del loader aún no es compatible con Modrinth Hosting."
+    "defaultMessage": "Esta versión de Minecraft o del loader aún no es compatible con EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Instalando addons..."
@@ -4413,16 +4413,16 @@
     "defaultMessage": "¿Ya tienes un servidor?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Aprende más sobre Modrinth Hosting"
+    "defaultMessage": "Aprende más sobre EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Nuevo servidor"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Instala mods, invita amigos, y jueguen juntos todo desde la Modrinth App."
+    "defaultMessage": "Instala mods, invita amigos, y jueguen juntos todo desde la EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Aún no hay servidores"
@@ -4434,7 +4434,7 @@
     "defaultMessage": "Instalación de mods en un clic"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Invita a tus amigos y ayúdalos a que se unan fácilmente desde la Modrinth App."
+    "defaultMessage": "Invita a tus amigos y ayúdalos a que se unan fácilmente desde la EndRage Launcher."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Juega con amigos"
@@ -4545,7 +4545,7 @@
     "defaultMessage": "Detalles del error:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Si compraste tu servidor de Modrinth Hosting recientemente, está en cola y aparecerá aquí en cuanto esté listo. <warning>No intentes comprar un servidor nuevo.</warning>"
+    "defaultMessage": "Si compraste tu servidor de EndRage Hosting recientemente, está en cola y aparecerá aquí en cuanto esté listo. <warning>No intentes comprar un servidor nuevo.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Si necesitas soporte personalizado acerca del estado de tu servidor, por favor contacta al soporte de Modrinth."
@@ -4599,7 +4599,7 @@
     "defaultMessage": "Buscar {count} {count, plural,one {servidor} other {servidores}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "¡Ahora puedes encontrarlos aquí!"
@@ -4677,7 +4677,7 @@
     "defaultMessage": "No descartable"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Tu compra de Modrinth Hosting se completó correctamente."
+    "defaultMessage": "Tu compra de EndRage Hosting se completó correctamente."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Compra exitosa"
@@ -4767,7 +4767,7 @@
     "defaultMessage": "¿Dónde te gustaría que se ubicara tu servidor?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "¿Tu región no aparece en la lista? <link>¡Cuéntanos dónde te gustaría que esté Modrinth Hosting próximamente!</link>"
+    "defaultMessage": "¿Tu región no aparece en la lista? <link>¡Cuéntanos dónde te gustaría que esté EndRage Hosting próximamente!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Sudeste asiático"
@@ -4866,7 +4866,7 @@
     "defaultMessage": "Tu servidor está listo. ¡Esto es lo que necesitas hacer para empezar a jugar!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Bienvenido a Modrinth Hosting"
+    "defaultMessage": "Bienvenido a EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Haz alcanzado el límite de solicitudes. Por favor, inténtalo de nuevo más tarde."
@@ -5562,10 +5562,10 @@
     "defaultMessage": "Adaptador temprano de los shaders"
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Este usuario participó en una prueba de alpha cerrada de Modrinth Hosting antes de que lanzamos la beta en Noviembre de 2024."
+    "defaultMessage": "Este usuario participó en una prueba de alpha cerrada de EndRage Hosting antes de que lanzamos la beta en Noviembre de 2024."
   },
   "user.profile.badge.hosting-alpha.name": {
-    "defaultMessage": "Alpha Tester de Modrinth Hosting"
+    "defaultMessage": "Alpha Tester de EndRage Hosting"
   },
   "user.profile.badge.moderator.about.1": {
     "defaultMessage": "Este usuario trabaja para Modrinth como Moderador de Contenido."

@@ -2274,16 +2274,16 @@
     "defaultMessage": "서버 변경 시 파일 자동 업데이트"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Modrinth App 받기"
+    "defaultMessage": "EndRage Launcher 받기"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App이 자동으로 열립니다..."
+    "defaultMessage": "EndRage Launcher이 자동으로 열립니다..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Modrinth App 여는 중"
+    "defaultMessage": "EndRage Launcher 여는 중"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Modrinth App을 사용하는 이유"
+    "defaultMessage": "EndRage Launcher을 사용하는 이유"
   },
   "notification.error.title": {
     "defaultMessage": "오류가 발생했습니다"
@@ -4005,7 +4005,7 @@
     "defaultMessage": "설치 중 알 수 없는 오류가 발생했습니다."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "이 미인크래프트 또는 로더 버전은 아직 Modrinth Hosting에서 지원되지 않습니다."
+    "defaultMessage": "이 미인크래프트 또는 로더 버전은 아직 EndRage Hosting에서 지원되지 않습니다."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "애드온 설치 중..."
@@ -4347,7 +4347,7 @@
     "defaultMessage": "서버가 어디에 위치했으면 좋겠나요?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "원하는 지역이 목록에 없나요? <link>Modrinth Hosting을 어디에서 만나고 싶은지 알려주세요!</link>"
+    "defaultMessage": "원하는 지역이 목록에 없나요? <link>EndRage Hosting을 어디에서 만나고 싶은지 알려주세요!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "동남아시아"
@@ -4398,7 +4398,7 @@
     "defaultMessage": "서버가 준비되었습니다. 플레이하려면 다음 단계를 따라주세요!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Modrinth Hosting에 오신 것을 환영합니다"
+    "defaultMessage": "EndRage Hosting에 오신 것을 환영합니다"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "제한에 도달했습니다. 나중에 다시 시도하세요."

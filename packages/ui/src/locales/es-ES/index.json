@@ -4362,7 +4362,7 @@
     "defaultMessage": "Se produjo un error inesperado durante la instalación."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Esta versión de Minecraft o del loader aún no es compatible con Modrinth Hosting."
+    "defaultMessage": "Esta versión de Minecraft o del loader aún no es compatible con EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Instalando addons..."
@@ -4398,13 +4398,13 @@
     "defaultMessage": "Conoce más sobre el alojamiento de servidores de Modrinth"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Nuevo servidor"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Instala mods, invita amigos, y jueguen todos juntos desde la Modrinth App."
+    "defaultMessage": "Instala mods, invita amigos, y jueguen todos juntos desde la EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "No se han encontrado servidores todavía"
@@ -4527,7 +4527,7 @@
     "defaultMessage": "Detalles del error:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Si has adquirido un servidor de Modrinth Hosting recientemente, está en una lista de espera y aparecerá aquí cuando esté preparado. <warning>No intentes realizar la compra de otro servidor.</warning>"
+    "defaultMessage": "Si has adquirido un servidor de EndRage Hosting recientemente, está en una lista de espera y aparecerá aquí cuando esté preparado. <warning>No intentes realizar la compra de otro servidor.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Si requieres soporte personalizado sobre el estatus de tu servidor, por favor contacta al Soporte de Modrinth."
@@ -4848,7 +4848,7 @@
     "defaultMessage": "Tu servidor está listo. ¡Esto es lo que necesitas hacer para empezar a jugar!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "¡Bienvenido a Modrinth Hosting!"
+    "defaultMessage": "¡Bienvenido a EndRage Hosting!"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Se ha alcanzado el límite de solicitudes. Inténtalo de nuevo más tarde."
@@ -5544,10 +5544,10 @@
     "defaultMessage": "Adaptador temprano de los shaders"
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Este usuario participó en una prueba de alpha cerrada de Modrinth Hosting antes de que lanzamos la beta en Noviembre de 2024."
+    "defaultMessage": "Este usuario participó en una prueba de alpha cerrada de EndRage Hosting antes de que lanzamos la beta en Noviembre de 2024."
   },
   "user.profile.badge.hosting-alpha.name": {
-    "defaultMessage": "Alpha Tester de Modrinth Hosting"
+    "defaultMessage": "Alpha Tester de EndRage Hosting"
   },
   "user.profile.badge.moderator.about.1": {
     "defaultMessage": "Este usuario trabaja para Modrinth como Moderador de Contenido."

@@ -2151,16 +2151,16 @@
     "defaultMessage": "サーバーが変更したときにファイルを更新し続ける"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Modrinth Appを入手する"
+    "defaultMessage": "EndRage Launcherを入手する"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth Appが自動で開きます…"
+    "defaultMessage": "EndRage Launcherが自動で開きます…"
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Modrinth Appを開く"
+    "defaultMessage": "EndRage Launcherを開く"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "なぜModrinth Appを使うのか"
+    "defaultMessage": "なぜEndRage Launcherを使うのか"
   },
   "notification.error.title": {
     "defaultMessage": "エラーが発生しました"
@@ -3237,16 +3237,16 @@
     "defaultMessage": "既にサーバーをお持ちですか？"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Modrinth Hostingについて詳しくはこちらをご覧ください"
+    "defaultMessage": "EndRage Hostingについて詳しくはこちらをご覧ください"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "新しいサーバー"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Modrinth Appを使えば、MODのインストール、友達の招待、そして一緒にプレイすることなど、すべてが可能です。"
+    "defaultMessage": "EndRage Launcherを使えば、MODのインストール、友達の招待、そして一緒にプレイすることなど、すべてが可能です。"
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "サーバーはまだありません"
@@ -3255,7 +3255,7 @@
     "defaultMessage": "ワンクリックでMODをインストール"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "友達を招待して、Modrinth Appで簡単に設定してあげましょう。"
+    "defaultMessage": "友達を招待して、EndRage Launcherで簡単に設定してあげましょう。"
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "友達と遊ぶ"
@@ -3375,7 +3375,7 @@
     "defaultMessage": "サーバーをどこに設置しますか？"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "ご希望の地域が見つかりませんか？ <link>Modrinth Hostingを利用したい場所をお知らせください！</link>"
+    "defaultMessage": "ご希望の地域が見つかりませんか？ <link>EndRage Hostingを利用したい場所をお知らせください！</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "東南アジア"

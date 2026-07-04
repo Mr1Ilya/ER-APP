@@ -2316,16 +2316,16 @@
     "defaultMessage": "Luôn cập nhật các file khi server thay đổi"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Tải Modrinth App"
+    "defaultMessage": "Tải EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App sẽ được tự động mở..."
+    "defaultMessage": "EndRage Launcher sẽ được tự động mở..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Mở Modrinth App"
+    "defaultMessage": "Mở EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Tại sao nên sử dụng Modrinth App"
+    "defaultMessage": "Tại sao nên sử dụng EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "Đã xảy ra lỗi"
@@ -3948,7 +3948,7 @@
     "defaultMessage": "Có lỗi lạ xảy ra trong khi tải."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Phiên bản minecraft hoặc loader hiện không được hỗ trợ bởi Modrinth Hosting."
+    "defaultMessage": "Phiên bản minecraft hoặc loader hiện không được hỗ trợ bởi EndRage Hosting."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Đang cài addon..."
@@ -3981,10 +3981,10 @@
     "defaultMessage": "Đã có máy chủ rồi?"
   },
   "servers.list-empty.learn-more-link": {
-    "defaultMessage": "Tìm hiểu thêm về Modrinth Hosting"
+    "defaultMessage": "Tìm hiểu thêm về EndRage Hosting"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Máy chủ mới"
@@ -4107,7 +4107,7 @@
     "defaultMessage": "Chi tiết lỗi:"
   },
   "servers.manage.error.queue-notice": {
-    "defaultMessage": "Nếu bạn đã từng mua máy chủ Modrinth Hosting, nó đang trong hàng chờ và sẽ xuất hiện ở đây khi đã sẵn sàng. <warning>Tuyệt đối không được mua lại máy chủ mới.</warning>"
+    "defaultMessage": "Nếu bạn đã từng mua máy chủ EndRage Hosting, nó đang trong hàng chờ và sẽ xuất hiện ở đây khi đã sẵn sàng. <warning>Tuyệt đối không được mua lại máy chủ mới.</warning>"
   },
   "servers.manage.error.support-notice": {
     "defaultMessage": "Nếu bạn cần trợ giúp cá nhân liên quan đến trạng thái máy chủ, vui lòng liên hệ bên hỗ trợ Modrinth."
@@ -4155,7 +4155,7 @@
     "defaultMessage": "Tìm kiếm trong {count} {count, plural, other {máy chủ}}..."
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.description": {
     "defaultMessage": "Nó hiện đang ở đây!"
@@ -4221,7 +4221,7 @@
     "defaultMessage": "Không thể bỏ qua"
   },
   "servers.purchase.notification.success.text": {
-    "defaultMessage": "Đã thành toán thành công cho Modrinth Hosting."
+    "defaultMessage": "Đã thành toán thành công cho EndRage Hosting."
   },
   "servers.purchase.notification.success.title": {
     "defaultMessage": "Thanh toán thành công"
@@ -4311,7 +4311,7 @@
     "defaultMessage": "Bạn muốn khu vực máy chủ của bạn được nằm ở đâu?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Khu vực không được liệt kê? <link>Hãy cho chúng tôi biết nơi mà bạn muốn Modrinth Hosting sẽ có trong tương lai!</link>"
+    "defaultMessage": "Khu vực không được liệt kê? <link>Hãy cho chúng tôi biết nơi mà bạn muốn EndRage Hosting sẽ có trong tương lai!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Đông Nam Á"
@@ -4362,7 +4362,7 @@
     "defaultMessage": "Máy chủ của bạn đã sẵn sàng. Bạn sẽ cần làm những điều này để bắt đầu chơi!"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Chào mừng đến Modrinth Hosting"
+    "defaultMessage": "Chào mừng đến EndRage Hosting"
   },
   "servers.setup.rate-limit.text": {
     "defaultMessage": "Bạn đang bị giới hạn lượt truy cập. Vui lòng thử lại sau."
@@ -5058,10 +5058,10 @@
     "defaultMessage": "Người dùng Shader sớm"
   },
   "user.profile.badge.hosting-alpha.about.1": {
-    "defaultMessage": "Người này đã tham gia vào việc thử nghiệm alpha kín của Modrinth Hosting trước khi chúng tôi phát hành Modrinth Hosting Beta vào tháng mười một 2024."
+    "defaultMessage": "Người này đã tham gia vào việc thử nghiệm alpha kín của EndRage Hosting trước khi chúng tôi phát hành EndRage Hosting Beta vào tháng mười một 2024."
   },
   "user.profile.badge.hosting-alpha.name": {
-    "defaultMessage": "Người thử nghiệm Modrinth Hosting"
+    "defaultMessage": "Người thử nghiệm EndRage Hosting"
   },
   "user.profile.badge.moderator.about.1": {
     "defaultMessage": "Người dùng này làm cho bên kiểm duyệt nội dung Modrinth."

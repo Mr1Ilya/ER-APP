@@ -2313,16 +2313,16 @@
     "defaultMessage": "Přidávání platební metody"
   },
   "modal.open-in-app.get-app": {
-    "defaultMessage": "Získat Modrinth App"
+    "defaultMessage": "Získat EndRage Launcher"
   },
   "modal.open-in-app.opening-automatically": {
-    "defaultMessage": "Modrinth App se otevře automaticky..."
+    "defaultMessage": "EndRage Launcher se otevře automaticky..."
   },
   "modal.open-in-app.title": {
-    "defaultMessage": "Otevírání Modrinth App"
+    "defaultMessage": "Otevírání EndRage Launcher"
   },
   "modal.open-in-app.why-use": {
-    "defaultMessage": "Proč používat Modrinth App"
+    "defaultMessage": "Proč používat EndRage Launcher"
   },
   "notification.error.title": {
     "defaultMessage": "Došlo k chybě"
@@ -3684,7 +3684,7 @@
     "defaultMessage": "Vyhledávání..."
   },
   "servers.installing-banner.error.unsupported-loader-version": {
-    "defaultMessage": "Modrinth Hosting tuto verzi Minecraftu nebo loaderu zatím nepodporuje."
+    "defaultMessage": "EndRage Hosting tuto verzi Minecraftu nebo loaderu zatím nepodporuje."
   },
   "servers.installing-banner.phase.installing-addons": {
     "defaultMessage": "Instalování addonů..."
@@ -3720,13 +3720,13 @@
     "defaultMessage": "Zjistěte víc o Modrinth hostingu"
   },
   "servers.list-empty.modrinth-hosting-label": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.list-empty.new-server-button": {
     "defaultMessage": "Nový server"
   },
   "servers.list-empty.no-servers-description": {
-    "defaultMessage": "Instalujte mody, zvěte přátele a hrajte společně, to vše z Modrinth App."
+    "defaultMessage": "Instalujte mody, zvěte přátele a hrajte společně, to vše z EndRage Launcher."
   },
   "servers.list-empty.no-servers-title": {
     "defaultMessage": "Zatím žádné servery"
@@ -3738,7 +3738,7 @@
     "defaultMessage": "Instalace módů jedním klikem"
   },
   "servers.list-empty.play-with-friends-description": {
-    "defaultMessage": "Pozvěte přátele a nastavte jim vše přímo v Modrinth App."
+    "defaultMessage": "Pozvěte přátele a nastavte jim vše přímo v EndRage Launcher."
   },
   "servers.list-empty.play-with-friends-title": {
     "defaultMessage": "Hrajte s přáteli"
@@ -3807,7 +3807,7 @@
     "defaultMessage": "Úspěch"
   },
   "servers.manage.servers-title": {
-    "defaultMessage": "Modrinth Hosting"
+    "defaultMessage": "EndRage Hosting"
   },
   "servers.manage.settings-hint.dismiss": {
     "defaultMessage": "Znovu nezobrazovat"
@@ -3939,7 +3939,7 @@
     "defaultMessage": "Kde bys chtěl mít umístěný svůj server?"
   },
   "servers.region.region-unsupported": {
-    "defaultMessage": "Chybí vaše oblast? <link>Dejte nám vědět, kde byste chtěli vidět Modrinth Hosting příště!</link>"
+    "defaultMessage": "Chybí vaše oblast? <link>Dejte nám vědět, kde byste chtěli vidět EndRage Hosting příště!</link>"
   },
   "servers.region.southeast-asia": {
     "defaultMessage": "Jihovýchodní Asie"
@@ -3996,7 +3996,7 @@
     "defaultMessage": "Nastavte si svůj server (~2min)"
   },
   "servers.setup.onboarding.welcome.title": {
-    "defaultMessage": "Vítejte v Modrinth Hostingu"
+    "defaultMessage": "Vítejte v EndRage Hostingu"
   },
   "servers.setup.uploading-modpack.header": {
     "defaultMessage": "Nahrávání modpacku"
