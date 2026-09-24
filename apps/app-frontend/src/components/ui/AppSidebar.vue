@@ -108,7 +108,7 @@ function navigate(to: string) {
 
 <template>
 	<aside
-		class="sidebar-container select-none flex flex-col justify-between h-full bg-[#18191c] border-r border-[#26282e]/80 transition-all duration-200 z-20"
+		class="sidebar-container select-none flex flex-col justify-between h-full bg-[var(--er-sidebar-bg)] border-r border-[var(--er-border)] transition-all duration-200 z-20"
 		:class="collapsed ? 'w-[72px] px-2 py-3' : 'w-[220px] px-3 py-3'"
 	>
 		<!-- Top section -->
@@ -116,7 +116,7 @@ function navigate(to: string) {
 			<!-- Collapse Toggle Button -->
 			<div class="mb-2 px-1 flex items-center" :class="collapsed ? 'justify-center' : 'justify-start'">
 				<button
-					class="flex items-center gap-2 text-xs font-medium text-[#8e929b] hover:text-white transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-white/5"
+					class="flex items-center gap-2 text-xs font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-white/5"
 					:title="collapsed ? 'Развернуть меню' : 'Свернуть меню'"
 					@click="emit('toggle-collapse')"
 				>
@@ -145,7 +145,7 @@ function navigate(to: string) {
 					:class="[
 						isItemActive(item)
 							? 'bg-[#22c55e]/15 text-[#22c55e] border-[#22c55e]/30 font-semibold shadow-sm'
-							: 'bg-transparent text-[#9ca3af] hover:text-[#f3f4f6] hover:bg-white/5 border-transparent',
+							: 'bg-transparent text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 border-transparent',
 						collapsed ? 'justify-center px-2' : ''
 					]"
 					:title="collapsed ? item.label : undefined"
@@ -215,16 +215,16 @@ function navigate(to: string) {
 		</div>
 
 		<!-- Bottom section -->
-		<div class="flex flex-col gap-2 pt-2 border-t border-[#26282e]/80">
+		<div class="flex flex-col gap-2 pt-2 border-t border-[var(--er-border)]">
 			<!-- Settings button -->
 			<button
-				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[#9ca3af] hover:text-[#f3f4f6] hover:bg-white/5 transition-all bg-transparent border-0 cursor-pointer w-full"
+				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 transition-all bg-transparent border-0 cursor-pointer w-full"
 				:class="collapsed ? 'justify-center px-2' : ''"
 				:title="collapsed ? 'Настройки' : undefined"
 				@click="emit('open-settings')"
 			>
 				<svg
-					class="w-4 h-4 shrink-0 text-[#9ca3af] group-hover:text-white transition-colors"
+					class="w-4 h-4 shrink-0 text-[var(--er-text-secondary)] group-hover:text-[var(--er-text)] transition-colors"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
@@ -240,7 +240,7 @@ function navigate(to: string) {
 
 			<!-- Account Card -->
 			<button
-				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[#202227] hover:bg-[#26282f] border border-[#2d3038] hover:border-[#383c46] transition-all cursor-pointer text-left w-full"
+				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[#22c55e]/40 transition-all cursor-pointer text-left w-full"
 				:class="collapsed ? 'justify-center p-1.5' : ''"
 				:title="collapsed ? (activeAccount?.profile?.name || 'Аккаунты') : undefined"
 				@click="emit('open-accounts')"
@@ -248,19 +248,19 @@ function navigate(to: string) {
 				<img
 					:src="avatarUrl"
 					alt="Avatar"
-					class="w-8 h-8 rounded-lg bg-[#141518] object-cover shrink-0 border border-white/10"
+					class="w-8 h-8 rounded-lg bg-[var(--er-subtle-bg)] object-cover shrink-0 border border-white/10"
 				/>
 				<div v-if="!collapsed" class="flex flex-col min-w-0 flex-1">
-					<span class="text-xs font-semibold text-white truncate leading-tight">
+					<span class="text-xs font-semibold text-[var(--er-text)] truncate leading-tight">
 						{{ activeAccount?.profile?.name || 'Войти в игру' }}
 					</span>
-					<span class="text-[10px] text-[#8e929b] truncate leading-tight mt-0.5">
+					<span class="text-[10px] text-[var(--er-text-secondary)] truncate leading-tight mt-0.5">
 						{{ accountTypeLabel }}
 					</span>
 				</div>
 				<svg
 					v-if="!collapsed"
-					class="w-3.5 h-3.5 text-[#6b7280] group-hover:text-white transition-colors shrink-0"
+					class="w-3.5 h-3.5 text-[var(--er-text-secondary)] group-hover:text-[var(--er-text)] transition-colors shrink-0"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"

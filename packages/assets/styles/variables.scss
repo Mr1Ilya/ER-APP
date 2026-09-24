@@ -183,6 +183,17 @@
 
 html {
 	@extend .light-properties;
+	--er-bg: #141518;
+	--er-sidebar-bg: #18191c;
+	--er-statusbar-bg: #18191c;
+	--er-card-bg: #1b1c20;
+	--er-card-hover: #202227;
+	--er-card-border: #282a32;
+	--er-border: rgba(38, 40, 46, 0.8);
+	--er-text: #ffffff;
+	--er-text-secondary: #9ca3af;
+	--er-accent: #22c55e;
+	--er-subtle-bg: #202227;
 	--dark-color-base: #b0bac5;
 	--dark-color-contrast: #ecf9fb;
 
@@ -219,11 +230,34 @@ html {
 .light-mode,
 .light {
 	@extend .light-properties;
+	--er-bg: #f3f4f6;
+	--er-sidebar-bg: #ffffff;
+	--er-statusbar-bg: #ffffff;
+	--er-card-bg: #ffffff;
+	--er-card-hover: #f9fafb;
+	--er-card-border: #e5e7eb;
+	--er-border: #e5e7eb;
+	--er-text: #111827;
+	--er-text-secondary: #4b5563;
+	--er-accent: #16a34a;
+	--er-subtle-bg: #f3f4f6;
 }
 
 .dark-mode,
 .dark,
 :root[data-theme='dark'] {
+	--er-bg: #141518;
+	--er-sidebar-bg: #18191c;
+	--er-statusbar-bg: #18191c;
+	--er-card-bg: #1b1c20;
+	--er-card-hover: #202227;
+	--er-card-border: #282a32;
+	--er-border: rgba(38, 40, 46, 0.8);
+	--er-text: #ffffff;
+	--er-text-secondary: #9ca3af;
+	--er-accent: #22c55e;
+	--er-subtle-bg: #202227;
+
 	--surface-1: #121315;
 	--surface-1-5: #15171a;
 	--surface-2: #191b1f;
@@ -397,6 +431,18 @@ html {
 
 .oled-mode {
 	@extend .dark-mode;
+	--er-bg: #000000;
+	--er-sidebar-bg: #000000;
+	--er-statusbar-bg: #000000;
+	--er-card-bg: #08080a;
+	--er-card-hover: #101014;
+	--er-card-border: #1a1a20;
+	--er-border: #1a1a20;
+	--er-text: #ffffff;
+	--er-text-secondary: #8e929b;
+	--er-accent: #22c55e;
+	--er-subtle-bg: #0d0d10;
+
 	--surface-1: #000000;
 	--surface-1-5: #050506;
 	--surface-2: #09090a;

@@ -14,7 +14,7 @@ const showCreationModal = inject('showCreationModal')
 const route = useRoute()
 const breadcrumbs = useBreadcrumbs()
 
-breadcrumbs.setRootContext({ name: 'Library', link: route.path })
+breadcrumbs.setRootContext({ name: 'Мои сборки', link: route.path })
 
 const instances = shallowRef(await list().catch(handleError))
 
@@ -36,13 +36,13 @@ onUnmounted(() => {
 
 <template>
 	<div class="p-6 flex flex-col gap-3">
-		<h1 class="m-0 text-2xl hidden">Library</h1>
+		<h1 class="m-0 text-2xl hidden">Мои сборки</h1>
 		<NavTabs
 			:links="[
-				{ label: 'All instances', href: `/library` },
-				{ label: 'Modpacks', href: `/library/modpacks` },
-				{ label: 'Servers', href: `/library/servers` },
-				{ label: 'Custom', href: `/library/custom` },
+				{ label: 'Все сборки', href: `/library` },
+				{ label: 'Модпаки', href: `/library/modpacks` },
+				{ label: 'Серверы', href: `/library/servers` },
+				{ label: 'Свои', href: `/library/custom` },
 				{ label: 'Shared with me', href: `/library/shared`, shown: false },
 				{ label: 'Saved', href: `/library/saved`, shown: false },
 			]"
@@ -54,11 +54,11 @@ onUnmounted(() => {
 			<div class="icon">
 				<NewInstanceImage />
 			</div>
-			<h3>No instances found</h3>
+			<h3>Нет установленных сборок</h3>
 			<ButtonStyled color="brand">
 				<button :disabled="offline" @click="showCreationModal?.()">
 					<PlusIcon />
-					Create new instance
+					Создать новую сборку
 				</button>
 			</ButtonStyled>
 		</div>

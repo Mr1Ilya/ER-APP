@@ -747,9 +747,12 @@ async function loadCurrentUser() {
 		currentUserId.value = defaultId
 
 		const allAccounts = await users()
-		currentUser.value = allAccounts.find((acc) => acc.profile.id === defaultId)
+		const cleanId = (id?: string) => (id || '').replace(/-/g, '').toLowerCase()
+		currentUser.value =
+			allAccounts.find((acc) => cleanId(acc.profile?.id) === cleanId(defaultId)) ||
+			allAccounts.find((acc) => acc.profile?.id === defaultId) ||
+			allAccounts[0]
 	} catch (e) {
-		handleError(e as Error)
 		currentUser.value = undefined
 		currentUserId.value = undefined
 	}
@@ -956,7 +959,10 @@ async function onAccountChanged() {
 	try {
 		await loadCurrentUser()
 		if (hasLicense.value) {
-			await Promise.allSettled([loadCapes(), loadSkins()])
+			await Promise.race([
+				Promise.allSettled([loadCapes(), loadSkins()]),
+				new Promise((resolve) => setTimeout(resolve, 3000)),
+			])
 		}
 	} catch (err) {
 		console.warn('Failed to update skins on account change', err)
@@ -967,13 +973,16 @@ onMounted(async () => {
 	window.addEventListener('offline', onOffline)
 	window.addEventListener('online', onOnline)
 	window.addEventListener('endrage-account-changed', onAccountChanged)
-	userCheckInterval = window.setInterval(checkUserChanges, 250)
+	userCheckInterval = window.setInterval(checkUserChanges, 1000)
 	void setupAddSkinDragDropListener()
 
 	try {
 		await loadCurrentUser()
 		if (hasLicense.value) {
-			await Promise.allSettled([loadCapes(), loadSkins()])
+			await Promise.race([
+				Promise.allSettled([loadCapes(), loadSkins()]),
+				new Promise((resolve) => setTimeout(resolve, 3000)),
+			])
 		}
 	} catch (err) {
 		console.warn('Failed to load skins or user', err)
@@ -1015,15 +1024,18 @@ function onOnline() {
 async function checkUserChanges() {
 	try {
 		const defaultId = await get_default_user()
-		if (defaultId !== currentUserId.value) {
+		const cleanId = (id?: string) => (id || '').replace(/-/g, '').toLowerCase()
+		if (cleanId(defaultId) !== cleanId(currentUserId.value)) {
 			await loadCurrentUser()
-			await loadCapes()
-			await loadSkins()
+			if (hasLicense.value) {
+				await Promise.race([
+					Promise.allSettled([loadCapes(), loadSkins()]),
+					new Promise((resolve) => setTimeout(resolve, 3000)),
+				])
+			}
 		}
 	} catch (error) {
-		if (currentUser.value && error instanceof Error) {
-			handleError(error)
-		}
+		// silent
 	}
 }
 
@@ -1142,15 +1154,15 @@ async function checkUserChanges() {
 
 	<!-- If not licensed, show stylish SOON screen -->
 	<div v-else class="box-border flex min-h-[75vh] items-center justify-center p-6 select-none">
-		<div class="relative mx-auto flex w-full max-w-lg flex-col items-center text-center gap-4 rounded-3xl bg-[#1b1c21] border border-[#282a32] p-8 shadow-2xl">
+		<div class="relative mx-auto flex w-full max-w-lg flex-col items-center text-center gap-4 rounded-3xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] p-8 shadow-2xl">
 			<div class="w-16 h-16 rounded-2xl bg-[#22c55e]/15 text-[#22c55e] flex items-center justify-center border border-[#22c55e]/25 mb-1">
 				<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 2 1.67h1.49v9.14a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-9.14h1.49a2 2 0 0 0 2-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z"></path>
 				</svg>
 			</div>
 			<span class="text-xs font-black tracking-widest text-[#22c55e] uppercase bg-[#22c55e]/15 px-3 py-1 rounded-full border border-[#22c55e]/30">SOON</span>
-			<h2 class="text-2xl font-black text-white m-0">Скоро будет своя система скинов</h2>
-			<p class="text-sm text-[#8e929b] leading-relaxed max-w-md m-0">
+			<h2 class="text-2xl font-black text-[var(--er-text)] m-0">Скоро будет своя система скинов</h2>
+			<p class="text-sm text-[var(--er-text-secondary)] leading-relaxed max-w-md m-0">
 				Смена скинов через каталог прямо сейчас доступна для лицензионных аккаунтов Microsoft. Собственная система скинов EndRage для всех аккаунтов находится в разработке!
 			</p>
 		</div>

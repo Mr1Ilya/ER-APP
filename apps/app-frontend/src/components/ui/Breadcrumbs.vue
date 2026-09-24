@@ -67,8 +67,19 @@ const breadcrumbs = computed<Breadcrumb[]>(() => {
 	return additionalContext ? [additionalContext as Breadcrumb, ...crumbs] : crumbs
 })
 
+const breadcrumbTranslations: Record<string, string> = {
+	'Home': 'Главная',
+	'Library': 'Мои сборки',
+	'Browse': 'Контент',
+	'Skins': 'Скины',
+	'Settings': 'Настройки',
+	'New instance': 'Новая сборка',
+	'Create instance': 'Создать сборку',
+}
+
 function resolveLabel(name: string): string {
-	return name.charAt(0) === '?' ? breadcrumbData.getName(name.slice(1)) : name
+	const raw = name.charAt(0) === '?' ? breadcrumbData.getName(name.slice(1)) : name
+	return breadcrumbTranslations[raw] || raw
 }
 
 // Overflow detection

@@ -6,6 +6,7 @@ import {
 	LanguagesIcon,
 	ModrinthIcon,
 	PaintbrushIcon,
+	RefreshCwIcon,
 	SettingsIcon,
 	ShieldIcon,
 	ToggleRightIcon,
@@ -21,7 +22,7 @@ import {
 } from '@erteam/ui'
 import { getVersion } from '@tauri-apps/api/app'
 import { platform as getOsPlatform, version as getOsVersion } from '@tauri-apps/plugin-os'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import AppearanceSettings from '@/components/ui/settings/AppearanceSettings.vue'
 import DefaultInstanceSettings from '@/components/ui/settings/DefaultInstanceSettings.vue'
@@ -139,6 +140,66 @@ function devModeCount() {
 	}
 }
 
+import {
+	appUpdateState,
+	downloadAvailableAppUpdate,
+	installAvailableAppUpdate,
+	triggerCheckForUpdates,
+} from '@/providers/app-update'
+
+const {
+	isCheckingUpdates,
+	availableUpdate,
+	finishedDownloading,
+	downloading,
+	downloadPercent,
+} = appUpdateState
+
+const checkStatusMessage = ref<string | null>(null)
+
+async function handleManualCheck() {
+	if (finishedDownloading.value) {
+		await installAvailableAppUpdate()
+		return
+	}
+	if (availableUpdate.value && !downloading.value) {
+		await downloadAvailableAppUpdate()
+		return
+	}
+
+	checkStatusMessage.value = null
+	const res = await triggerCheckForUpdates(true)
+	if (res && res.updateFound) {
+		checkStatusMessage.value = `Найдено обновление v${res.version}!`
+	} else if (!availableUpdate.value) {
+		checkStatusMessage.value = 'У вас последняя версия'
+		setTimeout(() => {
+			if (checkStatusMessage.value === 'У вас последняя версия') {
+				checkStatusMessage.value = null
+			}
+		}, 4000)
+	}
+}
+
+const updateButtonLabel = computed(() => {
+	if (isCheckingUpdates.value) {
+		return 'Проверка...'
+	}
+	if (downloading.value) {
+		return `Загрузка ${downloadPercent.value}%`
+	}
+	if (finishedDownloading.value) {
+		return 'Перезапустить'
+	}
+	if (availableUpdate.value) {
+		return `Обновить до v${availableUpdate.value.version}`
+	}
+	if (checkStatusMessage.value) {
+		return checkStatusMessage.value
+	}
+	return 'Проверить обновления'
+})
+
 const messages = defineMessages({
 	downloading: {
 		id: 'app.settings.downloading',
@@ -170,25 +231,42 @@ const messages = defineMessages({
 				<p v-if="themeStore.devMode" class="text-brand font-semibold m-0 mb-2">
 					{{ formatMessage(developerModeEnabled) }}
 				</p>
-				<div class="flex items-center gap-3">
-					<button
-						class="p-0 m-0 bg-transparent border-none cursor-pointer button-animation"
-						:class="{
-							'text-brand': themeStore.devMode,
-							'text-secondary': !themeStore.devMode,
-						}"
-						@click="devModeCount"
-					>
-						<ModrinthIcon class="w-6 h-6" />
-					</button>
-					<div class="max-w-[200px]">
-						<p class="m-0">EndRage Launcher {{ version }}</p>
-						<p class="m-0">
-							<span v-if="osPlatform === 'macos'">macOS</span>
-							<span v-else class="capitalize">{{ osPlatform }}</span>
-							{{ osVersion }}
-						</p>
+				<div class="flex items-center justify-between gap-3 pt-2">
+					<div class="flex items-center gap-3">
+						<button
+							class="p-0 m-0 bg-transparent border-none cursor-pointer button-animation"
+							:class="{
+								'text-brand': themeStore.devMode,
+								'text-secondary': !themeStore.devMode,
+							}"
+							@click="devModeCount"
+						>
+							<ModrinthIcon class="w-6 h-6" />
+						</button>
+						<div class="max-w-[200px]">
+							<p class="m-0 font-medium text-white">EndRage Launcher {{ version }}</p>
+							<p class="m-0 text-xs text-[#8e929b]">
+								<span v-if="osPlatform === 'macos'">macOS</span>
+								<span v-else class="capitalize">{{ osPlatform }}</span>
+								{{ osVersion }}
+							</p>
+						</div>
 					</div>
+					<button
+						type="button"
+						class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border"
+						:class="[
+							availableUpdate
+								? 'bg-[#22c55e] text-black border-[#22c55e] font-semibold hover:bg-[#16a34a]'
+								: 'bg-[#22242b] text-[#9ca3af] hover:text-white hover:bg-[#2b2d36] border-[#383c46]',
+							isCheckingUpdates || downloading ? 'opacity-80 cursor-wait' : ''
+						]"
+						:disabled="isCheckingUpdates"
+						@click="handleManualCheck"
+					>
+						<RefreshCwIcon class="w-3.5 h-3.5" :class="{ 'animate-spin': isCheckingUpdates || downloading }" />
+						<span>{{ updateButtonLabel }}</span>
+					</button>
 				</div>
 			</div>
 		</template>

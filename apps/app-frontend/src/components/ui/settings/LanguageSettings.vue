@@ -26,6 +26,7 @@ async function onLocaleChange(newLocale: string) {
 
 	$isChanging.value = true
 	try {
+		localStorage.setItem('endrage_user_language_set', 'true')
 		i18n.global.locale.value = newLocale
 		settings.value.locale = newLocale
 	} finally {

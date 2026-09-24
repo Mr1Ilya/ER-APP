@@ -24,6 +24,7 @@ interface AppUpdateActions {
 	download?: () => Promise<void> | void
 	install?: () => Promise<void> | void
 	changelog?: () => Promise<void> | void
+	check?: (manual?: boolean) => Promise<{ updateFound: boolean; version?: string } | void> | void
 }
 
 const progress = ref(0)
@@ -34,6 +35,7 @@ const restarting = ref(false)
 const availableUpdate = ref<AppUpdate | null>(null)
 const updateSize = ref<number | null>(null)
 const updatesEnabled = ref(true)
+const isCheckingUpdates = ref(false)
 
 let actions: AppUpdateActions = {}
 
@@ -50,6 +52,7 @@ export const appUpdateState = {
 	availableUpdate,
 	updateSize,
 	updatesEnabled,
+	isCheckingUpdates,
 	downloadProgress: computed(() => progress.value),
 	downloadPercent: computed(() => Math.trunc(progress.value * 100)),
 	isVisible: computed(() => !!availableUpdate.value && !restarting.value && updatesEnabled.value),
@@ -168,4 +171,14 @@ export async function installAvailableAppUpdate(): Promise<void> {
 export async function openAppUpdateChangelog(): Promise<void> {
 	recordAppUpdateUserAction()
 	await actions.changelog?.()
+}
+
+export async function triggerCheckForUpdates(manual = true): Promise<{ updateFound: boolean; version?: string } | void> {
+	if (isCheckingUpdates.value) return
+	isCheckingUpdates.value = true
+	try {
+		return await actions.check?.(manual)
+	} finally {
+		isCheckingUpdates.value = false
+	}
 }

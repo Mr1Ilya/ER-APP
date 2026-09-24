@@ -8,13 +8,17 @@ import { instance_listener } from '@/helpers/events'
 import { list, run } from '@/helpers/instance'
 import type { GameInstance } from '@/helpers/types'
 import { useBreadcrumbs } from '@/store/breadcrumbs'
+import bg1 from '@/assets/wallpapers/minecraft_bg_1.jpg'
+import bg2 from '@/assets/wallpapers/minecraft_bg_2.jpg'
+import bg3 from '@/assets/wallpapers/minecraft_bg_3.jpg'
+import defaultMinecraftBlock from '@/assets/minecraft_block.png'
 
 const { handleError } = injectNotificationManager()
 const route = useRoute()
 const router = useRouter()
 const breadcrumbs = useBreadcrumbs()
 
-breadcrumbs.setRootContext({ name: 'Home', link: route.path })
+breadcrumbs.setRootContext({ name: 'Главная', link: route.path })
 
 const instances = ref<GameInstance[]>([])
 const isLaunching = ref(false)
@@ -22,11 +26,7 @@ const launchingInstanceId = ref<string | null>(null)
 const isMuted = ref(false)
 const currentWallpaperIndex = ref(0)
 
-const wallpapers = [
-	'https://launcher-files.modrinth.com/assets/fabulously_optimized.webp',
-	'https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=1600&auto=format&fit=crop',
-	'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1600&auto=format&fit=crop'
-]
+const wallpapers = [bg1, bg2, bg3]
 
 const recentInstances = computed(() =>
 	instances.value
@@ -209,9 +209,9 @@ onUnmounted(() => {
 		<!-- SECTION: МОИ СБОРКИ -->
 		<div class="flex flex-col gap-3.5">
 			<div class="flex items-center justify-between">
-				<h2 class="text-base font-bold text-white m-0">Мои сборки</h2>
+				<h2 class="text-base font-bold text-[var(--er-text)] m-0">Мои сборки</h2>
 				<button
-					class="text-xs font-semibold text-[#8e929b] hover:text-[#22c55e] transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
+					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-[#22c55e] transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
 					@click="router.push('/library')"
 				>
 					<span>Все сборки</span>
@@ -227,37 +227,29 @@ onUnmounted(() => {
 				<div
 					v-for="instance in instances"
 					:key="instance.id"
-					class="w-44 h-52 bg-[#1b1c20] hover:bg-[#202227] border border-[#282a32] hover:border-[#22c55e]/40 rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm"
+					class="w-44 h-52 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[#22c55e]/40 rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm"
 					@click="handlePlay(instance)"
 				>
 					<!-- Top Block: 3D cube thumbnail container -->
-					<div class="w-full h-28 rounded-xl bg-[#141518] border border-white/5 flex items-center justify-center overflow-hidden relative">
+					<div class="w-full h-28 rounded-xl bg-[var(--er-subtle-bg)] border border-white/5 flex items-center justify-center overflow-hidden relative">
 						<img
-							v-if="instance.icon_path"
-							:src="instance.icon_path"
+							:src="instance.icon_path || defaultMinecraftBlock"
 							alt="Instance icon"
 							class="w-14 h-14 object-contain"
+							@error="(e) => ((e.target as HTMLImageElement).src = defaultMinecraftBlock)"
 						/>
-						<!-- Fallback stylish Minecraft isometric cube -->
-						<div v-else class="w-12 h-12 flex items-center justify-center text-[#8e929b] group-hover:text-[#22c55e] transition-colors">
-							<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-								<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-								<line x1="12" y1="22.08" x2="12" y2="12"></line>
-							</svg>
-						</div>
 					</div>
 
 					<!-- Bottom info -->
 					<div class="flex flex-col gap-0.5">
-						<span class="text-xs font-bold text-white group-hover:text-[#22c55e] truncate transition-colors leading-tight">
+						<span class="text-xs font-bold text-[var(--er-text)] group-hover:text-[#22c55e] truncate transition-colors leading-tight">
 							{{ instance.name }}
 						</span>
-						<span class="text-[11px] text-[#8e929b] truncate capitalize leading-tight">
+						<span class="text-[11px] text-[var(--er-text-secondary)] truncate capitalize leading-tight">
 							{{ instance.loader }} · {{ instance.game_version }}
 						</span>
-						<div class="flex items-center gap-1 text-[10px] text-[#6b7280] mt-1">
-							<svg class="w-3 h-3 text-[#6b7280]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<div class="flex items-center gap-1 text-[10px] text-[var(--er-text-secondary)] mt-1">
+							<svg class="w-3 h-3 text-[var(--er-text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<circle cx="12" cy="12" r="10"></circle>
 								<polyline points="12 6 12 12 16 14"></polyline>
 							</svg>
@@ -268,10 +260,10 @@ onUnmounted(() => {
 
 				<!-- "+ Новая сборка" Card -->
 				<div
-					class="w-44 h-52 bg-[#16171a] hover:bg-[#1a1c21] border-2 border-dashed border-[#282a32] hover:border-[#22c55e]/50 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[#8e929b] hover:text-[#22c55e] group select-none"
+					class="w-44 h-52 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-[#22c55e]/50 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-[#22c55e] group select-none"
 					@click="handleCreateNewInstance"
 				>
-					<div class="w-10 h-10 rounded-full bg-[#202227] group-hover:bg-[#22c55e]/15 flex items-center justify-center transition-colors">
+					<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-[#22c55e]/15 flex items-center justify-center transition-colors">
 						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 							<line x1="12" y1="5" x2="12" y2="19"></line>
 							<line x1="5" y1="12" x2="19" y2="12"></line>

@@ -271,7 +271,7 @@ const isUpdateDownloading = computed(
 		(downloadProgress.value > 0 && downloadProgress.value < 1 && !finishedDownloading.value),
 )
 const showUpdatePill = computed(
-	() => isUpdateVisible.value && (finishedDownloading.value || metered.value),
+	() => isUpdateVisible.value,
 )
 const animateReadyPill = ref(false)
 const updateLabel = computed(() => {

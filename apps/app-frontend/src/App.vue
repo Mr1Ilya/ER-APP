@@ -371,9 +371,12 @@ async function setupApp() {
 		pending_update_toast_for_version,
 	} = await getSettings()
 
-	// Initialize locale from saved settings
-	if (locale) {
+	// Initialize locale from saved settings: Default to Russian for EndRage launcher unless user explicitly selected English
+	const userHasChosenLanguage = localStorage.getItem('endrage_user_language_set') === 'true'
+	if (userHasChosenLanguage && locale) {
 		i18n.global.locale.value = locale
+	} else {
+		i18n.global.locale.value = 'ru-RU'
 	}
 
 	if (default_page === 'Library') {
@@ -1053,7 +1056,7 @@ function showDelayedUpdatePopup() {
 	markAppUpdatePopupShown(update.version, stage)
 }
 
-async function checkUpdates() {
+async function checkUpdates(manual = false) {
 	if (!(await areUpdatesEnabled())) {
 		console.log('Skipping update check as updates are disabled in this build or environment')
 		updatesEnabled.value = false
@@ -1062,52 +1065,64 @@ async function checkUpdates() {
 			checkLinuxUpdates()
 			setInterval(checkLinuxUpdates, 5 * 60 * 1000)
 		}
-		return
+		return { updateFound: false }
 	}
 
 	async function performCheck() {
-		const update = await invoke('plugin:updater|check')
-		if (!update) {
-			console.log('No update available')
-			return
+		try {
+			const update = await invoke('plugin:updater|check')
+			if (!update) {
+				console.log('No update available')
+				return { updateFound: false }
+			}
+
+			const isExistingUpdate = update.version === availableUpdate.value?.version
+
+			if (isExistingUpdate) {
+				console.log('Update is already known')
+				scheduleDelayedUpdatePopup()
+				return { updateFound: true, version: update.version }
+			}
+
+			appUpdateDownload.progress.value = 0
+			finishedDownloading.value = false
+			downloading.value = false
+			updateSize.value = null
+			availableUpdate.value = update
+
+			console.log(`Update ${update.version} is available.`)
+
+			metered.value = await isNetworkMetered()
+			if (!metered.value) {
+				console.log('Starting download of update')
+				downloadUpdate(update)
+			} else {
+				console.log(`Metered connection detected, not auto-downloading update.`)
+				markAppUpdateActionable(update.version)
+				scheduleDelayedUpdatePopup()
+			}
+
+			getUpdateSize(update.rid).then((size) => (updateSize.value = size))
+			return { updateFound: true, version: update.version }
+		} catch (e) {
+			console.error('Error checking updates:', e)
+			if (manual) {
+				handleError(e)
+			}
+			return { updateFound: false }
 		}
-
-		const isExistingUpdate = update.version === availableUpdate.value?.version
-
-		if (isExistingUpdate) {
-			console.log('Update is already known')
-			scheduleDelayedUpdatePopup()
-			return
-		}
-
-		appUpdateDownload.progress.value = 0
-		finishedDownloading.value = false
-		downloading.value = false
-		updateSize.value = null
-		availableUpdate.value = update
-
-		console.log(`Update ${update.version} is available.`)
-
-		metered.value = await isNetworkMetered()
-		if (!metered.value) {
-			console.log('Starting download of update')
-			downloadUpdate(update)
-		} else {
-			console.log(`Metered connection detected, not auto-downloading update.`)
-			markAppUpdateActionable(update.version)
-			scheduleDelayedUpdatePopup()
-		}
-
-		getUpdateSize(update.rid).then((size) => (updateSize.value = size))
 	}
 
-	await performCheck()
-	setTimeout(
-		() => {
-			checkUpdates()
-		},
-		5 /* min */ * 60 /* sec */ * 1000 /* ms */,
-	)
+	const res = await performCheck()
+	if (!manual) {
+		setTimeout(
+			() => {
+				checkUpdates()
+			},
+			5 /* min */ * 60 /* sec */ * 1000 /* ms */,
+		)
+	}
+	return res
 }
 
 async function checkLinuxUpdates() {
@@ -1201,7 +1216,8 @@ async function installUpdate() {
 setAppUpdateActions({
 	download: downloadAvailableUpdate,
 	install: installUpdate,
-	changelog: () => openUrl('https://modrinth.com/news/changelog?filter=app'),
+	changelog: () => openUrl('https://github.com/Mr1Ilya/ER-APP/releases'),
+	check: (manual) => checkUpdates(manual),
 })
 
 async function openModrinthProjectLinkInApp(parsed) {
@@ -1380,7 +1396,10 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 	<div
 		v-if="stateInitialized"
 		class="app-grid-layout relative"
-		:class="{ 'disable-advanced-rendering': !themeStore.advancedRendering }"
+		:class="[
+			sidebarCollapsed ? 'collapsed-nav' : '',
+			{ 'disable-advanced-rendering': !themeStore.advancedRendering }
+		]"
 	>
 		<Transition name="fade">
 			<div
@@ -1422,19 +1441,19 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 			@open-settings="handleOpenSettings"
 			@open-accounts="handleOpenAccounts"
 		/>
-		<div data-tauri-drag-region class="app-grid-statusbar bg-[#18191c] border-b border-[#26282e]/80 h-[--top-bar-height] flex items-center justify-between px-4 select-none">
+		<div data-tauri-drag-region class="app-grid-statusbar bg-[var(--er-statusbar-bg)] border-b border-[var(--er-border)] text-[var(--er-text)] h-[--top-bar-height] flex items-center justify-between px-4 select-none">
 			<div data-tauri-drag-region class="flex items-center gap-3">
-				<EndRageAppLogo class="h-6 w-auto text-white pointer-events-none select-none" />
+				<EndRageAppLogo class="h-6 w-auto text-[var(--er-text)] pointer-events-none select-none" />
 				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-4">
 					<button
-						class="cursor-pointer p-0 m-0 text-gray-400 hover:text-white border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
 						title="Назад"
 						@click="router.back()"
 					>
 						<LeftArrowIcon class="w-3.5 h-3.5" />
 					</button>
 					<button
-						class="cursor-pointer p-0 m-0 text-gray-400 hover:text-white border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
 						title="Вперёд"
 						@click="router.forward()"
 					>
