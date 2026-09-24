@@ -754,6 +754,10 @@ async function loadCurrentUser() {
 	}
 }
 
+const hasLicense = computed(() => {
+	return Boolean(currentUser.value && !currentUser.value.access_token?.startsWith('offline'))
+})
+
 function getBakedSkinTextures(skin: Skin): RenderResult | undefined {
 	const key = `${skin.texture_key}+${skin.variant}+${skin.cape_id ?? 'no-cape'}`
 	return skinBlobUrlMap.get(key)
@@ -1024,31 +1028,8 @@ await loadSkins()
 		@proceed="deleteSkin"
 	/>
 
-	<div v-if="currentUser && currentUser.access_token?.startsWith('offline')" class="box-border flex h-[calc(100vh-3rem)] items-center justify-center p-4">
-		<div
-			class="relative mx-auto flex w-full max-w-xl flex-col gap-5 rounded-lg bg-bg-raised p-7 shadow-lg"
-		>
-			<div class="flex flex-col gap-5">
-				<h1 class="text-3xl font-extrabold m-0" style="color: var(--color-brand);">Смена скинов</h1>
-				<p class="text-lg m-0 text-secondary leading-relaxed">
-					Смена скинов в лаунчере доступна только для лицензионных аккаунтов.
-				</p>
-				<p class="text-base m-0 text-secondary leading-relaxed">
-					Чтобы установить скин на пиратский аккаунт <strong class="text-primary font-bold">{{ currentUser.profile.name }}</strong>, загрузите скин в личном кабинете на сайте <a href="https://ely.by" target="_blank" class="text-brand hover:underline font-bold" style="color: var(--color-brand);">ely.by</a> под этим же ником.
-				</p>
-				<p class="text-sm m-0 text-secondary leading-relaxed opacity-80">
-					Лаунчер автоматически подгрузит ваш скин с Ely.by при запуске игры!
-				</p>
-				<ButtonStyled color="brand">
-					<a href="https://ely.by" target="_blank" class="flex items-center gap-2 justify-center no-underline text-black font-bold h-full w-full py-2.5">
-						Открыть Ely.by
-					</a>
-				</ButtonStyled>
-			</div>
-		</div>
-	</div>
-
-	<div v-else-if="currentUser" class="skin-layout box-border min-h-full p-4">
+	<!-- If user has valid Minecraft license, render full Modrinth skin selector -->
+	<div v-if="hasLicense" class="skin-layout box-border min-h-full p-4">
 		<div class="sticky top-6 self-start p-2 pt-0">
 			<h1 class="m-0 text-2xl font-bold flex items-center gap-2">
 				{{ formatMessage(messages.skinSelectorTitle) }}
@@ -1131,41 +1112,19 @@ await loadSkins()
 		</div>
 	</div>
 
-	<div v-else class="box-border flex h-[calc(100vh-3rem)] items-center justify-center p-4">
-		<div
-			class="relative mx-auto flex w-full max-w-xl flex-col gap-5 rounded-lg bg-bg-raised p-7 shadow-lg"
-		>
-			<img
-				:src="ExcitedRinthbot"
-				:alt="formatMessage(messages.excitedRinthbotAlt)"
-				class="absolute -top-28 right-8 md:right-20 h-28 w-auto"
-			/>
-			<div
-				class="absolute top-0 left-0 w-full h-[1px] opacity-40 bg-gradient-to-r from-transparent via-green-500 to-transparent"
-				style="
-					background: linear-gradient(
-						to right,
-						transparent 2rem,
-						var(--color-green) calc(100% - 13rem),
-						var(--color-green) calc(100% - 5rem),
-						transparent calc(100% - 2rem)
-					);
-				"
-			></div>
-
-			<div class="flex flex-col gap-5">
-				<h1 class="text-3xl font-extrabold m-0">{{ formatMessage(messages.signInTitle) }}</h1>
-				<p class="text-lg m-0">
-					{{ formatMessage(messages.signInDescription) }}
-				</p>
-				<ButtonStyled v-show="accountsCard" color="brand" :disabled="accountsCard.loginDisabled">
-					<button :disabled="accountsCard.loginDisabled" @click="login">
-						<LogInIcon v-if="!accountsCard.loginDisabled" />
-						<SpinnerIcon v-else class="animate-spin" />
-						{{ formatMessage(messages.signInButton) }}
-					</button>
-				</ButtonStyled>
+	<!-- If not licensed, show stylish SOON screen -->
+	<div v-else class="box-border flex min-h-[75vh] items-center justify-center p-6 select-none">
+		<div class="relative mx-auto flex w-full max-w-lg flex-col items-center text-center gap-4 rounded-3xl bg-[#1b1c21] border border-[#282a32] p-8 shadow-2xl">
+			<div class="w-16 h-16 rounded-2xl bg-[#22c55e]/15 text-[#22c55e] flex items-center justify-center border border-[#22c55e]/25 mb-1">
+				<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 2 1.67h1.49v9.14a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-9.14h1.49a2 2 0 0 0 2-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z"></path>
+				</svg>
 			</div>
+			<span class="text-xs font-black tracking-widest text-[#22c55e] uppercase bg-[#22c55e]/15 px-3 py-1 rounded-full border border-[#22c55e]/30">SOON</span>
+			<h2 class="text-2xl font-black text-white m-0">Скоро будет своя система скинов</h2>
+			<p class="text-sm text-[#8e929b] leading-relaxed max-w-md m-0">
+				Смена скинов через каталог прямо сейчас доступна для лицензионных аккаунтов Microsoft. Собственная система скинов EndRage для всех аккаунтов находится в разработке!
+			</p>
 		</div>
 	</div>
 </template>

@@ -10739,7 +10739,7 @@ dependencies = [
 
 [[package]]
 name = "theseus"
-version = "1.0.0-local"
+version = "1.0.0"
 dependencies = [
  "ariadne",
  "async-minecraft-ping",
@@ -10774,7 +10774,6 @@ dependencies = [
  "hickory-resolver 0.25.2",
  "indicatif",
  "itertools 0.14.0",
- "md5",
  "modrinth-content-management",
  "notify",
  "notify-debouncer-mini",
@@ -10820,7 +10819,7 @@ dependencies = [
 
 [[package]]
 name = "theseus_gui"
-version = "1.0.0-local"
+version = "1.0.0"
 dependencies = [
  "async_zip",
  "chrono",

@@ -63,6 +63,7 @@ import { RouterView, useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 
 import EndRageAppLogo from '@/assets/end_rage_app.svg?component'
+import AppSidebar from '@/components/ui/AppSidebar.vue'
 import AccountsCard from '@/components/ui/AccountsCard.vue'
 import AppActionBar from '@/components/ui/AppActionBar.vue'
 import Breadcrumbs from '@/components/ui/Breadcrumbs.vue'
@@ -70,6 +71,7 @@ import ErrorModal from '@/components/ui/ErrorModal.vue'
 import AddServerToInstanceModal from '@/components/ui/install_flow/AddServerToInstanceModal.vue'
 import UnknownPackWarningModal from '@/components/ui/install_flow/UnknownPackWarningModal.vue'
 import MinecraftAuthErrorModal from '@/components/ui/minecraft-auth-error-modal/MinecraftAuthErrorModal.vue'
+import AccountsModal from '@/components/ui/modal/AccountsModal.vue'
 import AppSettingsModal from '@/components/ui/modal/AppSettingsModal.vue'
 import AuthGrantFlowWaitModal from '@/components/ui/modal/AuthGrantFlowWaitModal.vue'
 import InstallToPlayModal from '@/components/ui/modal/InstallToPlayModal.vue'
@@ -579,6 +581,24 @@ watch(stateInitialized, (ready) => {
 const error = useError()
 const errorModal = ref()
 const minecraftAuthErrorModal = ref()
+const accountsModal = ref()
+const settingsModal = ref()
+const sidebarCollapsed = ref(localStorage.getItem('endrage_sidebar_collapsed') === 'true')
+
+provide('showCreationModal', () => installationModal.value?.show())
+
+function handleToggleSidebar() {
+	sidebarCollapsed.value = !sidebarCollapsed.value
+	localStorage.setItem('endrage_sidebar_collapsed', sidebarCollapsed.value.toString())
+}
+
+function handleOpenAccounts() {
+	accountsModal.value?.show()
+}
+
+function handleOpenSettings() {
+	settingsModal.value?.show()
+}
 
 const contentInstall = createContentInstall({ router, handleError })
 provideContentInstall(contentInstall)
@@ -1380,6 +1400,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 		<Suspense>
 			<AppSettingsModal ref="settingsModal" />
 		</Suspense>
+		<AccountsModal ref="accountsModal" />
 		<Suspense>
 			<AuthGrantFlowWaitModal ref="modrinthLoginFlowWaitModal" @flow-cancel="cancelLogin" />
 		</Suspense>
@@ -1395,92 +1416,35 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 			@browse-modpacks="handleBrowseModpacks"
 		/>
 		<UnknownPackWarningModal ref="unknownPackWarningModal" />
-		<div
-			class="app-grid-navbar bg-bg-raised flex flex-col p-[0.5rem] pt-0 gap-[0.5rem] w-[--left-bar-width]"
-		>
-			<NavButton v-tooltip.right="'Home'" to="/">
-				<HomeIcon />
-			</NavButton>
-			<NavButton v-if="themeStore.featureFlags.worlds_tab" v-tooltip.right="'Worlds'" to="/worlds">
-				<WorldIcon />
-			</NavButton>
-			<NavButton
-				v-tooltip.right="'Discover content'"
-				to="/browse/modpack"
-				:is-primary="() => route.path.startsWith('/browse') && !route.query.i"
-				:is-subpage="(route) => route.path.startsWith('/project') && !route.query.i"
-			>
-				<CompassIcon />
-			</NavButton>
-			<NavButton v-tooltip.right="'Skin selector'" to="/skins">
-				<ChangeSkinIcon />
-			</NavButton>
-			<NavButton
-				v-tooltip.right="'Library'"
-				to="/library"
-				:is-primary="(r) => r.path === '/library' || r.path === '/library'"
-				:is-subpage="
-					() =>
-						route.path.startsWith('/instance') ||
-						((route.path.startsWith('/browse') || route.path.startsWith('/project')) &&
-							route.query.i)
-				"
-			>
-				<LibraryIcon />
-			</NavButton>
-			<div class="h-px w-6 mx-auto my-2 bg-surface-5"></div>
-			<suspense>
-				<QuickInstanceSwitcher />
-			</suspense>
-			<NavButton
-				v-tooltip.right="'Create new instance'"
-				:to="() => installationModal?.show()"
-				:disabled="offline"
-			>
-				<PlusIcon />
-			</NavButton>
-			<div class="flex flex-grow"></div>
-			<NavButton
-				v-tooltip.right="formatMessage(commonMessages.settingsLabel)"
-				:to="() => $refs.settingsModal.show()"
-			>
-				<SettingsIcon />
-			</NavButton>
-		</div>
-		<div data-tauri-drag-region class="app-grid-statusbar bg-bg-raised h-[--top-bar-height] flex">
-			<div data-tauri-drag-region class="flex min-w-0 flex-1 overflow-hidden p-3">
-				<EndRageAppLogo class="h-full w-auto shrink-0 text-contrast pointer-events-none" />
-				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1 ml-3">
+		<AppSidebar
+			:collapsed="sidebarCollapsed"
+			@toggle-collapse="handleToggleSidebar"
+			@open-settings="handleOpenSettings"
+			@open-accounts="handleOpenAccounts"
+		/>
+		<div data-tauri-drag-region class="app-grid-statusbar bg-[#18191c] border-b border-[#26282e]/80 h-[--top-bar-height] flex items-center justify-between px-4 select-none">
+			<div data-tauri-drag-region class="flex items-center gap-3">
+				<EndRageAppLogo class="h-6 w-auto text-white pointer-events-none select-none" />
+				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-4">
 					<button
-						class="cursor-pointer p-0 m-0 text-contrast border-none outline-none bg-button-bg rounded-full flex items-center justify-center w-6 h-6 hover:brightness-75 transition-all"
+						class="cursor-pointer p-0 m-0 text-gray-400 hover:text-white border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						title="Назад"
 						@click="router.back()"
 					>
-						<LeftArrowIcon />
+						<LeftArrowIcon class="w-3.5 h-3.5" />
 					</button>
 					<button
-						class="cursor-pointer p-0 m-0 text-contrast border-none outline-none bg-button-bg rounded-full flex items-center justify-center w-6 h-6 hover:brightness-75 transition-all"
+						class="cursor-pointer p-0 m-0 text-gray-400 hover:text-white border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						title="Вперёд"
 						@click="router.forward()"
 					>
-						<RightArrowIcon />
+						<RightArrowIcon class="w-3.5 h-3.5" />
 					</button>
 				</div>
-				<Breadcrumbs class="pt-[2px]" />
+				<Breadcrumbs class="pt-[1px] ml-1" />
 			</div>
-			<section data-tauri-drag-region class="flex shrink-0 ml-auto items-center">
-				<ButtonStyled
-					v-if="!forceSidebar && themeStore.toggleSidebar"
-					:type="sidebarToggled ? 'standard' : 'transparent'"
-					circular
-				>
-					<button
-						class="mr-3 transition-transform"
-						:class="{ 'rotate-180': !sidebarToggled }"
-						@click="sidebarToggled = !sidebarToggled"
-					>
-						<RightArrowIcon />
-					</button>
-				</ButtonStyled>
-				<div class="flex mr-3">
+			<section data-tauri-drag-region class="flex shrink-0 items-center gap-2">
+				<div class="flex mr-2">
 					<Suspense>
 						<AppActionBar />
 					</Suspense>
@@ -1492,10 +1456,13 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 	<div
 		v-if="stateInitialized"
 		class="app-contents"
-		:class="{
-			'sidebar-enabled': sidebarVisible,
-			'disable-advanced-rendering': !themeStore.advancedRendering,
-		}"
+		:class="[
+			sidebarCollapsed ? 'collapsed-nav' : '',
+			{
+				'sidebar-enabled': false,
+				'disable-advanced-rendering': !themeStore.advancedRendering,
+			}
+		]"
 	>
 		<div class="app-viewport flex-grow router-view">
 			<transition name="popup-survey">
@@ -1571,6 +1538,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 			</RouterView>
 		</div>
 		<div
+			v-if="false"
 			class="app-sidebar mt-px shrink-0 flex flex-col border-0 border-l-[1px] border-[--brand-gradient-border] border-solid"
 			:class="{ 'has-plus': hasPlus }"
 		>
@@ -1689,23 +1657,26 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 <style lang="scss" scoped>
 .app-grid-layout,
 .app-contents {
-	--top-bar-height: 3rem;
-	--left-bar-width: 4rem;
-	--right-bar-width: 300px;
+	--top-bar-height: 2.75rem;
+	--left-bar-width: 220px;
+	--right-bar-width: 0px;
+
+	&.collapsed-nav {
+		--left-bar-width: 72px;
+	}
 }
 
 .app-grid-layout {
 	display: grid;
-	grid-template: 'status status' 'nav dummy';
-	grid-template-columns: auto 1fr;
+	grid-template: 'nav status' 'nav dummy';
+	grid-template-columns: var(--left-bar-width) 1fr;
 	grid-template-rows: auto 1fr;
 	position: relative;
-	//z-index: 0;
-	background-color: var(--color-raised-bg);
+	background-color: var(--color-bg);
 	height: 100vh;
 }
 
-.app-grid-navbar {
+.sidebar-container {
 	grid-area: nav;
 	position: relative;
 	z-index: 2;
@@ -1731,23 +1702,16 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 	bottom: 0;
 	height: calc(100vh - var(--top-bar-height));
 	background-color: var(--color-bg);
-	border-top-left-radius: var(--radius-xl);
-
-	display: grid;
-	grid-template-columns: 1fr 0px;
-	// transition: grid-template-columns 0.4s ease-in-out;
-
-	&.sidebar-enabled {
-		grid-template-columns: 1fr 300px;
-	}
+	display: block;
+	overflow-y: auto;
 }
 
 .loading-indicator-container {
-	border-top-left-radius: var(--radius-xl);
 	overflow: hidden;
 }
 
 .app-sidebar {
+	display: none;
 	overflow: visible;
 	width: 300px;
 	position: relative;
@@ -1804,19 +1768,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 }
 
 .app-contents::before {
-	z-index: 30;
-	content: '';
-	position: fixed;
-	left: var(--left-bar-width);
-	top: var(--top-bar-height);
-	right: calc(-1 * var(--left-bar-width));
-	bottom: calc(-1 * var(--left-bar-width));
-	border-radius: var(--radius-xl);
-	box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1) inset;
-	border-color: var(--surface-5);
-	border-width: 1px;
-	border-style: solid;
-	pointer-events: none;
+	display: none;
 }
 
 .sidebar-teleport-content {
