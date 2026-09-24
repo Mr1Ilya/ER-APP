@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { get_default_user, users } from '@/helpers/auth'
 
@@ -54,6 +54,11 @@ async function loadUserData() {
 
 onMounted(() => {
 	loadUserData()
+	window.addEventListener('endrage-account-changed', loadUserData)
+})
+
+onUnmounted(() => {
+	window.removeEventListener('endrage-account-changed', loadUserData)
 })
 
 const navItems = [

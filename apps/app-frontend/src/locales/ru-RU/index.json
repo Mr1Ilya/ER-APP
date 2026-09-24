@@ -413,6 +413,9 @@
 	"app.settings.downloading": {
 		"message": "Скачивание версии {version}"
 	},
+	"app.settings.title": {
+		"message": "Настройки"
+	},
 	"app.settings.tabs.appearance": {
 		"message": "Внешний вид"
 	},

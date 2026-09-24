@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import {
-	Admonition,
-	AutoLink,
-	IntlFormatted,
-	LanguageSelector,
-	languageSelectorMessages,
-	LOCALES,
-	useVIntl,
-} from '@erteam/ui'
+import { LanguageSelector, LOCALES } from '@erteam/ui'
 import { computed, ref, watch } from 'vue'
 
 import { get, set } from '@/helpers/settings.ts'
 import i18n from '@/i18n.config'
-
-const { formatMessage } = useVIntl()
-
-const platform = computed(() => formatMessage(languageSelectorMessages.platformApp))
 
 const settings = ref(await get())
 
@@ -28,6 +16,10 @@ watch(
 )
 
 const $isChanging = ref(false)
+
+const allowedLocales = computed(() =>
+	LOCALES.filter((l) => l.code === 'ru-RU' || l.code === 'en-US')
+)
 
 async function onLocaleChange(newLocale: string) {
 	if (settings.value.locale === newLocale) return
@@ -43,28 +35,14 @@ async function onLocaleChange(newLocale: string) {
 </script>
 
 <template>
-	<h2 class="m-0 text-lg font-semibold text-contrast">Language</h2>
-
-	<Admonition type="warning" class="mt-2 mb-4">
-		{{ formatMessage(languageSelectorMessages.languageWarning, { platform }) }}
-	</Admonition>
-
-	<p class="m-0 mb-4">
-		<IntlFormatted
-			:message-id="languageSelectorMessages.languagesDescription"
-			:values="{ platform }"
-		>
-			<template #~crowdin-link="{ children }">
-				<AutoLink to="https://translate.modrinth.com">
-					<component :is="() => children" />
-				</AutoLink>
-			</template>
-		</IntlFormatted>
+	<h2 class="m-0 text-lg font-bold text-white">Язык / Language</h2>
+	<p class="m-0 mt-1 mb-4 text-sm text-[#9da3af]">
+		Выберите предпочитаемый язык интерфейса для EndRage Launcher (доступны Русский и English).
 	</p>
 
 	<LanguageSelector
-		:current-locale="settings.locale"
-		:locales="LOCALES"
+		:current-locale="settings.locale || 'ru-RU'"
+		:locales="allowedLocales"
 		:on-locale-change="onLocaleChange"
 		:is-changing="$isChanging"
 	/>

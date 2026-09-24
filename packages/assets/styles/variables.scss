@@ -153,8 +153,8 @@
 	--brand-gradient-border: rgba(64, 32, 64, 0.15);
 	--brand-gradient-fade-out-color: linear-gradient(to bottom, rgba(235, 213, 235, 0), #ecd0ec 70%);
 
-	--color-button-bg-selected: var(--color-brand);
-	--color-button-text-selected: var(--color-accent-contrast);
+	--color-button-bg-selected: #24262d;
+	--color-button-text-selected: #ffffff;
 
 	--color-gradient-button-bg: linear-gradient(180deg, #f8f9fa 0%, #dce0e6 100%);
 
@@ -361,18 +361,14 @@ html {
 
 	--shadow-card: rgba(0, 0, 0, 0.25) 0px 2px 4px 0px;
 
-	--brand-gradient-bg: linear-gradient(
-		0deg,
-		rgba(34, 197, 94, 0.1) 0%,
-		rgba(34, 197, 94, 0.03) 100%
-	);
-	--brand-gradient-strong-bg: linear-gradient(180deg, #16241b 10%, #151819 100%);
-	--brand-gradient-button: rgba(255, 255, 255, 0.08);
-	--brand-gradient-border: rgba(255, 255, 255, 0.07);
+	--brand-gradient-bg: transparent;
+	--brand-gradient-strong-bg: #16171a;
+	--brand-gradient-button: rgba(255, 255, 255, 0.06);
+	--brand-gradient-border: rgba(255, 255, 255, 0.08);
 	--brand-gradient-fade-out-color: linear-gradient(to bottom, rgba(18, 19, 21, 0), #121315 80%);
 
-	--color-button-bg-selected: var(--color-brand-highlight);
-	--color-button-text-selected: var(--color-brand);
+	--color-button-bg-selected: #24262d;
+	--color-button-text-selected: #ffffff;
 
 	--color-gradient-button-bg: linear-gradient(180deg, #2b2f38 0%, #24272f 100%);
 

@@ -144,13 +144,17 @@ const messages = defineMessages({
 		id: 'app.settings.downloading',
 		defaultMessage: 'Downloading v{version}',
 	},
+	title: {
+		id: 'app.settings.title',
+		defaultMessage: 'Settings',
+	},
 })
 </script>
 <template>
 	<TabbedModal ref="modal" :tabs="tabs.filter((t) => !t.developerOnly || themeStore.devMode)">
 		<template #title>
-			<span class="flex items-center gap-2 text-lg font-extrabold text-contrast">
-				<SettingsIcon /> Settings
+			<span class="flex items-center gap-2 text-lg font-extrabold text-white">
+				<SettingsIcon class="w-5 h-5 text-[#22c55e]" /> {{ formatMessage(messages.title) }}
 			</span>
 		</template>
 		<template #footer>

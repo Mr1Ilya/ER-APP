@@ -307,6 +307,7 @@ let isUnmounted = false
 
 const isDraggingSkinFile = ref(false)
 const isAddSkinButtonDragActive = ref(false)
+const isInitializing = ref(true)
 
 const deleteSkinModal = ref()
 const skinToDelete = ref<Skin | null>(null)
@@ -951,17 +952,41 @@ watch(isSkinManagementReadOnly, (readOnly) => {
 	}
 })
 
-onMounted(() => {
+async function onAccountChanged() {
+	try {
+		await loadCurrentUser()
+		if (hasLicense.value) {
+			await Promise.allSettled([loadCapes(), loadSkins()])
+		}
+	} catch (err) {
+		console.warn('Failed to update skins on account change', err)
+	}
+}
+
+onMounted(async () => {
 	window.addEventListener('offline', onOffline)
 	window.addEventListener('online', onOnline)
+	window.addEventListener('endrage-account-changed', onAccountChanged)
 	userCheckInterval = window.setInterval(checkUserChanges, 250)
 	void setupAddSkinDragDropListener()
+
+	try {
+		await loadCurrentUser()
+		if (hasLicense.value) {
+			await Promise.allSettled([loadCapes(), loadSkins()])
+		}
+	} catch (err) {
+		console.warn('Failed to load skins or user', err)
+	} finally {
+		isInitializing.value = false
+	}
 })
 
 onUnmounted(() => {
 	isUnmounted = true
 	window.removeEventListener('offline', onOffline)
 	window.removeEventListener('online', onOnline)
+	window.removeEventListener('endrage-account-changed', onAccountChanged)
 
 	if (userCheckInterval !== null) {
 		window.clearInterval(userCheckInterval)
@@ -1002,8 +1027,6 @@ async function checkUserChanges() {
 	}
 }
 
-await Promise.all([loadCapes(), loadCurrentUser()])
-await loadSkins()
 </script>
 
 <template>
@@ -1028,8 +1051,13 @@ await loadSkins()
 		@proceed="deleteSkin"
 	/>
 
+	<!-- Loading state while checking user / license -->
+	<div v-if="isInitializing" class="box-border flex min-h-[75vh] items-center justify-center">
+		<div class="h-9 w-9 animate-spin rounded-full border-2 border-[#22c55e] border-t-transparent"></div>
+	</div>
+
 	<!-- If user has valid Minecraft license, render full Modrinth skin selector -->
-	<div v-if="hasLicense" class="skin-layout box-border min-h-full p-4">
+	<div v-else-if="hasLicense" class="skin-layout box-border min-h-full p-4">
 		<div class="sticky top-6 self-start p-2 pt-0">
 			<h1 class="m-0 text-2xl font-bold flex items-center gap-2">
 				{{ formatMessage(messages.skinSelectorTitle) }}

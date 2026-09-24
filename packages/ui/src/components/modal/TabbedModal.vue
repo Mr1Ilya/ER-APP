@@ -88,14 +88,14 @@ defineExpose({ show, hide, selectedTab, setTab })
 					:href="tab.href ?? undefined"
 					:target="tab.href ? '_blank' : undefined"
 					:rel="tab.href ? 'noopener noreferrer' : undefined"
-					:class="`flex gap-2 items-center text-left rounded-xl px-4 py-2 border-none text-nowrap font-semibold cursor-pointer active:scale-[0.97] transition-all no-underline ${!tab.href && selectedTab === index ? 'bg-button-bgSelected text-button-textSelected' : 'bg-transparent text-button-text hover:bg-button-bg hover:text-contrast'}`"
+					:class="`flex gap-2.5 items-center text-left rounded-xl px-4 py-2.5 border-none text-nowrap font-medium text-sm cursor-pointer active:scale-[0.98] transition-all no-underline ${!tab.href && selectedTab === index ? 'bg-[#22242b] text-white font-semibold border-l-2 border-solid border-[#22c55e] shadow-sm' : 'bg-transparent text-[#9da3af] hover:bg-[#1f2127] hover:text-white'}`"
 					@click="!tab.href && setTab(index)"
 				>
-					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" />
+					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" :class="!tab.href && selectedTab === index ? 'text-[#22c55e]' : 'text-gray-400'" />
 					<span>{{ formatMessage(tab.name) }}</span>
 					<span
 						v-if="tab.badge"
-						class="rounded-full px-1.5 py-0.5 text-xs font-bold bg-brand-highlight text-brand-green"
+						class="rounded-full px-2 py-0.5 text-[11px] font-bold bg-[#282a32] text-gray-300"
 					>
 						{{ formatMessage(tab.badge) }}
 					</span>
