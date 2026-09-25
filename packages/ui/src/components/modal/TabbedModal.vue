@@ -8,12 +8,13 @@ import { type MessageDescriptor, useVIntl } from '../../composables/i18n'
 import { useScrollIndicator } from '../../composables/scroll-indicator'
 import NewModal from './NewModal.vue'
 export interface Tab {
-	name: MessageDescriptor
+	name: MessageDescriptor | string
 	icon: Component
 	content?: Component
 	href?: string
-	badge?: MessageDescriptor
+	badge?: MessageDescriptor | string
 	shown?: boolean
+	developerOnly?: boolean
 }
 
 const { formatMessage } = useVIntl()
@@ -88,16 +89,16 @@ defineExpose({ show, hide, selectedTab, setTab })
 					:href="tab.href ?? undefined"
 					:target="tab.href ? '_blank' : undefined"
 					:rel="tab.href ? 'noopener noreferrer' : undefined"
-					:class="`flex gap-2.5 items-center text-left rounded-xl px-4 py-2.5 border-none text-nowrap font-medium text-sm cursor-pointer active:scale-[0.98] transition-all no-underline ${!tab.href && selectedTab === index ? 'bg-[#22242b] text-white font-semibold border-l-2 border-solid border-[#22c55e] shadow-sm' : 'bg-transparent text-[#9da3af] hover:bg-[#1f2127] hover:text-white'}`"
+					:class="`flex gap-2.5 items-center text-left rounded-xl px-4 py-2.5 border-none text-nowrap font-medium text-sm cursor-pointer active:scale-[0.98] transition-all no-underline ${!tab.href && selectedTab === index ? 'bg-surface-4 text-contrast font-semibold shadow-sm' : 'bg-transparent text-secondary hover:bg-surface-3 hover:text-contrast'}`"
 					@click="!tab.href && setTab(index)"
 				>
-					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" :class="!tab.href && selectedTab === index ? 'text-[#22c55e]' : 'text-gray-400'" />
-					<span>{{ formatMessage(tab.name) }}</span>
+					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" :class="!tab.href && selectedTab === index ? 'text-brand' : 'text-secondary'" />
+					<span>{{ typeof tab.name === 'string' ? tab.name : formatMessage(tab.name) }}</span>
 					<span
 						v-if="tab.badge"
-						class="rounded-full px-2 py-0.5 text-[11px] font-bold bg-[#282a32] text-gray-300"
+						class="rounded-full px-2 py-0.5 text-[11px] font-bold bg-surface-3 text-secondary"
 					>
-						{{ formatMessage(tab.badge) }}
+						{{ typeof tab.badge === 'string' ? tab.badge : formatMessage(tab.badge) }}
 					</span>
 					<RightArrowIcon v-if="tab.href" class="size-4 ml-auto" />
 				</component>

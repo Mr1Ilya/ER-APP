@@ -2,13 +2,16 @@
 import { BoxIcon, FolderOpenIcon, FolderSearchIcon, TrashIcon } from '@erteam/assets'
 import { ButtonStyled, injectNotificationManager, Slider, StyledInput } from '@erteam/ui'
 import { open } from '@tauri-apps/plugin-dialog'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import ConfirmModalWrapper from '@/components/ui/modal/ConfirmModalWrapper.vue'
 import { purge_cache_types } from '@/helpers/cache.js'
 import { get, set } from '@/helpers/settings.ts'
 import { showAppDbBackupsFolder } from '@/helpers/utils.js'
+import i18n from '@/i18n.config'
 import { useTheming } from '@/store/state'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const { handleError } = injectNotificationManager()
 const themeStore = useTheming()
@@ -81,7 +84,9 @@ async function findLauncherDir() {
 <template>
 	<div class="flex flex-col gap-6">
 		<div class="flex flex-col gap-2.5">
-			<h2 class="m-0 text-lg font-semibold text-contrast">App directory</h2>
+			<h2 class="m-0 text-lg font-semibold text-contrast">
+				{{ isRu ? 'Папка лаунчера' : 'App directory' }}
+			</h2>
 			<StyledInput
 				id="appDir"
 				v-model="settings.custom_dir"
@@ -91,41 +96,43 @@ async function findLauncherDir() {
 			>
 				<template #right>
 					<ButtonStyled circular>
-						<button class="ml-1.5" @click="findLauncherDir">
+						<button class="ml-1.5" :title="isRu ? 'Выбрать другую папку' : 'Select a new app directory'" @click="findLauncherDir">
 							<FolderSearchIcon />
 						</button>
 					</ButtonStyled>
 				</template>
 			</StyledInput>
-			<p class="m-0 leading-tight text-secondary">
-				The directory where the launcher stores all of its files. Changes will be applied after
-				restarting the launcher.
+			<p class="m-0 leading-tight text-sm text-secondary">
+				{{ isRu ? 'Папка, где лаунчер сохраняет все свои файлы, сборки и кэш. Изменения вступят в силу после перезапуска.' : 'The directory where the launcher stores all of its files. Changes will be applied after restarting the launcher.' }}
 			</p>
 		</div>
 
 		<div class="flex flex-col gap-2.5">
 			<ConfirmModalWrapper
 				ref="purgeCacheConfirmModal"
-				title="Are you sure you want to purge the cache?"
-				description="If you proceed, your entire cache will be purged. This may slow down the app temporarily."
+				:title="isRu ? 'Вы уверены, что хотите очистить кэш?' : 'Are you sure you want to purge the cache?'"
+				:description="isRu ? 'Все временные файлы кэша будут удалены. Лаунчер заново загрузит актуальные данные.' : 'If you proceed, your entire cache will be purged. This may slow down the app temporarily.'"
 				:has-to-type="false"
-				proceed-label="Purge cache"
+				:proceed-label="isRu ? 'Очистить кэш' : 'Purge cache'"
 				:show-ad-on-close="false"
 				@proceed="purgeCache"
 			/>
-			<h2 class="m-0 text-lg font-semibold text-contrast">App cache</h2>
+			<h2 class="m-0 text-lg font-semibold text-contrast">
+				{{ isRu ? 'Кэш приложения' : 'App cache' }}
+			</h2>
 			<button id="purge-cache" class="btn min-w-max" @click="handlePurgeCacheClick">
 				<TrashIcon />
-				Purge cache
+				{{ isRu ? 'Очистить кэш' : 'Purge cache' }}
 			</button>
-			<p class="m-0 leading-tight text-secondary">
-				The Modrinth app stores a cache of data to speed up loading. This can be purged to force the
-				app to reload data. This may slow down the app temporarily.
+			<p class="m-0 leading-tight text-sm text-secondary">
+				{{ isRu ? 'EndRage Launcher сохраняет локальный кэш данных для ускорения работы. Очистка принудительно обновит все каталоги и списки.' : 'The app stores a cache of data to speed up loading. This can be purged to force the app to reload data.' }}
 			</p>
 		</div>
 
 		<div class="flex flex-col gap-2.5">
-			<h2 class="m-0 text-lg font-semibold text-contrast mt-4">Maximum concurrent downloads</h2>
+			<h2 class="m-0 text-lg font-semibold text-contrast mt-4">
+				{{ isRu ? 'Максимум параллельных загрузок' : 'Maximum concurrent downloads' }}
+			</h2>
 			<Slider
 				id="max-downloads"
 				v-model="settings.max_concurrent_downloads"
@@ -133,14 +140,15 @@ async function findLauncherDir() {
 				:max="10"
 				:step="1"
 			/>
-			<p class="m-0 leading-tight text-secondary">
-				The maximum amount of files the launcher can download at the same time. Set this to a lower
-				value if you have a poor internet connection. (app restart required to take effect)
+			<p class="m-0 leading-tight text-sm text-secondary">
+				{{ isRu ? 'Количество файлов, одновременно загружаемых лаунчером. Уменьшите значение при медленном интернет-соединении.' : 'The maximum amount of files the launcher can download at the same time. Set this to a lower value if you have a poor internet connection.' }}
 			</p>
 		</div>
 
 		<div class="flex flex-col gap-2.5">
-			<h2 class="mt-0 m-0 text-lg font-semibold text-contrast">Maximum concurrent writes</h2>
+			<h2 class="mt-0 m-0 text-lg font-semibold text-contrast">
+				{{ isRu ? 'Максимум одновременных записей на диск' : 'Maximum concurrent writes' }}
+			</h2>
 			<Slider
 				id="max-writes"
 				v-model="settings.max_concurrent_writes"
@@ -148,20 +156,21 @@ async function findLauncherDir() {
 				:max="50"
 				:step="1"
 			/>
-			<p class="m-0 leading-tight text-secondary">
-				The maximum amount of files the launcher can write to the disk at once. Set this to a lower
-				value if you are frequently getting I/O errors. (app restart required to take effect)
+			<p class="m-0 leading-tight text-sm text-secondary">
+				{{ isRu ? 'Количество файлов, одновременно записываемых на диск. Уменьшите значение, если возникают ошибки ввода-вывода (I/O).' : 'The maximum amount of files the launcher can write to the disk at once. Set this to a lower value if you are frequently getting I/O errors.' }}
 			</p>
 		</div>
 
 		<div class="flex flex-col gap-2.5">
-			<h2 class="mt-0 m-0 text-lg font-semibold text-contrast">App database backups</h2>
+			<h2 class="mt-0 m-0 text-lg font-semibold text-contrast">
+				{{ isRu ? 'Резервные копии базы данных' : 'App database backups' }}
+			</h2>
 			<button id="open-db-backups-folder" class="btn min-w-max" @click="openDbBackupsFolder">
 				<FolderOpenIcon />
-				Open backups folder
+				{{ isRu ? 'Открыть папку с бэкапами' : 'Open backups folder' }}
 			</button>
-			<p class="m-0 leading-tight text-secondary">
-				Backups of important app data are stored here in case you need to recover them later.
+			<p class="m-0 leading-tight text-sm text-secondary">
+				{{ isRu ? 'Здесь хранятся резервные копии важной информации лаунчера для быстрого восстановления при необходимости.' : 'Backups of important app data are stored here in case you need to recover them later.' }}
 			</p>
 		</div>
 	</div>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { get_default_user, login, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const isVisible = ref(false)
 const activeTab = ref<'list' | 'add'>('list')
@@ -63,7 +66,7 @@ async function handleSelectAccount(account: Account) {
 		notifyAccountChanged()
 		await loadAccounts()
 	} catch (e: any) {
-		errorMessage.value = e?.message || 'Не удалось выбрать аккаунт'
+		errorMessage.value = e?.message || (isRu.value ? 'Не удалось выбрать аккаунт' : 'Failed to select account')
 	} finally {
 		isActionRunning.value = false
 	}
@@ -80,7 +83,7 @@ async function handleRemoveAccount(account: Account) {
 			activeTab.value = 'add'
 		}
 	} catch (e: any) {
-		errorMessage.value = e?.message || 'Не удалось удалить аккаунт'
+		errorMessage.value = e?.message || (isRu.value ? 'Не удалось удалить аккаунт' : 'Failed to remove account')
 	} finally {
 		isActionRunning.value = false
 	}
@@ -89,11 +92,11 @@ async function handleRemoveAccount(account: Account) {
 async function handleAddOffline() {
 	const nickname = offlineNickname.value.trim()
 	if (!nickname) {
-		errorMessage.value = 'Пожалуйста, введите никнейм'
+		errorMessage.value = isRu.value ? 'Пожалуйста, введите никнейм' : 'Please enter a nickname'
 		return
 	}
 	if (nickname.length < 3 || nickname.length > 16) {
-		errorMessage.value = 'Никнейм должен содержать от 3 до 16 символов'
+		errorMessage.value = isRu.value ? 'Никнейм должен содержать от 3 до 16 символов' : 'Nickname must be between 3 and 16 characters'
 		return
 	}
 
@@ -109,7 +112,7 @@ async function handleAddOffline() {
 		await loadAccounts()
 		activeTab.value = 'list'
 	} catch (e: any) {
-		errorMessage.value = e?.message || 'Ошибка добавления офлайн аккаунта'
+		errorMessage.value = e?.message || (isRu.value ? 'Ошибка добавления офлайн аккаунта' : 'Error adding offline account')
 	} finally {
 		isActionRunning.value = false
 	}
@@ -127,7 +130,7 @@ async function handleAddMicrosoft() {
 		await loadAccounts()
 		activeTab.value = 'list'
 	} catch (e: any) {
-		errorMessage.value = e?.message || 'Вход отменён или произошла ошибка'
+		errorMessage.value = e?.message || (isRu.value ? 'Вход отменён или произошла ошибка' : 'Sign in canceled or error occurred')
 	} finally {
 		isActionRunning.value = false
 	}
@@ -153,23 +156,27 @@ function isOffline(account: Account) {
 				class="fixed inset-0 z-[150] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none"
 				@click.self="hide"
 			>
-				<div class="w-full max-w-lg bg-[#141518] border border-[#262830] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-white">
+				<div class="w-full max-w-lg bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast">
 					<!-- Header -->
-					<div class="flex items-center justify-between pb-3 border-b border-[#22242c]">
+					<div class="flex items-center justify-between pb-3 border-b border-divider">
 						<div class="flex items-center gap-3">
-							<div class="w-9 h-9 rounded-2xl bg-[#22c55e]/15 text-[#22c55e] flex items-center justify-center border border-[#22c55e]/20">
+							<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
 								<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 									<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
 									<circle cx="12" cy="7" r="4"></circle>
 								</svg>
 							</div>
 							<div>
-								<h3 class="text-lg font-bold text-white m-0">Управление аккаунтами</h3>
-								<p class="text-xs text-[#8e929b] m-0">Выберите активный профиль или добавьте новый</p>
+								<h3 class="text-lg font-bold text-contrast m-0">
+									{{ isRu ? 'Управление аккаунтами' : 'Account Management' }}
+								</h3>
+								<p class="text-xs text-secondary m-0">
+									{{ isRu ? 'Выберите активный профиль или добавьте новый' : 'Select an active profile or add a new one' }}
+								</p>
 							</div>
 						</div>
 						<button
-							class="w-8 h-8 rounded-xl bg-transparent hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors border-0 cursor-pointer"
+							class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
 							@click="hide"
 						>
 							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -190,46 +197,50 @@ function isOffline(account: Account) {
 					</div>
 
 					<!-- Top Mode Tabs -->
-					<div class="flex items-center gap-2 bg-[#1b1c21] p-1.5 rounded-2xl border border-[#262830]">
+					<div class="flex items-center gap-2 bg-surface-2 p-1.5 rounded-2xl border border-divider">
 						<button
 							class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border-0 cursor-pointer flex items-center justify-center gap-2"
-							:class="activeTab === 'list' ? 'bg-[#252730] text-white shadow-sm' : 'bg-transparent text-[#8e929b] hover:text-white'"
+							:class="activeTab === 'list' ? 'bg-surface-4 text-contrast shadow-sm' : 'bg-transparent text-secondary hover:text-contrast'"
 							@click="activeTab = 'list'"
 						>
-							<span>Мои аккаунты</span>
-							<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-white/10 text-gray-300">
+							<span>{{ isRu ? 'Мои аккаунты' : 'My Accounts' }}</span>
+							<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-surface-3 text-secondary">
 								{{ accountList.length }}
 							</span>
 						</button>
 						<button
 							class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border-0 cursor-pointer flex items-center justify-center gap-1.5"
-							:class="activeTab === 'add' ? 'bg-[#252730] text-white shadow-sm' : 'bg-transparent text-[#8e929b] hover:text-white'"
+							:class="activeTab === 'add' ? 'bg-surface-4 text-contrast shadow-sm' : 'bg-transparent text-secondary hover:text-contrast'"
 							@click="activeTab = 'add'"
 						>
-							<svg class="w-3.5 h-3.5 text-[#22c55e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+							<svg class="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
 								<line x1="12" y1="5" x2="12" y2="19"></line>
 								<line x1="5" y1="12" x2="19" y2="12"></line>
 							</svg>
-							<span>Добавить аккаунт</span>
+							<span>{{ isRu ? 'Добавить аккаунт' : 'Add Account' }}</span>
 						</button>
 					</div>
 
 					<!-- TAB 1: ACCOUNTS LIST -->
 					<div v-if="activeTab === 'list'" class="flex flex-col gap-2.5 max-h-[340px] overflow-y-auto pr-1">
 						<div v-if="accountList.length === 0" class="flex flex-col items-center justify-center py-8 text-center gap-2">
-							<div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-1">
+							<div class="w-12 h-12 rounded-2xl bg-surface-2 flex items-center justify-center text-secondary mb-1">
 								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
 									<circle cx="12" cy="7" r="4"></circle>
 									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
 								</svg>
 							</div>
-							<p class="text-sm font-semibold text-gray-300 m-0">Нет добавленных аккаунтов</p>
-							<p class="text-xs text-[#8e929b] m-0 max-w-xs">Добавьте пиратский никнейм или войдите через лицензию Microsoft</p>
+							<p class="text-sm font-semibold text-contrast m-0">
+								{{ isRu ? 'Нет добавленных аккаунтов' : 'No accounts added' }}
+							</p>
+							<p class="text-xs text-secondary m-0 max-w-xs">
+								{{ isRu ? 'Добавьте пиратский никнейм или войдите через лицензию Microsoft' : 'Add an offline nickname or sign in with Microsoft' }}
+							</p>
 							<button
-								class="mt-3 px-4 py-2 rounded-xl bg-[#22c55e] text-black font-bold text-xs border-0 cursor-pointer hover:bg-[#1ea850] transition-colors"
+								class="mt-3 px-4 py-2 rounded-xl bg-brand text-black font-bold text-xs border-0 cursor-pointer hover:brightness-110 transition-colors"
 								@click="activeTab = 'add'"
 							>
-								Добавить аккаунт
+								{{ isRu ? 'Добавить аккаунт' : 'Add Account' }}
 							</button>
 						</div>
 
@@ -237,32 +248,32 @@ function isOffline(account: Account) {
 							v-for="account in accountList"
 							:key="account.profile.id"
 							class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer"
-							:class="account.profile.id === currentDefaultId ? 'bg-[#1e2027] border-[#22c55e]/40 shadow-sm' : 'bg-[#18191f] border-[#252731] hover:bg-[#1d1f26]'"
+							:class="account.profile.id === currentDefaultId ? 'bg-surface-3 border-brand/40 shadow-sm' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 							@click="handleSelectAccount(account)"
 						>
 							<div class="flex items-center gap-3 min-w-0">
 								<img
 									:src="getAvatar(account)"
-									class="w-10 h-10 rounded-xl bg-black/40 border border-white/10 shrink-0"
+									class="w-10 h-10 rounded-xl bg-surface-1 border border-divider shrink-0 object-cover"
 									alt="avatar"
 									@error="($event.target as HTMLImageElement).src = 'https://launcher-files.modrinth.com/assets/steve_head.png'"
 								/>
 								<div class="flex flex-col min-w-0">
 									<div class="flex items-center gap-2">
-										<span class="text-sm font-bold text-white truncate">{{ account.profile.name }}</span>
+										<span class="text-sm font-bold text-contrast truncate">{{ account.profile.name }}</span>
 										<span
 											v-if="account.profile.id === currentDefaultId"
-											class="text-[10px] font-black uppercase tracking-wider bg-[#22c55e]/15 text-[#22c55e] px-2 py-0.5 rounded-full border border-[#22c55e]/30 shrink-0"
+											class="text-[10px] font-black uppercase tracking-wider bg-brand/15 text-brand px-2 py-0.5 rounded-full border border-brand/30 shrink-0"
 										>
-											Активен
+											{{ isRu ? 'Активен' : 'Active' }}
 										</span>
 									</div>
-									<span class="text-xs text-[#8e929b] flex items-center gap-1.5 mt-0.5">
+									<span class="text-xs text-secondary flex items-center gap-1.5 mt-0.5">
 										<span
 											class="w-1.5 h-1.5 rounded-full"
-											:class="isOffline(account) ? 'bg-blue-400' : 'bg-[#22c55e]'"
+											:class="isOffline(account) ? 'bg-blue-400' : 'bg-brand'"
 										></span>
-										{{ isOffline(account) ? 'Офлайн (Пиратка)' : 'Лицензия Microsoft' }}
+										{{ isOffline(account) ? (isRu ? 'Офлайн (Пиратка)' : 'Offline (Free)') : (isRu ? 'Лицензия Microsoft' : 'Microsoft Account') }}
 									</span>
 								</div>
 							</div>
@@ -270,14 +281,14 @@ function isOffline(account: Account) {
 							<div class="flex items-center gap-2">
 								<button
 									v-if="account.profile.id !== currentDefaultId"
-									class="px-3 py-1.5 rounded-xl bg-[#282a33] hover:bg-[#323540] text-xs font-semibold text-gray-200 transition-colors border-0 cursor-pointer"
+									class="px-3 py-1.5 rounded-xl bg-surface-4 hover:brightness-110 text-xs font-semibold text-contrast transition-colors border-0 cursor-pointer"
 									@click.stop="handleSelectAccount(account)"
 								>
-									Выбрать
+									{{ isRu ? 'Выбрать' : 'Select' }}
 								</button>
 								<button
-									class="w-8 h-8 rounded-xl bg-transparent hover:bg-red-500/15 text-gray-500 hover:text-red-400 flex items-center justify-center transition-colors border-0 cursor-pointer"
-									title="Удалить аккаунт"
+									class="w-8 h-8 rounded-xl bg-transparent hover:bg-red-500/15 text-secondary hover:text-red-400 flex items-center justify-center transition-colors border-0 cursor-pointer"
+									:title="isRu ? 'Удалить аккаунт' : 'Remove account'"
 									@click.stop="handleRemoveAccount(account)"
 								>
 									<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -296,58 +307,72 @@ function isOffline(account: Account) {
 						<div class="grid grid-cols-2 gap-2">
 							<button
 								class="p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'offline' ? 'bg-[#1e2027] border-[#22c55e]/50' : 'bg-[#18191f] border-[#252731] hover:bg-[#1d1f26]'"
+								:class="addType === 'offline' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 								@click="addType = 'offline'"
 							>
 								<div class="flex items-center justify-between w-full">
-									<span class="text-xs font-black uppercase tracking-wider text-blue-400">Офлайн / Пиратка</span>
-									<span v-if="addType === 'offline'" class="w-2 h-2 rounded-full bg-[#22c55e]"></span>
+									<span class="text-xs font-black uppercase tracking-wider text-blue-400">
+										{{ isRu ? 'Офлайн / Пиратка' : 'Offline / Free' }}
+									</span>
+									<span v-if="addType === 'offline'" class="w-2 h-2 rounded-full bg-brand"></span>
 								</div>
-								<span class="text-sm font-bold text-white">Вход по нику</span>
-								<span class="text-[11px] text-[#8e929b]">Без пароля, мгновенная игра</span>
+								<span class="text-sm font-bold text-contrast">
+									{{ isRu ? 'Вход по нику' : 'Enter Nickname' }}
+								</span>
+								<span class="text-[11px] text-secondary">
+									{{ isRu ? 'Без пароля, мгновенная игра' : 'No password, instant play' }}
+								</span>
 							</button>
 
 							<button
 								class="p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'microsoft' ? 'bg-[#1e2027] border-[#22c55e]/50' : 'bg-[#18191f] border-[#252731] hover:bg-[#1d1f26]'"
+								:class="addType === 'microsoft' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 								@click="addType = 'microsoft'"
 							>
 								<div class="flex items-center justify-between w-full">
-									<span class="text-xs font-black uppercase tracking-wider text-[#22c55e]">Лицензия</span>
-									<span v-if="addType === 'microsoft'" class="w-2 h-2 rounded-full bg-[#22c55e]"></span>
+									<span class="text-xs font-black uppercase tracking-wider text-brand">
+										{{ isRu ? 'Лицензия' : 'Official' }}
+									</span>
+									<span v-if="addType === 'microsoft'" class="w-2 h-2 rounded-full bg-brand"></span>
 								</div>
-								<span class="text-sm font-bold text-white">Microsoft</span>
-								<span class="text-[11px] text-[#8e929b]">Официальный аккаунт</span>
+								<span class="text-sm font-bold text-contrast">Microsoft</span>
+								<span class="text-[11px] text-secondary">
+									{{ isRu ? 'Официальный аккаунт' : 'Official account' }}
+								</span>
 							</button>
 						</div>
 
 						<!-- Offline form -->
-						<div v-if="addType === 'offline'" class="flex flex-col gap-3 p-4 rounded-2xl bg-[#18191f] border border-[#252731]">
-							<label class="text-xs font-semibold text-gray-300">Игровой никнейм</label>
+						<div v-if="addType === 'offline'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
+							<label class="text-xs font-semibold text-contrast">
+								{{ isRu ? 'Игровой никнейм' : 'Player Nickname' }}
+							</label>
 							<div class="relative flex items-center">
 								<input
 									v-model="offlineNickname"
 									type="text"
-									placeholder="Например: EndRagePlayer"
+									:placeholder="isRu ? 'Например: EndRagePlayer' : 'e.g. EndRagePlayer'"
 									maxlength="16"
-									class="w-full bg-[#111215] border border-[#292c36] focus:border-[#22c55e] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-colors"
+									class="w-full bg-surface-1 border border-divider focus:border-brand rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
 									@keyup.enter="handleAddOffline"
 								/>
 							</div>
-							<p class="text-[11px] text-[#8e929b] m-0">Никнейм должен состоять от 3 до 16 символов.</p>
+							<p class="text-[11px] text-secondary m-0">
+								{{ isRu ? 'Никнейм должен состоять от 3 до 16 символов.' : 'Nickname must be between 3 and 16 characters.' }}
+							</p>
 							<button
 								:disabled="!offlineNickname.trim() || isActionRunning"
-								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-[#22c55e] hover:bg-[#1ea850] disabled:bg-gray-700 disabled:text-gray-400 text-black font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-brand hover:brightness-110 disabled:opacity-50 text-black font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
 								@click="handleAddOffline"
 							>
-								<span v-if="!isActionRunning">Добавить офлайн аккаунт</span>
+								<span v-if="!isActionRunning">{{ isRu ? 'Добавить офлайн аккаунт' : 'Add offline account' }}</span>
 								<span v-else class="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full"></span>
 							</button>
 						</div>
 
 						<!-- Microsoft form -->
-						<div v-else class="flex flex-col gap-3 p-4 rounded-2xl bg-[#18191f] border border-[#252731] text-center items-center">
-							<div class="w-12 h-12 rounded-2xl bg-[#22c55e]/15 text-[#22c55e] flex items-center justify-center border border-[#22c55e]/20 mt-1">
+						<div v-else class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider text-center items-center">
+							<div class="w-12 h-12 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20 mt-1">
 								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 									<rect x="3" y="3" width="8" height="8" rx="1.5"></rect>
 									<rect x="13" y="3" width="8" height="8" rx="1.5"></rect>
@@ -356,15 +381,19 @@ function isOffline(account: Account) {
 								</svg>
 							</div>
 							<div class="flex flex-col gap-1 max-w-sm">
-								<span class="text-sm font-bold text-white">Вход через Microsoft</span>
-								<span class="text-xs text-[#8e929b]">Откроется официальное окно входа Microsoft в браузере для авторизации вашего лицензионного аккаунта.</span>
+								<span class="text-sm font-bold text-contrast">
+									{{ isRu ? 'Вход через Microsoft' : 'Sign in with Microsoft' }}
+								</span>
+								<span class="text-xs text-secondary">
+									{{ isRu ? 'Откроется официальное окно входа Microsoft в браузере для авторизации вашего лицензионного аккаунта.' : 'The official Microsoft login window will open in your browser to authenticate your licensed account.' }}
+								</span>
 							</div>
 							<button
 								:disabled="isActionRunning"
-								class="w-full py-2.5 px-4 mt-2 rounded-xl bg-[#22c55e] hover:bg-[#1ea850] disabled:bg-gray-700 text-black font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+								class="w-full py-2.5 px-4 mt-2 rounded-xl bg-brand hover:brightness-110 disabled:opacity-50 text-black font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
 								@click="handleAddMicrosoft"
 							>
-								<span v-if="!isActionRunning">Войти через Microsoft</span>
+								<span v-if="!isActionRunning">{{ isRu ? 'Войти через Microsoft' : 'Sign in with Microsoft' }}</span>
 								<span v-else class="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full"></span>
 							</button>
 						</div>

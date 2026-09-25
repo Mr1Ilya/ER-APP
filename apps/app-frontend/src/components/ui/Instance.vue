@@ -24,6 +24,10 @@ import { handleSevereError } from '@/store/error.js'
 const { handleError } = injectNotificationManager()
 const formatRelativeTime = useRelativeTime()
 
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
 const props = defineProps({
 	instance: {
 		type: Object,
@@ -164,18 +168,18 @@ onUnmounted(() => unlisten())
 			</div>
 			<div class="flex items-center">
 				<ButtonStyled v-if="playing" color="red" circular @mousehover="checkProcess">
-					<button v-tooltip="'Stop'" @click="(e) => stop(e, 'InstanceCard')">
+					<button :v-tooltip="isRu ? 'Остановить' : 'Stop'" @click="(e) => stop(e, 'InstanceCard')">
 						<StopCircleIcon />
 					</button>
 				</ButtonStyled>
 				<ButtonStyled v-else-if="modLoading" color="standard" circular>
-					<button v-tooltip="'Instance is loading...'" disabled>
+					<button :v-tooltip="isRu ? 'Сборка запускается...' : 'Instance is loading...'" disabled>
 						<SpinnerIcon class="animate-spin" />
 					</button>
 				</ButtonStyled>
 				<ButtonStyled v-else :color="first ? 'brand' : 'standard'" circular>
 					<button
-						v-tooltip="'Play'"
+						:v-tooltip="isRu ? 'Играть' : 'Play'"
 						@click="(e) => play(e, 'InstanceCard')"
 						@mousehover="checkProcess"
 					>
@@ -188,9 +192,9 @@ onUnmounted(() => unlisten())
 				<TimerIcon />
 				<span class="text-sm">
 					<template v-if="instance.last_played">
-						Played {{ formatRelativeTime(dayjs(instance.last_played).toISOString()) }}
+						{{ isRu ? 'Запуск: ' : 'Played ' }}{{ formatRelativeTime(dayjs(instance.last_played).toISOString()) }}
 					</template>
-					<template v-else> Never played </template>
+					<template v-else> {{ isRu ? 'Не запускалось' : 'Never played' }} </template>
 				</span>
 			</div>
 		</div>
@@ -212,7 +216,7 @@ onUnmounted(() => unlisten())
 				<div class="absolute inset-0 flex items-center justify-center">
 					<ButtonStyled v-if="playing" size="large" color="red" circular>
 						<button
-							v-tooltip="'Stop'"
+							:v-tooltip="isRu ? 'Остановить' : 'Stop'"
 							:class="{ 'scale-100 opacity-100': playing }"
 							class="transition-all scale-75 origin-bottom opacity-0 card-shadow"
 							@click="(e) => stop(e, 'InstanceCard')"
@@ -223,13 +227,13 @@ onUnmounted(() => unlisten())
 					</ButtonStyled>
 					<SpinnerIcon
 						v-else-if="modLoading || installing"
-						v-tooltip="modLoading ? 'Instance is loading...' : 'Installing...'"
+						:v-tooltip="modLoading ? (isRu ? 'Сборка запускается...' : 'Instance is loading...') : (isRu ? 'Установка...' : 'Installing...')"
 						class="animate-spin w-8 h-8"
 						tabindex="-1"
 					/>
 					<ButtonStyled v-else-if="!installed" size="large" color="brand" circular>
 						<button
-							v-tooltip="'Repair'"
+							:v-tooltip="isRu ? 'Починить' : 'Repair'"
 							class="transition-all scale-75 group-hover:scale-100 group-focus-within:scale-100 origin-bottom opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 card-shadow"
 							@click="(e) => repair(e)"
 						>
@@ -238,7 +242,7 @@ onUnmounted(() => unlisten())
 					</ButtonStyled>
 					<ButtonStyled v-else size="large" color="brand" circular>
 						<button
-							v-tooltip="'Play'"
+							:v-tooltip="isRu ? 'Играть' : 'Play'"
 							class="transition-all scale-75 group-hover:scale-100 group-focus-within:scale-100 origin-bottom opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 card-shadow"
 							@click="(e) => play(e, 'InstanceCard')"
 							@mousehover="checkProcess"

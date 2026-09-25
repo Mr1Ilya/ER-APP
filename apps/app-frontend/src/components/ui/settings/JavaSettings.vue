@@ -1,9 +1,12 @@
 <script setup>
 import { injectNotificationManager } from '@erteam/ui'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import JavaSelector from '@/components/ui/JavaSelector.vue'
 import { get_java_versions, set_java_version } from '@/helpers/jre'
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const { handleError } = injectNotificationManager()
 
@@ -28,7 +31,7 @@ async function updateJavaVersion(version) {
 			class="flex flex-col gap-2.5"
 		>
 			<h2 class="m-0 text-lg font-semibold text-contrast" :class="{ 'mt-4': index !== 0 }">
-				Java {{ javaVersion }} location
+				{{ isRu ? `Расположение Java ${javaVersion}` : `Java ${javaVersion} location` }}
 			</h2>
 			<JavaSelector
 				:id="'java-selector-' + javaVersion"

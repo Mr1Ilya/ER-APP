@@ -136,7 +136,7 @@ watch(
 	<h2 class="m-0 text-lg font-semibold text-contrast">
 		{{ formatMessage(messages.colorThemeTitle) }}
 	</h2>
-	<p class="m-0 mt-1">{{ formatMessage(messages.colorThemeDescription) }}</p>
+	<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.colorThemeDescription) }}</p>
 
 	<ThemeSelector
 		:update-color-theme="
@@ -155,7 +155,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.advancedRenderingTitle) }}
 			</h2>
-			<p class="m-0 mt-1">
+			<p class="m-0 mt-1 text-sm text-secondary">
 				{{ formatMessage(messages.advancedRenderingDescription) }}
 			</p>
 		</div>
@@ -177,7 +177,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.nativeDecorationsTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.nativeDecorationsDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.nativeDecorationsDescription) }}</p>
 		</div>
 		<Toggle id="native-decorations" v-model="settings.native_decorations" />
 	</div>
@@ -187,7 +187,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.minimizeLauncherTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.minimizeLauncherDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.minimizeLauncherDescription) }}</p>
 		</div>
 		<Toggle id="minimize-launcher" v-model="settings.hide_on_process_start" />
 	</div>
@@ -197,7 +197,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.showPlayTimeTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.showPlayTimeDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.showPlayTimeDescription) }}</p>
 		</div>
 		<Toggle
 			:model-value="themeStore.getFeatureFlag(showPlayTimeFlag)"
@@ -216,7 +216,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.hideNametagTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.hideNametagDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.hideNametagDescription) }}</p>
 		</div>
 		<Toggle
 			id="hide-nametag-skins-page"
@@ -235,7 +235,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.defaultLandingPageTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.defaultLandingPageDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.defaultLandingPageDescription) }}</p>
 		</div>
 		<Combobox
 			id="opening-page"
@@ -261,7 +261,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.jumpBackIntoWorldsTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.jumpBackIntoWorldsDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.jumpBackIntoWorldsDescription) }}</p>
 		</div>
 		<Toggle
 			:model-value="themeStore.getFeatureFlag(worldsInHomeFlag)"
@@ -280,7 +280,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.unknownPackWarningTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.unknownPackWarningDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.unknownPackWarningDescription) }}</p>
 		</div>
 		<Toggle
 			:model-value="!themeStore.getFeatureFlag(skipUnknownPackWarningFlag)"
@@ -300,7 +300,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.skipNonEssentialWarningsTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.skipNonEssentialWarningsDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.skipNonEssentialWarningsDescription) }}</p>
 		</div>
 		<Toggle
 			:model-value="themeStore.getFeatureFlag(skipNonEssentialWarningsFlag)"
@@ -319,7 +319,7 @@ watch(
 			<h2 class="m-0 text-lg font-semibold text-contrast">
 				{{ formatMessage(messages.toggleSidebarTitle) }}
 			</h2>
-			<p class="m-0 mt-1">{{ formatMessage(messages.toggleSidebarDescription) }}</p>
+			<p class="m-0 mt-1 text-sm text-secondary">{{ formatMessage(messages.toggleSidebarDescription) }}</p>
 		</div>
 		<Toggle
 			id="toggle-sidebar"

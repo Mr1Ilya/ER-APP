@@ -34,12 +34,16 @@ const avatarUrl = computed(() => {
 	return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 })
 
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
 const accountTypeLabel = computed(() => {
-	if (!activeAccount.value) return 'Нажмите для входа'
+	if (!activeAccount.value) return isRu.value ? 'Нажмите для входа' : 'Click to log in'
 	if (activeAccount.value.access_token?.startsWith('offline')) {
-		return 'Офлайн аккаунт'
+		return isRu.value ? 'Офлайн аккаунт' : 'Offline account'
 	}
-	return 'Лицензия Microsoft'
+	return isRu.value ? 'Лицензия Microsoft' : 'Microsoft account'
 })
 
 async function loadUserData() {
@@ -61,37 +65,37 @@ onUnmounted(() => {
 	window.removeEventListener('endrage-account-changed', loadUserData)
 })
 
-const navItems = [
+const navItems = computed(() => [
 	{
 		id: 'play',
-		label: 'Играть',
+		label: isRu.value ? 'Играть' : 'Play',
 		to: '/',
 		exact: true,
 		icon: 'play',
 	},
 	{
 		id: 'library',
-		label: 'Мои сборки',
+		label: isRu.value ? 'Мои сборки' : 'Library',
 		to: '/library',
 		matchPrefix: '/instance',
 		icon: 'cube',
 	},
 	{
 		id: 'content',
-		label: 'Контент',
+		label: isRu.value ? 'Контент' : 'Browse',
 		to: '/browse/modpack',
 		matchPrefix: '/browse',
 		icon: 'content',
 	},
 	{
 		id: 'skins',
-		label: 'Скины',
+		label: isRu.value ? 'Скины' : 'Skins',
 		to: '/skins',
 		icon: 'skins',
 	},
-]
+])
 
-function isItemActive(item: typeof navItems[0]) {
+function isItemActive(item: { to: string; exact?: boolean; matchPrefix?: string }) {
 	if (item.exact) {
 		return route.path === item.to
 	}
@@ -117,7 +121,7 @@ function navigate(to: string) {
 			<div class="mb-2 px-1 flex items-center" :class="collapsed ? 'justify-center' : 'justify-start'">
 				<button
 					class="flex items-center gap-2 text-xs font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-white/5"
-					:title="collapsed ? 'Развернуть меню' : 'Свернуть меню'"
+					:title="collapsed ? (isRu ? 'Развернуть меню' : 'Expand sidebar') : (isRu ? 'Свернуть меню' : 'Collapse sidebar')"
 					@click="emit('toggle-collapse')"
 				>
 					<svg
@@ -132,7 +136,7 @@ function navigate(to: string) {
 					>
 						<polyline points="15 18 9 12 15 6"></polyline>
 					</svg>
-					<span v-if="!collapsed">Свернуть</span>
+					<span v-if="!collapsed">{{ isRu ? 'Свернуть' : 'Collapse' }}</span>
 				</button>
 			</div>
 
@@ -220,7 +224,7 @@ function navigate(to: string) {
 			<button
 				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 transition-all bg-transparent border-0 cursor-pointer w-full"
 				:class="collapsed ? 'justify-center px-2' : ''"
-				:title="collapsed ? 'Настройки' : undefined"
+				:title="collapsed ? (isRu ? 'Настройки' : 'Settings') : undefined"
 				@click="emit('open-settings')"
 			>
 				<svg
@@ -235,14 +239,14 @@ function navigate(to: string) {
 					<circle cx="12" cy="12" r="3"></circle>
 					<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
 				</svg>
-				<span v-if="!collapsed" class="truncate tracking-wide">Настройки</span>
+				<span v-if="!collapsed" class="truncate tracking-wide">{{ isRu ? 'Настройки' : 'Settings' }}</span>
 			</button>
 
 			<!-- Account Card -->
 			<button
 				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[#22c55e]/40 transition-all cursor-pointer text-left w-full"
 				:class="collapsed ? 'justify-center p-1.5' : ''"
-				:title="collapsed ? (activeAccount?.profile?.name || 'Аккаунты') : undefined"
+				:title="collapsed ? (activeAccount?.profile?.name || (isRu ? 'Аккаунты' : 'Accounts')) : undefined"
 				@click="emit('open-accounts')"
 			>
 				<img
@@ -252,7 +256,7 @@ function navigate(to: string) {
 				/>
 				<div v-if="!collapsed" class="flex flex-col min-w-0 flex-1">
 					<span class="text-xs font-semibold text-[var(--er-text)] truncate leading-tight">
-						{{ activeAccount?.profile?.name || 'Войти в игру' }}
+						{{ activeAccount?.profile?.name || (isRu ? 'Войти в игру' : 'Log in') }}
 					</span>
 					<span class="text-[10px] text-[var(--er-text-secondary)] truncate leading-tight mt-0.5">
 						{{ accountTypeLabel }}

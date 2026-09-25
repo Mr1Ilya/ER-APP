@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { PlusIcon } from '@erteam/assets'
 import { ButtonStyled, injectNotificationManager, NavTabs } from '@erteam/ui'
-import { inject, onUnmounted, ref, shallowRef } from 'vue'
+import { computed, inject, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { NewInstanceImage } from '@/assets/icons'
 import { instance_listener } from '@/helpers/events.js'
 import { list } from '@/helpers/instance'
+import i18n from '@/i18n.config'
 import { useBreadcrumbs } from '@/store/breadcrumbs.js'
 
 const { handleError } = injectNotificationManager()
@@ -14,7 +15,15 @@ const showCreationModal = inject('showCreationModal')
 const route = useRoute()
 const breadcrumbs = useBreadcrumbs()
 
-breadcrumbs.setRootContext({ name: 'Мои сборки', link: route.path })
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+watch(
+	isRu,
+	(ru) => {
+		breadcrumbs.setRootContext({ name: ru ? 'Мои сборки' : 'Library', link: route.path })
+	},
+	{ immediate: true },
+)
 
 const instances = shallowRef(await list().catch(handleError))
 
@@ -36,13 +45,13 @@ onUnmounted(() => {
 
 <template>
 	<div class="p-6 flex flex-col gap-3">
-		<h1 class="m-0 text-2xl hidden">Мои сборки</h1>
+		<h1 class="m-0 text-2xl hidden">{{ isRu ? 'Мои сборки' : 'Library' }}</h1>
 		<NavTabs
 			:links="[
-				{ label: 'Все сборки', href: `/library` },
-				{ label: 'Модпаки', href: `/library/modpacks` },
-				{ label: 'Серверы', href: `/library/servers` },
-				{ label: 'Свои', href: `/library/custom` },
+				{ label: isRu ? 'Все сборки' : 'All', href: `/library` },
+				{ label: isRu ? 'Модпаки' : 'Modpacks', href: `/library/modpacks` },
+				{ label: isRu ? 'Серверы' : 'Servers', href: `/library/servers` },
+				{ label: isRu ? 'Свои' : 'Custom', href: `/library/custom` },
 				{ label: 'Shared with me', href: `/library/shared`, shown: false },
 				{ label: 'Saved', href: `/library/saved`, shown: false },
 			]"
@@ -54,11 +63,11 @@ onUnmounted(() => {
 			<div class="icon">
 				<NewInstanceImage />
 			</div>
-			<h3>Нет установленных сборок</h3>
+			<h3>{{ isRu ? 'Нет установленных сборок' : 'No installed instances' }}</h3>
 			<ButtonStyled color="brand">
 				<button :disabled="offline" @click="showCreationModal?.()">
 					<PlusIcon />
-					Создать новую сборку
+					{{ isRu ? 'Создать новую сборку' : 'Create new instance' }}
 				</button>
 			</ButtonStyled>
 		</div>

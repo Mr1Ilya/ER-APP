@@ -6,6 +6,7 @@ import { get, set } from '@/helpers/settings.ts'
 import i18n from '@/i18n.config'
 
 const settings = ref(await get())
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 watch(
 	settings,
@@ -36,9 +37,11 @@ async function onLocaleChange(newLocale: string) {
 </script>
 
 <template>
-	<h2 class="m-0 text-lg font-bold text-white">Язык / Language</h2>
-	<p class="m-0 mt-1 mb-4 text-sm text-[#9da3af]">
-		Выберите предпочитаемый язык интерфейса для EndRage Launcher (доступны Русский и English).
+	<h2 class="m-0 text-lg font-bold text-contrast">
+		{{ isRu ? 'Язык' : 'Language' }}
+	</h2>
+	<p class="m-0 mt-1 mb-4 text-sm text-secondary">
+		{{ isRu ? 'Выберите предпочитаемый язык интерфейса для EndRage Launcher (доступны Русский и English).' : 'Select your preferred interface language for EndRage Launcher (Russian and English available).' }}
 	</p>
 
 	<LanguageSelector

@@ -13,12 +13,22 @@ import bg2 from '@/assets/wallpapers/minecraft_bg_2.jpg'
 import bg3 from '@/assets/wallpapers/minecraft_bg_3.jpg'
 import defaultMinecraftBlock from '@/assets/minecraft_block.png'
 
+import i18n from '@/i18n.config'
+
 const { handleError } = injectNotificationManager()
 const route = useRoute()
 const router = useRouter()
 const breadcrumbs = useBreadcrumbs()
 
-breadcrumbs.setRootContext({ name: 'Главная', link: route.path })
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+watch(
+	isRu,
+	(ru) => {
+		breadcrumbs.setRootContext({ name: ru ? 'Главная' : 'Home', link: route.path })
+	},
+	{ immediate: true },
+)
 
 const instances = ref<GameInstance[]>([])
 const isLaunching = ref(false)
@@ -85,11 +95,11 @@ function toggleWallpaper() {
 }
 
 function formatPlaytime(seconds?: number) {
-	if (!seconds || seconds <= 0) return 'Не запускалось'
+	if (!seconds || seconds <= 0) return isRu.value ? 'Не запускалось' : 'Never played'
 	const mins = Math.floor(seconds / 60)
-	if (mins < 60) return `${mins} мин`
+	if (mins < 60) return `${mins} ${isRu.value ? 'мин' : 'min'}`
 	const hours = (mins / 60).toFixed(1)
-	return `${hours} ч`
+	return `${hours} ${isRu.value ? 'ч' : 'h'}`
 }
 
 onMounted(async () => {
@@ -127,7 +137,7 @@ onUnmounted(() => {
 				<!-- Mute audio button -->
 				<button
 					class="p-2 rounded-xl bg-black/40 hover:bg-black/60 backdrop-blur border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer"
-					:title="isMuted ? 'Включить звук' : 'Выключить звук'"
+					:title="isMuted ? (isRu ? 'Включить звук' : 'Unmute') : (isRu ? 'Выключить звук' : 'Mute')"
 					@click="isMuted = !isMuted"
 				>
 					<svg v-if="!isMuted" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -151,7 +161,7 @@ onUnmounted(() => {
 						<circle cx="8.5" cy="8.5" r="1.5"></circle>
 						<polyline points="21 15 16 10 5 21"></polyline>
 					</svg>
-					<span>Фон</span>
+					<span>{{ isRu ? 'Фон' : 'Background' }}</span>
 				</button>
 			</div>
 
@@ -160,7 +170,7 @@ onUnmounted(() => {
 				<!-- Instance Details -->
 				<div class="flex flex-col gap-1.5 max-w-xl">
 					<span class="text-[11px] font-bold tracking-widest text-[#9ca3af] uppercase">
-						{{ activeHeroInstance ? 'ПРОДОЛЖИТЬ' : 'ГОТОВ К ИГРЕ' }}
+						{{ activeHeroInstance ? (isRu ? 'ПРОДОЛЖИТЬ' : 'CONTINUE') : (isRu ? 'ГОТОВ К ИГРЕ' : 'READY TO PLAY') }}
 					</span>
 					<h1 class="text-2xl md:text-3xl font-black text-white m-0 tracking-wide drop-shadow-md">
 						{{ activeHeroInstance ? activeHeroInstance.name : 'EndRage Default' }}
@@ -181,7 +191,7 @@ onUnmounted(() => {
 					<button
 						v-if="activeHeroInstance"
 						class="w-11 h-11 rounded-2xl bg-[#1e2025]/80 hover:bg-[#282b32] backdrop-blur border border-white/10 text-white/90 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
-						title="Настройки сборки"
+						:title="isRu ? 'Настройки сборки' : 'Instance settings'"
 						@click="handleOpenInstanceSettings(activeHeroInstance.id)"
 					>
 						<svg class="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,7 +210,7 @@ onUnmounted(() => {
 							<polygon points="6,4 20,12 6,20"></polygon>
 						</svg>
 						<div v-else class="w-5 h-5 border-2 border-[#121315] border-t-transparent rounded-full animate-spin"></div>
-						<span>{{ isLaunching ? 'Запуск...' : 'Играть' }}</span>
+						<span>{{ isLaunching ? (isRu ? 'Запуск...' : 'Launching...') : (isRu ? 'Играть' : 'Play') }}</span>
 					</button>
 				</div>
 			</div>
@@ -209,12 +219,12 @@ onUnmounted(() => {
 		<!-- SECTION: МОИ СБОРКИ -->
 		<div class="flex flex-col gap-3.5">
 			<div class="flex items-center justify-between">
-				<h2 class="text-base font-bold text-[var(--er-text)] m-0">Мои сборки</h2>
+				<h2 class="text-base font-bold text-[var(--er-text)] m-0">{{ isRu ? 'Мои сборки' : 'My instances' }}</h2>
 				<button
 					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-[#22c55e] transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
 					@click="router.push('/library')"
 				>
-					<span>Все сборки</span>
+					<span>{{ isRu ? 'Все сборки' : 'All instances' }}</span>
 					<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<polyline points="9 18 15 12 9 6"></polyline>
 					</svg>
@@ -269,7 +279,7 @@ onUnmounted(() => {
 							<line x1="5" y1="12" x2="19" y2="12"></line>
 						</svg>
 					</div>
-					<span class="text-xs font-semibold">Новая сборка</span>
+					<span class="text-xs font-semibold">{{ isRu ? 'Новая сборка' : 'New instance' }}</span>
 				</div>
 			</div>
 		</div>

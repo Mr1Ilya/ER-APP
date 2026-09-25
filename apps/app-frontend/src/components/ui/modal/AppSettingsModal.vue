@@ -46,63 +46,49 @@ const developerModeEnabled = defineMessage({
 	defaultMessage: 'Developer mode enabled.',
 })
 
-const tabs = [
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+const tabs = computed(() => [
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.appearance',
-			defaultMessage: 'Appearance',
-		}),
+		name: isRu.value ? 'Внешний вид' : 'Appearance',
 		icon: PaintbrushIcon,
 		content: AppearanceSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.language',
-			defaultMessage: 'Language',
-		}),
+		name: isRu.value ? 'Язык' : 'Language',
 		icon: LanguagesIcon,
 		content: LanguageSettings,
-		badge: commonMessages.beta,
+		badge: isRu.value ? 'Бета' : 'Beta',
 	},
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.privacy',
-			defaultMessage: 'Privacy',
-		}),
+		name: isRu.value ? 'Приватность' : 'Privacy',
 		icon: ShieldIcon,
 		content: PrivacySettings,
 	},
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.java-installations',
-			defaultMessage: 'Java installations',
-		}),
+		name: isRu.value ? 'Установки Java' : 'Java installations',
 		icon: CoffeeIcon,
 		content: JavaSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.default-instance-options',
-			defaultMessage: 'Default instance options',
-		}),
+		name: isRu.value ? 'Параметры по умолчанию' : 'Default instance options',
 		icon: GameIcon,
 		content: DefaultInstanceSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'app.settings.tabs.resource-management',
-			defaultMessage: 'Resource management',
-		}),
+		name: isRu.value ? 'Управление ресурсами' : 'Resource management',
 		icon: GaugeIcon,
 		content: ResourceManagementSettings,
 	},
 	{
-		name: commonSettingsMessages.featureFlags,
+		name: isRu.value ? 'Флаги функций' : 'Feature flags',
 		icon: ToggleRightIcon,
 		content: FeatureFlagSettings,
 		developerOnly: true,
 	},
-]
+])
 
 const modal = ref<InstanceType<typeof TabbedModal> | null>(null)
 
@@ -134,7 +120,7 @@ function devModeCount() {
 		settings.value.developer_mode = !!themeStore.devMode
 		devModeCounter.value = 0
 
-		if (!themeStore.devMode && tabs[modal.value!.selectedTab].developerOnly) {
+		if (!themeStore.devMode && tabs.value[modal.value!.selectedTab].developerOnly) {
 			modal.value!.setTab(0)
 		}
 	}
@@ -170,11 +156,12 @@ async function handleManualCheck() {
 	checkStatusMessage.value = null
 	const res = await triggerCheckForUpdates(true)
 	if (res && res.updateFound) {
-		checkStatusMessage.value = `Найдено обновление v${res.version}!`
+		checkStatusMessage.value = isRu.value ? `Найдено обновление v${res.version}!` : `Found update v${res.version}!`
 	} else if (!availableUpdate.value) {
-		checkStatusMessage.value = 'У вас последняя версия'
+		const latestMsg = isRu.value ? 'У вас последняя версия' : 'You have the latest version'
+		checkStatusMessage.value = latestMsg
 		setTimeout(() => {
-			if (checkStatusMessage.value === 'У вас последняя версия') {
+			if (checkStatusMessage.value === latestMsg) {
 				checkStatusMessage.value = null
 			}
 		}, 4000)
@@ -183,21 +170,21 @@ async function handleManualCheck() {
 
 const updateButtonLabel = computed(() => {
 	if (isCheckingUpdates.value) {
-		return 'Проверка...'
+		return isRu.value ? 'Проверка...' : 'Checking...'
 	}
 	if (downloading.value) {
-		return `Загрузка ${downloadPercent.value}%`
+		return isRu.value ? `Загрузка ${downloadPercent.value}%` : `Downloading ${downloadPercent.value}%`
 	}
 	if (finishedDownloading.value) {
-		return 'Перезапустить'
+		return isRu.value ? 'Перезапустить' : 'Restart'
 	}
 	if (availableUpdate.value) {
-		return `Обновить до v${availableUpdate.value.version}`
+		return isRu.value ? `Обновить до v${availableUpdate.value.version}` : `Update to v${availableUpdate.value.version}`
 	}
 	if (checkStatusMessage.value) {
 		return checkStatusMessage.value
 	}
-	return 'Проверить обновления'
+	return isRu.value ? 'Проверить обновления' : 'Check for updates'
 })
 
 const messages = defineMessages({
@@ -214,8 +201,8 @@ const messages = defineMessages({
 <template>
 	<TabbedModal ref="modal" :tabs="tabs.filter((t) => !t.developerOnly || themeStore.devMode)">
 		<template #title>
-			<span class="flex items-center gap-2 text-lg font-extrabold text-white">
-				<SettingsIcon class="w-5 h-5 text-[#22c55e]" /> {{ formatMessage(messages.title) }}
+			<span class="flex items-center gap-2 text-lg font-extrabold text-contrast">
+				<SettingsIcon class="w-5 h-5 text-brand" /> {{ formatMessage(messages.title) }}
 			</span>
 		</template>
 		<template #footer>
@@ -244,8 +231,8 @@ const messages = defineMessages({
 							<ModrinthIcon class="w-6 h-6" />
 						</button>
 						<div class="max-w-[200px]">
-							<p class="m-0 font-medium text-white">EndRage Launcher {{ version }}</p>
-							<p class="m-0 text-xs text-[#8e929b]">
+							<p class="m-0 font-medium text-contrast">EndRage Launcher {{ version }}</p>
+							<p class="m-0 text-xs text-secondary">
 								<span v-if="osPlatform === 'macos'">macOS</span>
 								<span v-else class="capitalize">{{ osPlatform }}</span>
 								{{ osVersion }}
@@ -254,11 +241,11 @@ const messages = defineMessages({
 					</div>
 					<button
 						type="button"
-						class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border"
+						class="px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border"
 						:class="[
 							availableUpdate
-								? 'bg-[#22c55e] text-black border-[#22c55e] font-semibold hover:bg-[#16a34a]'
-								: 'bg-[#22242b] text-[#9ca3af] hover:text-white hover:bg-[#2b2d36] border-[#383c46]',
+								? 'bg-brand text-black border-brand font-semibold hover:brightness-110'
+								: 'bg-surface-3 text-secondary hover:text-contrast hover:bg-surface-4 border-divider',
 							isCheckingUpdates || downloading ? 'opacity-80 cursor-wait' : ''
 						]"
 						:disabled="isCheckingUpdates"

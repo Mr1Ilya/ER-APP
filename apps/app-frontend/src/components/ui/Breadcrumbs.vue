@@ -67,7 +67,11 @@ const breadcrumbs = computed<Breadcrumb[]>(() => {
 	return additionalContext ? [additionalContext as Breadcrumb, ...crumbs] : crumbs
 })
 
-const breadcrumbTranslations: Record<string, string> = {
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+const enToRu: Record<string, string> = {
 	'Home': 'Главная',
 	'Library': 'Мои сборки',
 	'Browse': 'Контент',
@@ -77,9 +81,23 @@ const breadcrumbTranslations: Record<string, string> = {
 	'Create instance': 'Создать сборку',
 }
 
+const ruToEn: Record<string, string> = {
+	'Главная': 'Home',
+	'Мои сборки': 'Library',
+	'Контент': 'Browse',
+	'Скины': 'Skins',
+	'Настройки': 'Settings',
+	'Новая сборка': 'New instance',
+	'Создать сборку': 'Create instance',
+}
+
 function resolveLabel(name: string): string {
 	const raw = name.charAt(0) === '?' ? breadcrumbData.getName(name.slice(1)) : name
-	return breadcrumbTranslations[raw] || raw
+	if (isRu.value) {
+		return enToRu[raw] || raw
+	} else {
+		return ruToEn[raw] || raw
+	}
 }
 
 // Overflow detection

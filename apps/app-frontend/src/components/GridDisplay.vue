@@ -31,6 +31,33 @@ const { handleError } = injectNotificationManager()
 
 const { formatMessage } = useVIntl()
 
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+function translateSortOption(option) {
+	if (!isRu.value) return option
+	switch (option) {
+		case 'Name': return 'Имя'
+		case 'Last played': return 'Недавно запущенные'
+		case 'Date created': return 'Дата создания'
+		case 'Date modified': return 'Дата изменения'
+		case 'Game version': return 'Версия игры'
+		default: return option
+	}
+}
+
+function translateGroupOption(option) {
+	if (!isRu.value) return option
+	switch (option) {
+		case 'Group': return 'Группа'
+		case 'Loader': return 'Загрузчик'
+		case 'Game version': return 'Версия игры'
+		case 'None': return 'Нет'
+		default: return option
+	}
+}
+
 const props = defineProps({
 	instances: {
 		type: Array,
@@ -276,7 +303,7 @@ const filteredResults = computed(() => {
 			v-model="search"
 			:icon="SearchIcon"
 			type="text"
-			placeholder="Search"
+			:placeholder="isRu ? 'Поиск...' : 'Search'"
 			clearable
 			wrapper-class="flex-1"
 		/>
@@ -288,8 +315,8 @@ const filteredResults = computed(() => {
 			:options="['Name', 'Last played', 'Date created', 'Date modified', 'Game version']"
 			placeholder="Select..."
 		>
-			<span class="font-semibold text-primary">Sort by: </span>
-			<span class="font-semibold text-secondary">{{ selected }}</span>
+			<span class="font-semibold text-primary">{{ isRu ? 'Сортировка: ' : 'Sort by: ' }}</span>
+			<span class="font-semibold text-secondary">{{ translateSortOption(selected) }}</span>
 		</DropdownSelect>
 		<DropdownSelect
 			v-slot="{ selected }"
@@ -299,8 +326,8 @@ const filteredResults = computed(() => {
 			:options="['Group', 'Loader', 'Game version', 'None']"
 			placeholder="Select..."
 		>
-			<span class="font-semibold text-primary">Group by: </span>
-			<span class="font-semibold text-secondary">{{ selected }}</span>
+			<span class="font-semibold text-primary">{{ isRu ? 'Группировка: ' : 'Group by: ' }}</span>
+			<span class="font-semibold text-secondary">{{ translateGroupOption(selected) }}</span>
 		</DropdownSelect>
 	</div>
 	<Accordion
@@ -330,14 +357,14 @@ const filteredResults = computed(() => {
 	</Accordion>
 	<ConfirmDeleteInstanceModal ref="confirmModal" @delete="deleteInstance" />
 	<ContextMenu ref="instanceOptions" @option-clicked="handleOptionsClick">
-		<template #play> <PlayIcon /> Play </template>
-		<template #stop> <StopCircleIcon /> Stop </template>
-		<template #add_content> <PlusIcon /> Add content </template>
-		<template #edit> <EyeIcon /> View instance </template>
-		<template #duplicate> <ClipboardCopyIcon /> Duplicate instance</template>
-		<template #delete> <TrashIcon /> Delete </template>
-		<template #open> <FolderOpenIcon /> Open folder </template>
-		<template #copy> <ClipboardCopyIcon /> Copy path </template>
+		<template #play> <PlayIcon /> {{ isRu ? 'Запустить' : 'Play' }} </template>
+		<template #stop> <StopCircleIcon /> {{ isRu ? 'Остановить' : 'Stop' }} </template>
+		<template #add_content> <PlusIcon /> {{ isRu ? 'Добавить контент' : 'Add content' }} </template>
+		<template #edit> <EyeIcon /> {{ isRu ? 'Открыть сборку' : 'View instance' }} </template>
+		<template #duplicate> <ClipboardCopyIcon /> {{ isRu ? 'Дублировать сборку' : 'Duplicate instance' }}</template>
+		<template #delete> <TrashIcon /> {{ isRu ? 'Удалить' : 'Delete' }} </template>
+		<template #open> <FolderOpenIcon /> {{ isRu ? 'Открыть папку' : 'Open folder' }} </template>
+		<template #copy> <ClipboardCopyIcon /> {{ isRu ? 'Скопировать путь' : 'Copy path' }} </template>
 	</ContextMenu>
 </template>
 <style lang="scss" scoped>

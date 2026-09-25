@@ -50,8 +50,11 @@ import {
 	set_custom_skin_order,
 } from '@/helpers/skins.ts'
 import { hasPride26Badge } from '@/helpers/user-campaigns.ts'
+import i18n from '@/i18n.config'
 import { handleSevereError } from '@/store/error'
 import { useTheming } from '@/store/state'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 type UnlistenFn = () => void
 type VirtualSkinSectionListExpose = {
@@ -1160,10 +1163,12 @@ async function checkUserChanges() {
 					<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 2 1.67h1.49v9.14a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-9.14h1.49a2 2 0 0 0 2-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z"></path>
 				</svg>
 			</div>
-			<span class="text-xs font-black tracking-widest text-[#22c55e] uppercase bg-[#22c55e]/15 px-3 py-1 rounded-full border border-[#22c55e]/30">SOON</span>
-			<h2 class="text-2xl font-black text-[var(--er-text)] m-0">Скоро будет своя система скинов</h2>
-			<p class="text-sm text-[var(--er-text-secondary)] leading-relaxed max-w-md m-0">
-				Смена скинов через каталог прямо сейчас доступна для лицензионных аккаунтов Microsoft. Собственная система скинов EndRage для всех аккаунтов находится в разработке!
+			<span class="text-xs font-black tracking-widest text-brand uppercase bg-brand/15 px-3 py-1 rounded-full border border-brand/30">SOON</span>
+			<h2 class="text-2xl font-black text-contrast m-0">
+				{{ isRu ? 'Скоро будет своя система скинов' : 'Custom Skin System Coming Soon' }}
+			</h2>
+			<p class="text-sm text-secondary leading-relaxed max-w-md m-0">
+				{{ isRu ? 'Смена скинов через каталог прямо сейчас доступна для лицензионных аккаунтов Microsoft. Собственная система скинов EndRage для всех аккаунтов находится в разработке!' : 'Skin management via catalog is currently available for licensed Microsoft accounts. EndRage custom skin system for all accounts is currently under development!' }}
 			</p>
 		</div>
 	</div>
