@@ -1,6 +1,6 @@
 [package]
 name = "theseus_gui"
-version = "1.0.4"
+version = "1.0.5"
 edition.workspace = true
 description = "EndRage Launcher — a desktop application for managing your Minecraft mods"
 repository = "https://github.com/Mr1Ilya/ER-APP"
