@@ -137,10 +137,25 @@ async function handleAddMicrosoft() {
 }
 
 function getAvatar(account: Account) {
-	if (account.profile?.id) {
-		return `https://crafatar.com/avatars/${account.profile.id}?size=64&overlay=true`
+	if (!account.profile) return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	const cleanId = (account.profile.id || '').replace(/-/g, '')
+	if (cleanId) {
+		return `https://mc-heads.net/avatar/${cleanId}/64`
+	}
+	if (account.profile.name) {
+		return `https://mc-heads.net/avatar/${encodeURIComponent(account.profile.name)}/64`
 	}
 	return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+}
+
+function handleAvatarError(e: Event, account: Account) {
+	const img = e.target as HTMLImageElement
+	const name = account.profile?.name
+	if (name && !img.src.includes('minotar.net')) {
+		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
+	} else if (!img.src.includes('steve_head')) {
+		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	}
 }
 
 function isOffline(account: Account) {
@@ -256,7 +271,7 @@ function isOffline(account: Account) {
 									:src="getAvatar(account)"
 									class="w-10 h-10 rounded-xl bg-surface-1 border border-divider shrink-0 object-cover"
 									alt="avatar"
-									@error="($event.target as HTMLImageElement).src = 'https://launcher-files.modrinth.com/assets/steve_head.png'"
+									@error="(e) => handleAvatarError(e, account)"
 								/>
 								<div class="flex flex-col min-w-0">
 									<div class="flex items-center gap-2">

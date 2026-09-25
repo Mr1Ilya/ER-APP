@@ -91,9 +91,10 @@ function toggleItem(item: T) {
 	}
 
 	.selected {
-		color: var(--color-brand);
-		background-color: var(--color-brand-highlight);
-		border: 1px solid var(--color-brand);
+		color: #ffffff !important;
+		background-color: rgba(255, 255, 255, 0.16) !important;
+		border: 1px solid rgba(255, 255, 255, 0.3) !important;
+		font-weight: 600;
 	}
 }
 </style>

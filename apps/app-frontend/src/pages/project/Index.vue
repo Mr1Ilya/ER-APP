@@ -45,6 +45,17 @@
 			/>
 		</Teleport>
 		<div class="flex flex-col gap-4 p-6">
+			<div v-if="!projectInstallContext" class="flex items-center gap-2">
+				<button
+					class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-3 hover:bg-surface-4 text-secondary hover:text-contrast text-xs font-semibold cursor-pointer border border-divider transition-all"
+					@click="router.back()"
+				>
+					<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="15 18 9 12 15 6"></polyline>
+					</svg>
+					<span>{{ isRu ? 'Назад' : 'Back' }}</span>
+				</button>
+			</div>
 			<div
 				v-if="projectInstallContext"
 				class="sticky top-0 z-20 -mx-6 -mt-6 rounded-tl-[--radius-xl] border-0 border-b border-solid bg-surface-1 p-3 border-surface-5"
@@ -328,6 +339,11 @@ const route = useRoute()
 const router = useRouter()
 const breadcrumbs = useBreadcrumbs()
 const themeStore = useTheming()
+
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
 const { formatMessage } = useVIntl()
 
 const messages = defineMessages({

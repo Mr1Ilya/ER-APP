@@ -202,7 +202,7 @@ const messages = defineMessages({
 	<TabbedModal ref="modal" :tabs="tabs.filter((t) => !t.developerOnly || themeStore.devMode)">
 		<template #title>
 			<span class="flex items-center gap-2 text-lg font-extrabold text-contrast">
-				<SettingsIcon class="w-5 h-5 text-brand" /> {{ formatMessage(messages.title) }}
+				<SettingsIcon class="w-5 h-5 text-contrast" /> {{ isRu ? 'Настройки' : 'Settings' }}
 			</span>
 		</template>
 		<template #footer>

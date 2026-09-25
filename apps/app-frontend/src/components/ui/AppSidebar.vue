@@ -28,11 +28,29 @@ const activeAccount = computed(() => {
 })
 
 const avatarUrl = computed(() => {
-	if (activeAccount.value?.profile?.id) {
-		return `https://crafatar.com/avatars/${activeAccount.value.profile.id}?size=64&overlay=true`
+	const acc = activeAccount.value
+	if (!acc?.profile) {
+		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	}
+	const cleanId = (acc.profile.id || '').replace(/-/g, '')
+	if (cleanId) {
+		return `https://mc-heads.net/avatar/${cleanId}/64`
+	}
+	if (acc.profile.name) {
+		return `https://mc-heads.net/avatar/${encodeURIComponent(acc.profile.name)}/64`
 	}
 	return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 })
+
+function onAvatarError(e: Event) {
+	const img = e.target as HTMLImageElement
+	const name = activeAccount.value?.profile?.name
+	if (name && !img.src.includes('minotar.net')) {
+		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
+	} else if (!img.src.includes('steve_head')) {
+		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	}
+}
 
 import i18n from '@/i18n.config'
 
@@ -84,7 +102,7 @@ const navItems = computed(() => [
 		id: 'content',
 		label: isRu.value ? 'Контент' : 'Browse',
 		to: '/browse/modpack',
-		matchPrefix: '/browse',
+		matchPrefix: ['/browse', '/project'],
 		icon: 'content',
 	},
 	{
@@ -95,19 +113,25 @@ const navItems = computed(() => [
 	},
 ])
 
-function isItemActive(item: { to: string; exact?: boolean; matchPrefix?: string }) {
+function isItemActive(item: { to: string; exact?: boolean; matchPrefix?: string | string[] }) {
 	if (item.exact) {
 		return route.path === item.to
 	}
+	if (item.id === 'content') {
+		return route.path.startsWith('/browse') || route.path.startsWith('/project')
+	}
 	if (item.matchPrefix) {
-		return route.path === item.to || route.path.startsWith(item.to + '/') || route.path.startsWith(item.matchPrefix)
+		const prefixes = Array.isArray(item.matchPrefix) ? item.matchPrefix : [item.matchPrefix]
+		return prefixes.some((p) => route.path === p || route.path.startsWith(p + '/'))
 	}
 	return route.path.startsWith(item.to)
 }
 
 function navigate(to: string) {
-	router.push(to)
+	if (route.path === to) return
+	router.push(to).catch(() => {})
 }
+
 </script>
 
 <template>
@@ -253,6 +277,7 @@ function navigate(to: string) {
 					:src="avatarUrl"
 					alt="Avatar"
 					class="w-8 h-8 rounded-lg bg-[var(--er-subtle-bg)] object-cover shrink-0 border border-white/10"
+					@error="onAvatarError"
 				/>
 				<div v-if="!collapsed" class="flex flex-col min-w-0 flex-1">
 					<span class="text-xs font-semibold text-[var(--er-text)] truncate leading-tight">

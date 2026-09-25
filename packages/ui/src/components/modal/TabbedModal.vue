@@ -92,7 +92,7 @@ defineExpose({ show, hide, selectedTab, setTab })
 					:class="`flex gap-2.5 items-center text-left rounded-xl px-4 py-2.5 border-none text-nowrap font-medium text-sm cursor-pointer active:scale-[0.98] transition-all no-underline ${!tab.href && selectedTab === index ? 'bg-surface-4 text-contrast font-semibold shadow-sm' : 'bg-transparent text-secondary hover:bg-surface-3 hover:text-contrast'}`"
 					@click="!tab.href && setTab(index)"
 				>
-					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" :class="!tab.href && selectedTab === index ? 'text-brand' : 'text-secondary'" />
+					<component :is="tab.icon" class="w-4 h-4 flex-shrink-0" :class="!tab.href && selectedTab === index ? 'text-contrast' : 'text-secondary'" />
 					<span>{{ typeof tab.name === 'string' ? tab.name : formatMessage(tab.name) }}</span>
 					<span
 						v-if="tab.badge"

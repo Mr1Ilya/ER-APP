@@ -1,17 +1,17 @@
 <template>
 	<button
-		class="group flex w-full hover:cursor-pointer items-center gap-3 rounded-[20px] p-3 text-left transition-all hover:brightness-110 active:scale-[0.98] border-none"
-		:class="selected ? 'bg-brand-highlight' : 'bg-surface-4'"
+		class="group flex w-full hover:cursor-pointer items-center gap-3 rounded-[20px] p-3 text-left transition-all hover:brightness-110 active:scale-[0.98] border border-solid"
+		:class="selected ? 'bg-surface-5 border-white/30 shadow-md' : 'bg-surface-4 border-transparent'"
 		@click="$emit('click')"
 	>
 		<div
 			class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-solid"
-			:class="selected ? 'border-brand' : 'border-surface-5'"
+			:class="selected ? 'border-white/40 bg-white/10' : 'border-surface-5'"
 		>
 			<component
 				:is="icon"
 				class="size-8 text-secondary"
-				:class="selected ? '!stroke-brand' : ''"
+				:class="selected ? '!stroke-white !text-white' : ''"
 				stroke-width="1.5"
 			/>
 		</div>

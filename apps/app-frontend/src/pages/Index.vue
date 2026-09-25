@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { injectNotificationManager } from '@erteam/ui'
 import dayjs from 'dayjs'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { instance_listener } from '@/helpers/events'
 import { list, run } from '@/helpers/instance'
 import type { GameInstance } from '@/helpers/types'
 import { useBreadcrumbs } from '@/store/breadcrumbs'
-import bg1 from '@/assets/wallpapers/minecraft_bg_1.jpg'
-import bg2 from '@/assets/wallpapers/minecraft_bg_2.jpg'
-import bg3 from '@/assets/wallpapers/minecraft_bg_3.jpg'
 import defaultMinecraftBlock from '@/assets/minecraft_block.png'
 
 import i18n from '@/i18n.config'
@@ -36,7 +33,12 @@ const launchingInstanceId = ref<string | null>(null)
 const isMuted = ref(false)
 const currentWallpaperIndex = ref(0)
 
-const wallpapers = [bg1, bg2, bg3]
+const wallpaperModules = import.meta.glob<{ default: string }>(
+	'@/assets/wallpapers/*.{png,jpg,jpeg,webp}',
+	{ eager: true },
+)
+const wallpapers = Object.values(wallpaperModules).map((m) => m.default)
+
 
 const recentInstances = computed(() =>
 	instances.value
@@ -102,12 +104,17 @@ function formatPlaytime(seconds?: number) {
 	return `${hours} ${isRu.value ? 'ч' : 'h'}`
 }
 
+let unlistenInstance: (() => void) | null = null
+
 onMounted(async () => {
 	await fetchInstances()
-})
-
-const unlistenInstance = await instance_listener(async () => {
-	await fetchInstances()
+	try {
+		unlistenInstance = await instance_listener(async () => {
+			await fetchInstances()
+		})
+	} catch (e) {
+		console.error('Failed to attach instance listener in Index.vue', e)
+	}
 })
 
 onUnmounted(() => {
@@ -115,6 +122,7 @@ onUnmounted(() => {
 		unlistenInstance()
 	}
 })
+
 </script>
 
 <template>

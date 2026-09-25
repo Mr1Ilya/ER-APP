@@ -352,6 +352,7 @@ async function setAccount(account: MinecraftCredential) {
 	defaultUser.value = account.profile.id
 	await set_default_user(account.profile.id).catch(handleError)
 	await refreshValues()
+	window.dispatchEvent(new CustomEvent('endrage-account-changed'))
 	emit('change')
 }
 

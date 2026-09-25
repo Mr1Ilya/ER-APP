@@ -80,44 +80,33 @@ watch(
 	{ immediate: true },
 )
 
+import i18n from '@/i18n.config'
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
 const tabs = computed<TabbedModalTab[]>(() => [
 	{
-		name: defineMessage({
-			id: 'instance.settings.tabs.general',
-			defaultMessage: 'General',
-		}),
+		name: isRu.value ? 'Основные' : 'General',
 		icon: InfoIcon,
 		content: GeneralSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'instance.settings.tabs.installation',
-			defaultMessage: 'Installation',
-		}),
+		name: isRu.value ? 'Установка' : 'Installation',
 		icon: WrenchIcon,
 		content: InstallationSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'instance.settings.tabs.window',
-			defaultMessage: 'Window',
-		}),
+		name: isRu.value ? 'Окно игры' : 'Window',
 		icon: MonitorIcon,
 		content: WindowSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'instance.settings.tabs.java',
-			defaultMessage: 'Java and memory',
-		}),
+		name: isRu.value ? 'Java и память' : 'Java and memory',
 		icon: CoffeeIcon,
 		content: JavaSettings,
 	},
 	{
-		name: defineMessage({
-			id: 'instance.settings.tabs.hooks',
-			defaultMessage: 'Launch hooks',
-		}),
+		name: isRu.value ? 'Хуки запуска' : 'Launch hooks',
 		icon: CodeIcon,
 		content: HooksSettings,
 	},
@@ -193,7 +182,7 @@ defineExpose({ show, hide })
 				/>
 				{{ instance.name }} <ChevronRightIcon />
 				<span class="font-extrabold text-contrast">{{
-					formatMessage(commonMessages.settingsLabel)
+					isRu ? 'Настройки' : 'Settings'
 				}}</span>
 			</span>
 		</template>
