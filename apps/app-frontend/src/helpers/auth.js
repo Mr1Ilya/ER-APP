@@ -37,6 +37,10 @@ export async function login_offline(username, useElyby) {
 	return await invoke('plugin:auth|login_offline', { username, useElyby })
 }
 
+export async function login_endrage(username, token, uuidStr) {
+	return await invoke('plugin:auth|login_endrage', { username, token, uuidStr })
+}
+
 /**
  * Retrieves the default user
  * @return {Promise<UUID | undefined>}

@@ -32,6 +32,9 @@ const avatarUrl = computed(() => {
 	if (!acc?.profile) {
 		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	}
+	if (acc.access_token?.startsWith('endrage')) {
+		return `https://skins.end-rage.ru/head/${encodeURIComponent(acc.profile.name)}?size=64`
+	}
 	if (acc.access_token?.startsWith('offline')) {
 		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	}
@@ -47,6 +50,12 @@ const avatarUrl = computed(() => {
 
 function onAvatarError(e: Event) {
 	const img = e.target as HTMLImageElement
+	if (activeAccount.value?.access_token?.startsWith('endrage')) {
+		if (!img.src.includes('127.0.0.1:4003')) {
+			img.src = `http://127.0.0.1:4003/head/${encodeURIComponent(activeAccount.value?.profile?.name || '')}?size=64`
+			return
+		}
+	}
 	const name = activeAccount.value?.profile?.name
 	if (name && !img.src.includes('minotar.net')) {
 		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
@@ -61,8 +70,11 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const accountTypeLabel = computed(() => {
 	if (!activeAccount.value) return isRu.value ? 'Нажмите для входа' : 'Click to log in'
+	if (activeAccount.value.access_token?.startsWith('endrage')) {
+		return 'EndRage Auth'
+	}
 	if (activeAccount.value.access_token?.startsWith('offline')) {
-		return isRu.value ? 'Офлайн аккаунт' : 'Offline account'
+		return isRu.value ? 'Офлайн (Ник)' : 'Offline account'
 	}
 	return isRu.value ? 'Лицензия Microsoft' : 'Microsoft account'
 })

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { get_default_user, login, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
+import { get_default_user, login, login_endrage, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
 import i18n from '@/i18n.config'
 
 const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const isVisible = ref(false)
 const activeTab = ref<'list' | 'add'>('list')
-const addType = ref<'offline' | 'microsoft'>('offline')
+const addType = ref<'microsoft' | 'endrage' | 'offline'>('endrage')
 
 const offlineNickname = ref('')
+const endrageUsername = ref('')
+const endragePassword = ref('')
 const isActionRunning = ref(false)
 const errorMessage = ref<string | null>(null)
 
@@ -136,8 +138,61 @@ async function handleAddMicrosoft() {
 	}
 }
 
+async function handleAddEndrage() {
+	const username = endrageUsername.value.trim()
+	const password = endragePassword.value
+	if (!username || !password) {
+		errorMessage.value = isRu.value ? 'Пожалуйста, введите логин и пароль' : 'Please enter username and password'
+		return
+	}
+
+	try {
+		isActionRunning.value = true
+		errorMessage.value = null
+
+		let resp: Response
+		try {
+			resp = await fetch('https://auth.end-rage.ru/authenticate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ username, password, requestUser: true }),
+			})
+		} catch {
+			// Fallback to local address if domain is not routed yet
+			resp = await fetch('http://127.0.0.1:4002/authenticate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ username, password, requestUser: true }),
+			})
+		}
+
+		const data = await resp.json()
+		if (!resp.ok) {
+			throw new Error(data.errorMessage || data.error || (isRu.value ? 'Неверный логин или пароль' : 'Authentication failed'))
+		}
+
+		const profile = data.selectedProfile
+		const account = await login_endrage(profile.name, data.accessToken, profile.id)
+		if (account?.profile?.id) {
+			await set_default_user(account.profile.id)
+		}
+		endrageUsername.value = ''
+		endragePassword.value = ''
+		notifyAccountChanged()
+		await loadAccounts()
+		activeTab.value = 'list'
+	} catch (e: any) {
+		errorMessage.value = e?.message || (isRu.value ? 'Не удалось войти в аккаунт EndRage' : 'Failed to sign in to EndRage account')
+	} finally {
+		isActionRunning.value = false
+	}
+}
+
 function getAvatar(account: Account) {
 	if (!account.profile) return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	if (account.access_token?.startsWith('endrage')) {
+		return `https://skins.end-rage.ru/head/${encodeURIComponent(account.profile.name)}?size=64`
+	}
 	if (account.access_token?.startsWith('offline')) {
 		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	}
@@ -153,12 +208,23 @@ function getAvatar(account: Account) {
 
 function handleAvatarError(e: Event, account: Account) {
 	const img = e.target as HTMLImageElement
+	if (account.access_token?.startsWith('endrage')) {
+		// Fallback to local skins port if domain is not yet active
+		if (!img.src.includes('127.0.0.1:4003')) {
+			img.src = `http://127.0.0.1:4003/head/${encodeURIComponent(account.profile.name)}?size=64`
+			return
+		}
+	}
 	const name = account.profile?.name
 	if (name && !img.src.includes('minotar.net')) {
 		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
 	} else if (!img.src.includes('steve_head')) {
 		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	}
+}
+
+function isEndRage(account: Account) {
+	return Boolean(account.access_token?.startsWith('endrage'))
 }
 
 function isOffline(account: Account) {
@@ -289,9 +355,9 @@ function isOffline(account: Account) {
 									<span class="text-xs text-secondary flex items-center gap-1.5 mt-0.5">
 										<span
 											class="w-1.5 h-1.5 rounded-full"
-											:class="isOffline(account) ? 'bg-blue-400' : 'bg-brand'"
+											:class="isEndRage(account) ? 'bg-purple-400' : isOffline(account) ? 'bg-blue-400' : 'bg-brand'"
 										></span>
-										{{ isOffline(account) ? (isRu ? 'Офлайн (Пиратка)' : 'Offline (Free)') : (isRu ? 'Лицензия Microsoft' : 'Microsoft Account') }}
+										{{ isEndRage(account) ? 'EndRage Auth' : isOffline(account) ? (isRu ? 'Офлайн (Ник)' : 'Offline (Free)') : (isRu ? 'Лицензия Microsoft' : 'Microsoft Account') }}
 									</span>
 								</div>
 							</div>
@@ -321,75 +387,109 @@ function isOffline(account: Account) {
 
 					<!-- TAB 2: ADD ACCOUNT -->
 					<div v-if="activeTab === 'add'" class="flex flex-col gap-4">
-						<!-- Sub-type selector -->
-						<div class="grid grid-cols-2 gap-2">
+						<!-- 3 Auth Types Selector -->
+						<div class="grid grid-cols-3 gap-2">
+							<!-- 1. Microsoft -->
 							<button
-								class="p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'offline' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
-								@click="addType = 'offline'"
-							>
-								<div class="flex items-center justify-between w-full">
-									<span class="text-xs font-black uppercase tracking-wider text-blue-400">
-										{{ isRu ? 'Офлайн / Пиратка' : 'Offline / Free' }}
-									</span>
-									<span v-if="addType === 'offline'" class="w-2 h-2 rounded-full bg-brand"></span>
-								</div>
-								<span class="text-sm font-bold text-contrast">
-									{{ isRu ? 'Вход по нику' : 'Enter Nickname' }}
-								</span>
-								<span class="text-[11px] text-secondary">
-									{{ isRu ? 'Без пароля, мгновенная игра' : 'No password, instant play' }}
-								</span>
-							</button>
-
-							<button
-								class="p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
+								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
 								:class="addType === 'microsoft' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 								@click="addType = 'microsoft'"
 							>
 								<div class="flex items-center justify-between w-full">
-									<span class="text-xs font-black uppercase tracking-wider text-brand">
+									<span class="text-[10px] font-black uppercase tracking-wider text-brand">
 										{{ isRu ? 'Лицензия' : 'Official' }}
 									</span>
-									<span v-if="addType === 'microsoft'" class="w-2 h-2 rounded-full bg-brand"></span>
+									<span v-if="addType === 'microsoft'" class="w-1.5 h-1.5 rounded-full bg-brand"></span>
 								</div>
-								<span class="text-sm font-bold text-contrast">Microsoft</span>
-								<span class="text-[11px] text-secondary">
-									{{ isRu ? 'Официальный аккаунт' : 'Official account' }}
+								<span class="text-xs font-bold text-contrast">Microsoft</span>
+								<span class="text-[10px] text-secondary line-clamp-1">
+									{{ isRu ? 'Официальный' : 'Official' }}
+								</span>
+							</button>
+
+							<!-- 2. EndRage Auth -->
+							<button
+								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
+								:class="addType === 'endrage' ? 'bg-surface-3 border-purple-500/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								@click="addType = 'endrage'"
+							>
+								<div class="flex items-center justify-between w-full">
+									<span class="text-[10px] font-black uppercase tracking-wider text-purple-400">
+										EndRage
+									</span>
+									<span v-if="addType === 'endrage'" class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+								</div>
+								<span class="text-xs font-bold text-contrast">EndRage Auth</span>
+								<span class="text-[10px] text-secondary line-clamp-1">
+									{{ isRu ? 'Аккаунт + Скин' : 'Account + Skin' }}
+								</span>
+							</button>
+
+							<!-- 3. Offline / Free -->
+							<button
+								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
+								:class="addType === 'offline' ? 'bg-surface-3 border-blue-400/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								@click="addType = 'offline'"
+							>
+								<div class="flex items-center justify-between w-full">
+									<span class="text-[10px] font-black uppercase tracking-wider text-blue-400">
+										{{ isRu ? 'Офлайн' : 'Offline' }}
+									</span>
+									<span v-if="addType === 'offline'" class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+								</div>
+								<span class="text-xs font-bold text-contrast">{{ isRu ? 'По нику' : 'Free' }}</span>
+								<span class="text-[10px] text-secondary line-clamp-1">
+									{{ isRu ? 'Без пароля' : 'No password' }}
 								</span>
 							</button>
 						</div>
 
-						<!-- Offline form -->
-						<div v-if="addType === 'offline'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
-							<label class="text-xs font-semibold text-contrast">
-								{{ isRu ? 'Игровой никнейм' : 'Player Nickname' }}
-							</label>
-							<div class="relative flex items-center">
+						<!-- EndRage Auth Form -->
+						<div v-if="addType === 'endrage'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
+							<div class="flex flex-col gap-1">
+								<label class="text-xs font-semibold text-contrast">
+									{{ isRu ? 'Логин или Email на End-Rage.Ru' : 'Username or Email on End-Rage' }}
+								</label>
 								<input
-									v-model="offlineNickname"
+									v-model="endrageUsername"
 									type="text"
-									:placeholder="isRu ? 'Например: EndRagePlayer' : 'e.g. EndRagePlayer'"
-									maxlength="16"
-									class="w-full bg-surface-1 border border-divider focus:border-brand rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
-									@keyup.enter="handleAddOffline"
+									:placeholder="isRu ? 'Например: EndRagePlayer' : 'Username or email'"
+									class="w-full bg-surface-1 border border-divider focus:border-purple-400 rounded-xl px-3.5 py-2 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
 								/>
 							</div>
-							<p class="text-[11px] text-secondary m-0">
-								{{ isRu ? 'Никнейм должен состоять от 3 до 16 символов.' : 'Nickname must be between 3 and 16 characters.' }}
-							</p>
+
+							<div class="flex flex-col gap-1">
+								<label class="text-xs font-semibold text-contrast">
+									{{ isRu ? 'Пароль' : 'Password' }}
+								</label>
+								<input
+									v-model="endragePassword"
+									type="password"
+									placeholder="••••••••"
+									class="w-full bg-surface-1 border border-divider focus:border-purple-400 rounded-xl px-3.5 py-2 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
+									@keyup.enter="handleAddEndrage"
+								/>
+							</div>
+
+							<div class="flex items-center justify-between text-[11px] text-secondary">
+								<span>{{ isRu ? 'Скин и плащ загрузятся с сайта' : 'Skin and cape will load automatically' }}</span>
+								<a href="https://end-rage.ru" target="_blank" class="text-purple-400 hover:underline">
+									{{ isRu ? 'Регистрация' : 'Register' }}
+								</a>
+							</div>
+
 							<button
-								:disabled="!offlineNickname.trim() || isActionRunning"
-								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-brand hover:brightness-110 disabled:opacity-50 text-black font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
-								@click="handleAddOffline"
+								:disabled="!endrageUsername.trim() || !endragePassword || isActionRunning"
+								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+								@click="handleAddEndrage"
 							>
-								<span v-if="!isActionRunning">{{ isRu ? 'Добавить офлайн аккаунт' : 'Add offline account' }}</span>
-								<span v-else class="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full"></span>
+								<span v-if="!isActionRunning">{{ isRu ? 'Войти в аккаунт EndRage' : 'Sign in to EndRage' }}</span>
+								<span v-else class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
 							</button>
 						</div>
 
-						<!-- Microsoft form -->
-						<div v-else class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider text-center items-center">
+						<!-- Microsoft Form -->
+						<div v-else-if="addType === 'microsoft'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider text-center items-center">
 							<div class="w-12 h-12 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20 mt-1">
 								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 									<rect x="3" y="3" width="8" height="8" rx="1.5"></rect>
@@ -413,6 +513,34 @@ function isOffline(account: Account) {
 							>
 								<span v-if="!isActionRunning">{{ isRu ? 'Войти через Microsoft' : 'Sign in with Microsoft' }}</span>
 								<span v-else class="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full"></span>
+							</button>
+						</div>
+
+						<!-- Offline Form -->
+						<div v-else class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
+							<label class="text-xs font-semibold text-contrast">
+								{{ isRu ? 'Игровой никнейм' : 'Player Nickname' }}
+							</label>
+							<div class="relative flex items-center">
+								<input
+									v-model="offlineNickname"
+									type="text"
+									:placeholder="isRu ? 'Например: EndRagePlayer' : 'e.g. EndRagePlayer'"
+									maxlength="16"
+									class="w-full bg-surface-1 border border-divider focus:border-blue-400 rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
+									@keyup.enter="handleAddOffline"
+								/>
+							</div>
+							<p class="text-[11px] text-secondary m-0">
+								{{ isRu ? 'Никнейм должен состоять от 3 до 16 символов без пароля.' : 'Nickname must be between 3 and 16 characters.' }}
+							</p>
+							<button
+								:disabled="!offlineNickname.trim() || isActionRunning"
+								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+								@click="handleAddOffline"
+							>
+								<span v-if="!isActionRunning">{{ isRu ? 'Играть по нику' : 'Play with Nickname' }}</span>
+								<span v-else class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
 							</button>
 						</div>
 					</div>

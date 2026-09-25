@@ -10,6 +10,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             check_reachable,
             login,
             login_offline,
+            login_endrage,
             remove_user,
             get_default_user,
             set_default_user,
@@ -125,6 +126,48 @@ pub async fn login_offline(username: String, use_elyby: bool) -> Result<Credenti
         },
         access_token: access_token.to_string(),
         refresh_token: "offline".to_string(),
+        expires: Utc::now() + Duration::days(365 * 10),
+        active: true,
+    };
+
+    let state = theseus::State::get().await?;
+    credentials.upsert(&state.pool).await?;
+
+    Ok(credentials)
+}
+
+#[tauri::command]
+pub async fn login_endrage(
+    username: String,
+    token: String,
+    uuid_str: Option<String>,
+) -> Result<Credentials> {
+    let uuid = if let Some(ref u) = uuid_str {
+        uuid::Uuid::parse_str(u).unwrap_or_else(|_| {
+            let hash = md5::compute(format!("OfflinePlayer:{}", username).as_bytes());
+            let mut bytes = hash.0;
+            bytes[6] = (bytes[6] & 0x0f) | 0x30;
+            bytes[8] = (bytes[8] & 0x3f) | 0x80;
+            uuid::Uuid::from_bytes(bytes)
+        })
+    } else {
+        let hash = md5::compute(format!("OfflinePlayer:{}", username).as_bytes());
+        let mut bytes = hash.0;
+        bytes[6] = (bytes[6] & 0x0f) | 0x30;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        uuid::Uuid::from_bytes(bytes)
+    };
+
+    let credentials = Credentials {
+        offline_profile: MinecraftProfile {
+            id: uuid,
+            name: username.clone(),
+            skins: vec![],
+            capes: vec![],
+            fetch_time: Some(std::time::Instant::now()),
+        },
+        access_token: format!("endrage:{}", token),
+        refresh_token: "endrage".to_string(),
         expires: Utc::now() + Duration::days(365 * 10),
         active: true,
     };
