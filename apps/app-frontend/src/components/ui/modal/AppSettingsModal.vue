@@ -244,7 +244,7 @@ const messages = defineMessages({
 						class="px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border"
 						:class="[
 							availableUpdate
-								? 'bg-brand text-black border-brand font-semibold hover:brightness-110'
+								? 'bg-white text-black border-white/20 font-semibold hover:bg-gray-200'
 								: 'bg-surface-3 text-secondary hover:text-contrast hover:bg-surface-4 border-divider',
 							isCheckingUpdates || downloading ? 'opacity-80 cursor-wait' : ''
 						]"

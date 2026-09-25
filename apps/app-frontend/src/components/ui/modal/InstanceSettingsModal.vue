@@ -33,6 +33,7 @@ import { get_game_versions, get_loaders } from '@/helpers/tags'
 import { provideInstanceSettings } from '@/providers/instance-settings'
 
 import type { GameInstance } from '../../../helpers/types'
+import defaultMinecraftBlock from '@/assets/minecraft_block.png'
 
 const { formatMessage } = useVIntl()
 const queryClient = useQueryClient()
@@ -174,16 +175,16 @@ defineExpose({ show, hide })
 		:width="'min(928px, calc(95vw - 10rem))'"
 	>
 		<template #title>
-			<span class="flex items-center gap-2 text-lg font-semibold text-primary">
-				<Avatar
-					:src="instance.icon_path ? convertFileSrc(instance.icon_path) : undefined"
-					size="24px"
-					:tint-by="props.instance.id"
+			<span class="flex items-center gap-2.5 text-base font-semibold text-white/90">
+				<img
+					:src="instance.icon_path ? convertFileSrc(instance.icon_path) : defaultMinecraftBlock"
+					class="w-6 h-6 rounded-md object-contain border border-white/10"
+					alt="Icon"
+					@error="(e) => ((e.target as HTMLImageElement).src = defaultMinecraftBlock)"
 				/>
-				{{ instance.name }} <ChevronRightIcon />
-				<span class="font-extrabold text-contrast">{{
-					isRu ? 'Настройки' : 'Settings'
-				}}</span>
+				<span class="text-white font-bold">{{ instance.name }}</span>
+				<ChevronRightIcon class="w-4 h-4 text-white/40" />
+				<span class="text-white/70">{{ isRu ? 'Настройки' : 'Settings' }}</span>
 			</span>
 		</template>
 	</TabbedModal>

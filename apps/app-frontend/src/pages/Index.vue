@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { injectNotificationManager } from '@erteam/ui'
 import dayjs from 'dayjs'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { instance_listener } from '@/helpers/events'
@@ -9,6 +9,7 @@ import { list, run } from '@/helpers/instance'
 import type { GameInstance } from '@/helpers/types'
 import { useBreadcrumbs } from '@/store/breadcrumbs'
 import defaultMinecraftBlock from '@/assets/minecraft_block.png'
+import InstanceSettingsModal from '@/components/ui/modal/InstanceSettingsModal.vue'
 
 import i18n from '@/i18n.config'
 
@@ -84,12 +85,24 @@ async function handlePlay(instance: GameInstance | null) {
 	}
 }
 
-function handleOpenInstanceSettings(instanceId: string) {
-	router.push(`/instance/${instanceId}`)
+const showCreationModal = inject<() => void>('showCreationModal')
+const selectedSettingsInstance = ref<GameInstance | null>(null)
+const instanceSettingsModalRef = ref<any>(null)
+
+function handleOpenInstanceSettings(inst: GameInstance | null) {
+	if (!inst) return
+	selectedSettingsInstance.value = inst
+	nextTick(() => {
+		instanceSettingsModalRef.value?.show()
+	})
 }
 
 function handleCreateNewInstance() {
-	router.push('/library?action=create')
+	if (showCreationModal) {
+		showCreationModal()
+	} else {
+		router.push('/library?action=create')
+	}
 }
 
 function toggleWallpaper() {
@@ -200,7 +213,7 @@ onUnmounted(() => {
 						v-if="activeHeroInstance"
 						class="w-11 h-11 rounded-2xl bg-[#1e2025]/80 hover:bg-[#282b32] backdrop-blur border border-white/10 text-white/90 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
 						:title="isRu ? 'Настройки сборки' : 'Instance settings'"
-						@click="handleOpenInstanceSettings(activeHeroInstance.id)"
+						@click="handleOpenInstanceSettings(activeHeroInstance)"
 					>
 						<svg class="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<circle cx="12" cy="12" r="3"></circle>
@@ -210,7 +223,7 @@ onUnmounted(() => {
 
 					<!-- Big Play Button -->
 					<button
-						class="flex items-center gap-2.5 px-7 py-3 rounded-2xl bg-[#22c55e] hover:bg-[#16a34a] text-[#121315] font-black text-base transition-all duration-200 cursor-pointer shadow-lg active:scale-95 border-0"
+						class="flex items-center gap-2.5 px-7 py-3 rounded-2xl bg-white hover:bg-gray-100 text-[#121315] font-black text-base transition-all duration-200 cursor-pointer shadow-lg active:scale-95 border-0"
 						:disabled="isLaunching"
 						@click="handlePlay(activeHeroInstance)"
 					>
@@ -229,7 +242,7 @@ onUnmounted(() => {
 			<div class="flex items-center justify-between">
 				<h2 class="text-base font-bold text-[var(--er-text)] m-0">{{ isRu ? 'Мои сборки' : 'My instances' }}</h2>
 				<button
-					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-[#22c55e] transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
+					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
 					@click="router.push('/library')"
 				>
 					<span>{{ isRu ? 'Все сборки' : 'All instances' }}</span>
@@ -245,11 +258,22 @@ onUnmounted(() => {
 				<div
 					v-for="instance in instances"
 					:key="instance.id"
-					class="w-44 h-52 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[#22c55e]/40 rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm"
+					class="w-44 h-52 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-white/20 rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm relative"
 					@click="handlePlay(instance)"
 				>
-					<!-- Top Block: 3D cube thumbnail container -->
+					<!-- Top Block: 3D cube thumbnail container with gear button -->
 					<div class="w-full h-28 rounded-xl bg-[var(--er-subtle-bg)] border border-white/5 flex items-center justify-center overflow-hidden relative">
+						<!-- Gear button for editing profile/settings -->
+						<button
+							class="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/60 hover:bg-black/90 text-gray-300 hover:text-white flex items-center justify-center transition-all z-10 border border-white/10"
+							:title="isRu ? 'Настройки сборки' : 'Instance settings'"
+							@click.stop="handleOpenInstanceSettings(instance)"
+						>
+							<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="12" cy="12" r="3"></circle>
+								<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+							</svg>
+						</button>
 						<img
 							:src="instance.icon_path || defaultMinecraftBlock"
 							alt="Instance icon"
@@ -260,7 +284,7 @@ onUnmounted(() => {
 
 					<!-- Bottom info -->
 					<div class="flex flex-col gap-0.5">
-						<span class="text-xs font-bold text-[var(--er-text)] group-hover:text-[#22c55e] truncate transition-colors leading-tight">
+						<span class="text-xs font-bold text-[var(--er-text)] group-hover:text-white truncate transition-colors leading-tight">
 							{{ instance.name }}
 						</span>
 						<span class="text-[11px] text-[var(--er-text-secondary)] truncate capitalize leading-tight">
@@ -278,10 +302,10 @@ onUnmounted(() => {
 
 				<!-- "+ Новая сборка" Card -->
 				<div
-					class="w-44 h-52 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-[#22c55e]/50 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-[#22c55e] group select-none"
+					class="w-44 h-52 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-white group select-none"
 					@click="handleCreateNewInstance"
 				>
-					<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-[#22c55e]/15 flex items-center justify-center transition-colors">
+					<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-white/10 flex items-center justify-center transition-colors">
 						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 							<line x1="12" y1="5" x2="12" y2="19"></line>
 							<line x1="5" y1="12" x2="19" y2="12"></line>
@@ -291,6 +315,16 @@ onUnmounted(() => {
 				</div>
 			</div>
 		</div>
+
+		<!-- In-place instance settings modal -->
+		<InstanceSettingsModal
+			v-if="selectedSettingsInstance"
+			:key="selectedSettingsInstance.id"
+			ref="instanceSettingsModalRef"
+			:instance="selectedSettingsInstance"
+			:offline="false"
+			@unlinked="fetchInstances"
+		/>
 	</div>
 </template>
 
@@ -306,6 +340,6 @@ onUnmounted(() => {
 	border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	background: #22c55e;
+	background: #8b5cf6;
 }
 </style>

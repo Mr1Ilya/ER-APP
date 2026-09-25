@@ -32,6 +32,9 @@ const avatarUrl = computed(() => {
 	if (!acc?.profile) {
 		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	}
+	if (acc.access_token?.startsWith('offline')) {
+		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	}
 	const cleanId = (acc.profile.id || '').replace(/-/g, '')
 	if (cleanId) {
 		return `https://mc-heads.net/avatar/${cleanId}/64`
@@ -172,7 +175,7 @@ function navigate(to: string) {
 					class="nav-link-item group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border cursor-pointer text-left w-full"
 					:class="[
 						isItemActive(item)
-							? 'bg-[#22c55e]/15 text-[#22c55e] border-[#22c55e]/30 font-semibold shadow-sm'
+							? 'bg-white/10 text-white border-white/20 font-semibold shadow-sm'
 							: 'bg-transparent text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 border-transparent',
 						collapsed ? 'justify-center px-2' : ''
 					]"
@@ -268,7 +271,7 @@ function navigate(to: string) {
 
 			<!-- Account Card -->
 			<button
-				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[#22c55e]/40 transition-all cursor-pointer text-left w-full"
+				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-white/20 transition-all cursor-pointer text-left w-full"
 				:class="collapsed ? 'justify-center p-1.5' : ''"
 				:title="collapsed ? (activeAccount?.profile?.name || (isRu ? 'Аккаунты' : 'Accounts')) : undefined"
 				@click="emit('open-accounts')"

@@ -460,11 +460,15 @@ if (instance.value) {
 }
 
 onBeforeRouteLeave(() => {
-	breadcrumbs.setContext({
-		name: browseTitle.value,
-		link: `/browse/${projectType.value}`,
-		query: route.query,
-	})
+	try {
+		breadcrumbs.setContext({
+			name: browseTitle.value,
+			link: `/browse/${projectType.value}`,
+			query: route.query,
+		})
+	} catch (e) {
+		console.warn('Failed to set breadcrumbs context on leave', e)
+	}
 })
 
 const projectType = ref<ProjectType>(route.params.projectType as ProjectType)
@@ -1089,10 +1093,34 @@ provideBrowseManager({
 	offline,
 	lockedFilterMessages,
 })
+
+const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
+
+function handleGoBack() {
+	if (window.history.length > 1) {
+		router.back()
+	} else {
+		router.push('/')
+	}
+}
 </script>
 
 <template>
 	<div class="flex flex-col gap-3 p-6">
+		<div class="flex items-center justify-between pb-3 border-b border-white/10">
+			<button
+				class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-[var(--er-text-secondary)] hover:text-white bg-white/5 hover:bg-white/10 transition-all border border-white/10 cursor-pointer"
+				@click="handleGoBack"
+			>
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="15 18 9 12 15 6"></polyline>
+				</svg>
+				<span>{{ isRu ? 'Назад' : 'Back' }}</span>
+			</button>
+			<span class="text-sm font-semibold text-white/80">
+				{{ browseTitle }}
+			</span>
+		</div>
 		<BrowsePageLayout>
 			<template #after>
 				<ContextMenu ref="contextMenuRef" @option-clicked="handleOptionsClick">

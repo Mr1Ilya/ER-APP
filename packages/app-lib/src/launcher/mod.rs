@@ -903,13 +903,14 @@ pub async fn launch_minecraft(
         .into_iter(),
     );
 
-    if credentials.access_token == "offline" {
-        let injector_path = ensure_authlib_injector(&state.directories.libraries_dir()).await?;
-        command.arg(format!(
-            "-javaagent:{}={}",
-            injector_path.to_string_lossy(),
-            "https://ely.by"
-        ));
+    if credentials.access_token == "offline:elyby" && java_version.parsed_version < 25 {
+        if let Ok(injector_path) = ensure_authlib_injector(&state.directories.libraries_dir()).await {
+            command.arg(format!(
+                "-javaagent:{}={}",
+                injector_path.to_string_lossy(),
+                "https://ely.by"
+            ));
+        }
     }
 
     // The java launcher requires access to java.lang.reflect in order to force access in to

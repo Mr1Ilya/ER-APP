@@ -274,19 +274,24 @@ async function refreshValues() {
 	accounts.value.sort((a, b) => (a.profile?.name ?? '').localeCompare(b.profile?.name ?? ''))
 
 	try {
-		const skins = await get_available_skins()
-		equippedSkin.value = skins.find((skin) => skin.is_equipped) ?? null
+		const defaultAcc = accounts.value.find((a) => a.profile?.id === defaultUser.value)
+		if (defaultAcc && !defaultAcc.access_token?.startsWith('offline')) {
+			const skins = await get_available_skins()
+			equippedSkin.value = skins.find((skin) => skin.is_equipped) ?? null
 
-		if (equippedSkin.value) {
-			try {
-				const headUrl = await getPlayerHeadUrl(equippedSkin.value)
-				headUrlCache.value = new Map(headUrlCache.value).set(
-					equippedSkin.value.texture_key,
-					headUrl,
-				)
-			} catch (error) {
-				console.warn('Failed to get head render for equipped skin:', error)
+			if (equippedSkin.value) {
+				try {
+					const headUrl = await getPlayerHeadUrl(equippedSkin.value)
+					headUrlCache.value = new Map(headUrlCache.value).set(
+						equippedSkin.value.texture_key,
+						headUrl,
+					)
+				} catch (error) {
+					console.warn('Failed to get head render for equipped skin:', error)
+				}
 			}
+		} else {
+			equippedSkin.value = null
 		}
 	} catch {
 		equippedSkin.value = null

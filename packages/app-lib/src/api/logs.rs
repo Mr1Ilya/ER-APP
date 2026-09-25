@@ -51,12 +51,14 @@ impl CensoredString {
             // Use the offline profile to guarantee that this function does not cause
             // Mojang API request, and is never delayed by a network request. The offline
             // profile is optimistically updated on upsert from time to time anyway
+            if credentials.access_token != "offline" && !credentials.access_token.starts_with("offline:") {
+                s = s.replace(&credentials.access_token, "{MINECRAFT_ACCESS_TOKEN}");
+            }
+            let name = &credentials.offline_profile.name;
+            if name.len() >= 4 && !name.chars().all(|c| c.is_ascii_digit()) {
+                s = s.replace(name, "{MINECRAFT_USERNAME}");
+            }
             s = s
-                .replace(&credentials.access_token, "{MINECRAFT_ACCESS_TOKEN}")
-                .replace(
-                    &credentials.offline_profile.name,
-                    "{MINECRAFT_USERNAME}",
-                )
                 .replace(
                     &credentials.offline_profile.id.as_simple().to_string(),
                     "{MINECRAFT_UUID}",

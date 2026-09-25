@@ -138,6 +138,9 @@ async function handleAddMicrosoft() {
 
 function getAvatar(account: Account) {
 	if (!account.profile) return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	if (account.access_token?.startsWith('offline')) {
+		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
+	}
 	const cleanId = (account.profile.id || '').replace(/-/g, '')
 	if (cleanId) {
 		return `https://mc-heads.net/avatar/${cleanId}/64`

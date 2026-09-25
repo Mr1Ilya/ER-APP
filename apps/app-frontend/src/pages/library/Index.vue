@@ -25,6 +25,16 @@ watch(
 	{ immediate: true },
 )
 
+watch(
+	() => route.query.action,
+	(action) => {
+		if (action === 'create') {
+			;(showCreationModal as any)?.()
+		}
+	},
+	{ immediate: true },
+)
+
 const instances = shallowRef(await list().catch(handleError))
 
 const offline = ref(!navigator.onLine)

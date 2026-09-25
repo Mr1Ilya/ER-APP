@@ -1393,6 +1393,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 <template>
 	<SplashScreen v-if="!stateFailed" ref="splashScreen" data-tauri-drag-region />
 	<div id="teleports"></div>
+	<div id="sidebar-teleport-target" class="sidebar-teleport-content hidden"></div>
 	<div
 		v-if="stateInitialized"
 		class="app-grid-layout relative"

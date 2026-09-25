@@ -413,15 +413,15 @@ defineOptions({
 
 	// Fade variants
 	&.standard {
-		background: linear-gradient(to bottom, rgba(29, 48, 43, 0.52) 0%, rgba(14, 21, 26, 0.95) 100%);
+		background: rgba(0, 0, 0, 0.75);
 	}
 
 	&.warning {
-		background: linear-gradient(to bottom, rgba(48, 38, 29, 0.52) 0%, rgba(26, 20, 14, 0.95) 100%);
+		background: linear-gradient(to bottom, rgba(38, 28, 20, 0.65) 0%, rgba(18, 14, 10, 0.95) 100%);
 	}
 
 	&.danger {
-		background: linear-gradient(to bottom, rgba(43, 18, 26, 0.52) 0%, rgba(49, 10, 15, 0.95) 100%);
+		background: linear-gradient(to bottom, rgba(43, 18, 26, 0.65) 0%, rgba(20, 8, 12, 0.95) 100%);
 	}
 
 	@media (prefers-reduced-motion) {
