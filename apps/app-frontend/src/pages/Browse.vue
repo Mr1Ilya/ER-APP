@@ -1107,9 +1107,9 @@ function handleGoBack() {
 
 <template>
 	<div class="flex flex-col gap-3 p-6">
-		<div class="flex items-center justify-between pb-3 border-b border-white/10">
+		<div class="flex items-center justify-between pb-3 border-b border-[var(--er-border)]">
 			<button
-				class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-[var(--er-text-secondary)] hover:text-white bg-white/5 hover:bg-white/10 transition-all border border-white/10 cursor-pointer"
+				class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] transition-all border border-[var(--er-card-border)] cursor-pointer"
 				@click="handleGoBack"
 			>
 				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1117,7 +1117,7 @@ function handleGoBack() {
 				</svg>
 				<span>{{ isRu ? 'Назад' : 'Back' }}</span>
 			</button>
-			<span class="text-sm font-semibold text-white/80">
+			<span class="text-sm font-semibold text-[var(--er-text)]">
 				{{ browseTitle }}
 			</span>
 		</div>

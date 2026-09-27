@@ -1447,14 +1447,14 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 				<EndRageAppLogo class="h-6 w-auto text-[var(--er-text)] pointer-events-none select-none" />
 				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-4">
 					<button
-						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all"
 						title="Назад"
 						@click="router.back()"
 					>
 						<LeftArrowIcon class="w-3.5 h-3.5" />
 					</button>
 					<button
-						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all"
 						title="Вперёд"
 						@click="router.forward()"
 					>

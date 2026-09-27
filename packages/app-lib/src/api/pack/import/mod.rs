@@ -21,9 +21,11 @@ pub mod atlauncher;
 pub mod curseforge;
 pub mod gdlauncher;
 pub mod mmc;
+pub mod modrinth;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ImportLauncherType {
+    Modrinth,
     MultiMC,
     PrismLauncher,
     ATLauncher,
@@ -36,6 +38,7 @@ pub enum ImportLauncherType {
 impl fmt::Display for ImportLauncherType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            ImportLauncherType::Modrinth => write!(f, "Modrinth"),
             ImportLauncherType::MultiMC => write!(f, "MultiMC"),
             ImportLauncherType::PrismLauncher => write!(f, "PrismLauncher"),
             ImportLauncherType::ATLauncher => write!(f, "ATLauncher"),
@@ -53,6 +56,13 @@ pub async fn get_importable_instances(
 ) -> crate::Result<Vec<String>> {
     // Some launchers have a different folder structure for instances
     let instances_subfolder = match launcher_type {
+        ImportLauncherType::Modrinth => {
+            if base_path.join("profiles").exists() {
+                "profiles".to_string()
+            } else {
+                "".to_string()
+            }
+        }
         ImportLauncherType::GDLauncher | ImportLauncherType::ATLauncher => {
             "instances".to_string()
         }
@@ -69,6 +79,7 @@ pub async fn get_importable_instances(
         .unwrap_or_else(|| "instances".to_string()),
         ImportLauncherType::Unknown => {
             let types = [
+                ImportLauncherType::Modrinth,
                 ImportLauncherType::MultiMC,
                 ImportLauncherType::PrismLauncher,
                 ImportLauncherType::ATLauncher,
@@ -144,6 +155,16 @@ async fn import_instance_inner(
         instance_folder: instance_folder.clone(),
     };
     let res = match launcher_type {
+        ImportLauncherType::Modrinth => {
+            modrinth::import_modrinth(
+                base_path,
+                instance_folder,
+                instance_id,
+                reporter.clone(),
+                details.clone(),
+            )
+            .await
+        }
         ImportLauncherType::MultiMC | ImportLauncherType::PrismLauncher => {
             mmc::import_mmc(
                 base_path,       // path to base mmc folder
@@ -184,6 +205,7 @@ async fn import_instance_inner(
         }
         ImportLauncherType::Unknown => {
             let types = [
+                ImportLauncherType::Modrinth,
                 ImportLauncherType::MultiMC,
                 ImportLauncherType::PrismLauncher,
                 ImportLauncherType::ATLauncher,
@@ -240,6 +262,9 @@ pub fn get_default_launcher_path(
     r#type: ImportLauncherType,
 ) -> Option<PathBuf> {
     let path = match r#type {
+        ImportLauncherType::Modrinth => {
+            find_modrinth_path()
+        }
         ImportLauncherType::MultiMC => {
             return find_multimc_path();
         }
@@ -264,6 +289,28 @@ pub fn get_default_launcher_path(
     };
     let path = path?;
     if path.exists() { Some(path) } else { None }
+}
+
+/// Searches common locations for Modrinth App installation
+fn find_modrinth_path() -> Option<PathBuf> {
+    let mut candidates: Vec<PathBuf> = Vec::new();
+
+    if let Some(data_dir) = dirs::data_dir() {
+        candidates.push(data_dir.join("ModrinthApp"));
+        candidates.push(data_dir.join("com.modrinth.theseus"));
+    }
+
+    if let Some(config_dir) = dirs::config_dir() {
+        candidates.push(config_dir.join("ModrinthApp"));
+        candidates.push(config_dir.join("com.modrinth.theseus"));
+    }
+
+    if let Some(home) = dirs::home_dir() {
+        candidates.push(home.join(".config").join("ModrinthApp"));
+        candidates.push(home.join(".local").join("share").join("ModrinthApp"));
+    }
+
+    candidates.into_iter().find(|p| p.exists())
 }
 
 /// Searches common locations for a MultiMC installation.
@@ -322,6 +369,9 @@ pub async fn is_valid_importable_instance(
     r#type: ImportLauncherType,
 ) -> bool {
     match r#type {
+        ImportLauncherType::Modrinth => {
+            modrinth::is_valid_modrinth(instance_path).await
+        }
         ImportLauncherType::MultiMC | ImportLauncherType::PrismLauncher => {
             mmc::is_valid_mmc(instance_path).await
         }

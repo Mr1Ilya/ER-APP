@@ -159,7 +159,7 @@ function navigate(to: string) {
 			<!-- Collapse Toggle Button -->
 			<div class="mb-2 px-1 flex items-center" :class="collapsed ? 'justify-center' : 'justify-start'">
 				<button
-					class="flex items-center gap-2 text-xs font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-white/5"
+					class="flex items-center gap-2 text-xs font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-[var(--er-subtle-bg)]"
 					:title="collapsed ? (isRu ? 'Развернуть меню' : 'Expand sidebar') : (isRu ? 'Свернуть меню' : 'Collapse sidebar')"
 					@click="emit('toggle-collapse')"
 				>
@@ -187,8 +187,8 @@ function navigate(to: string) {
 					class="nav-link-item group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border cursor-pointer text-left w-full"
 					:class="[
 						isItemActive(item)
-							? 'bg-white/10 text-white border-white/20 font-semibold shadow-sm'
-							: 'bg-transparent text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 border-transparent',
+							? 'bg-[var(--er-card-hover)] text-[var(--er-text)] border-[var(--er-card-border)] font-semibold shadow-sm'
+							: 'bg-transparent text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-[var(--er-subtle-bg)] border-transparent',
 						collapsed ? 'justify-center px-2' : ''
 					]"
 					:title="collapsed ? item.label : undefined"
@@ -261,7 +261,7 @@ function navigate(to: string) {
 		<div class="flex flex-col gap-2 pt-2 border-t border-[var(--er-border)]">
 			<!-- Settings button -->
 			<button
-				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-white/5 transition-all bg-transparent border-0 cursor-pointer w-full"
+				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-[var(--er-subtle-bg)] transition-all bg-transparent border-0 cursor-pointer w-full"
 				:class="collapsed ? 'justify-center px-2' : ''"
 				:title="collapsed ? (isRu ? 'Настройки' : 'Settings') : undefined"
 				@click="emit('open-settings')"
@@ -283,7 +283,7 @@ function navigate(to: string) {
 
 			<!-- Account Card -->
 			<button
-				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-white/20 transition-all cursor-pointer text-left w-full"
+				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[var(--er-border)] transition-all cursor-pointer text-left w-full"
 				:class="collapsed ? 'justify-center p-1.5' : ''"
 				:title="collapsed ? (activeAccount?.profile?.name || (isRu ? 'Аккаунты' : 'Accounts')) : undefined"
 				@click="emit('open-accounts')"
@@ -291,7 +291,7 @@ function navigate(to: string) {
 				<img
 					:src="avatarUrl"
 					alt="Avatar"
-					class="w-8 h-8 rounded-lg bg-[var(--er-subtle-bg)] object-cover shrink-0 border border-white/10"
+					class="w-8 h-8 rounded-lg bg-[var(--er-subtle-bg)] object-cover shrink-0 border border-[var(--er-card-border)]"
 					@error="onAvatarError"
 				/>
 				<div v-if="!collapsed" class="flex flex-col min-w-0 flex-1">

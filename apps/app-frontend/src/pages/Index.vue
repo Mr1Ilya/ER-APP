@@ -3,6 +3,7 @@ import { injectNotificationManager } from '@erteam/ui'
 import dayjs from 'dayjs'
 import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 import { instance_listener } from '@/helpers/events'
 import { list, run } from '@/helpers/instance'
@@ -242,7 +243,7 @@ onUnmounted(() => {
 			<div class="flex items-center justify-between">
 				<h2 class="text-base font-bold text-[var(--er-text)] m-0">{{ isRu ? 'Мои сборки' : 'My instances' }}</h2>
 				<button
-					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-white transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
+					class="text-xs font-semibold text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-1"
 					@click="router.push('/library')"
 				>
 					<span>{{ isRu ? 'Все сборки' : 'All instances' }}</span>
@@ -258,11 +259,11 @@ onUnmounted(() => {
 				<div
 					v-for="instance in instances"
 					:key="instance.id"
-					class="w-44 h-52 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-white/20 rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm relative"
+					class="w-44 h-52 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[var(--er-border)] rounded-2xl p-3 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-sm relative"
 					@click="handlePlay(instance)"
 				>
 					<!-- Top Block: 3D cube thumbnail container with gear button -->
-					<div class="w-full h-28 rounded-xl bg-[var(--er-subtle-bg)] border border-white/5 flex items-center justify-center overflow-hidden relative">
+					<div class="w-full h-28 rounded-xl bg-[var(--er-subtle-bg)] border border-[var(--er-card-border)] flex items-center justify-center overflow-hidden relative">
 						<!-- Gear button for editing profile/settings -->
 						<button
 							class="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/60 hover:bg-black/90 text-gray-300 hover:text-white flex items-center justify-center transition-all z-10 border border-white/10"
@@ -275,7 +276,7 @@ onUnmounted(() => {
 							</svg>
 						</button>
 						<img
-							:src="instance.icon_path || defaultMinecraftBlock"
+							:src="instance.icon_path ? convertFileSrc(instance.icon_path) : defaultMinecraftBlock"
 							alt="Instance icon"
 							class="w-14 h-14 object-contain"
 							@error="(e) => ((e.target as HTMLImageElement).src = defaultMinecraftBlock)"
@@ -284,7 +285,7 @@ onUnmounted(() => {
 
 					<!-- Bottom info -->
 					<div class="flex flex-col gap-0.5">
-						<span class="text-xs font-bold text-[var(--er-text)] group-hover:text-white truncate transition-colors leading-tight">
+						<span class="text-xs font-bold text-[var(--er-text)] group-hover:text-[var(--er-text)] truncate transition-colors leading-tight">
 							{{ instance.name }}
 						</span>
 						<span class="text-[11px] text-[var(--er-text-secondary)] truncate capitalize leading-tight">
@@ -302,10 +303,10 @@ onUnmounted(() => {
 
 				<!-- "+ Новая сборка" Card -->
 				<div
-					class="w-44 h-52 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-white group select-none"
+					class="w-44 h-52 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-[var(--er-accent)] rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] group select-none"
 					@click="handleCreateNewInstance"
 				>
-					<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-white/10 flex items-center justify-center transition-colors">
+					<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-[var(--er-card-hover)] flex items-center justify-center transition-colors">
 						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 							<line x1="12" y1="5" x2="12" y2="19"></line>
 							<line x1="5" y1="12" x2="19" y2="12"></line>
