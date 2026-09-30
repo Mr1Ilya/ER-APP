@@ -14,7 +14,7 @@ import { computed, ref } from 'vue'
 
 import { ChatIcon } from '@/assets/icons'
 import ModalWrapper from '@/components/ui/modal/ModalWrapper.vue'
-import { trackEvent } from '@/helpers/analytics'
+import { reportLauncherError, trackEvent } from '@/helpers/analytics'
 import { login as login_flow, set_default_user } from '@/helpers/auth.js'
 import { install_existing_instance } from '@/helpers/install'
 import { cancel_directory_change } from '@/helpers/settings.ts'
@@ -36,6 +36,12 @@ defineExpose({
 	async show(errorVal, context, canClose = true, source = null) {
 		console.log(errorVal, context, canClose, source)
 		closable.value = canClose
+
+		reportLauncherError({
+			error: errorVal,
+			context: typeof context === 'string' ? context : (source || 'ErrorModal'),
+			extra: typeof context === 'object' ? context : undefined
+		})
 
 		if (errorVal.message && errorVal.message.includes('Minecraft authentication error:')) {
 			title.value = 'Unable to sign in to Minecraft'

@@ -48,6 +48,10 @@ export async function showLauncherLogsFolder() {
 	return await invoke('plugin:utils|show_launcher_logs_folder', {})
 }
 
+export async function getLatestLauncherLog() {
+	return await invoke('plugin:utils|get_latest_launcher_log').catch(() => null)
+}
+
 export async function createInstanceShortcut(instanceName, instanceId, options = {}) {
 	const outputPath = await save({
 		defaultPath: `Modrinth - ${instanceName}`,

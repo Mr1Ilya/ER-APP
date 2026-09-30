@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
 import { findMinecraftAuthError } from '@/components/ui/minecraft-auth-error-modal/minecraft-auth-errors'
+import { reportLauncherError } from '@/helpers/analytics'
 
 export const useError = defineStore('errorsStore', {
 	state: () => ({
@@ -15,8 +16,14 @@ export const useError = defineStore('errorsStore', {
 			this.minecraftAuthErrorModal = ref
 		},
 		showError(error, context, closable = true, source = null) {
+			reportLauncherError({
+				error,
+				context: typeof context === 'string' ? context : (source || (context && typeof context === 'object' && context.instanceId ? `Instance ${context.instanceId}` : 'Launcher Error')),
+				extra: typeof context === 'object' ? context : undefined
+			})
+
 			if (
-				error.message &&
+				error?.message &&
 				(error.message.includes('Minecraft authentication error:') ||
 					findMinecraftAuthError(error.message)) &&
 				this.minecraftAuthErrorModal
@@ -24,7 +31,9 @@ export const useError = defineStore('errorsStore', {
 				this.minecraftAuthErrorModal.show(error)
 				return
 			}
-			this.errorModal.show(error, context, closable, source)
+			if (this.errorModal) {
+				this.errorModal.show(error, context, closable, source)
+			}
 		},
 	},
 })

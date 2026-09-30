@@ -54,4 +54,25 @@ app.use(i18nPlugin)
 app.use(i18nDebugPlugin)
 app.directive('overlay-scrollbars', overlayScrollbarsDirective)
 
+import { reportLauncherError } from '@/helpers/analytics'
+
+app.config.errorHandler = (err, instance, info) => {
+	console.error('[Vue Error]', err, info)
+	reportLauncherError(err, `Vue Error (${info})`)
+}
+
+window.addEventListener('unhandledrejection', (event) => {
+	if (event.reason) {
+		console.error('[Unhandled Rejection]', event.reason)
+		reportLauncherError(event.reason, 'Unhandled Promise Rejection')
+	}
+})
+
+window.addEventListener('error', (event) => {
+	if (event.error) {
+		console.error('[Window Error]', event.error)
+		reportLauncherError(event.error, 'Window Error')
+	}
+})
+
 app.mount('#app')

@@ -21,6 +21,7 @@ pub fn init<R: Runtime>() -> tauri::plugin::TauriPlugin<R> {
             highlight_in_folder,
             open_path,
             show_launcher_logs_folder,
+            get_latest_launcher_log,
             show_app_db_backups_folder,
             progress_bars_list,
             get_opening_command,
@@ -119,6 +120,36 @@ pub async fn show_launcher_logs_folder<R: Runtime>(app: tauri::AppHandle<R>) {
         // (ie: if in debug mode only and launcher_logs never created)
         open_path(app, path).await;
     }
+}
+
+#[tauri::command]
+pub async fn get_latest_launcher_log() -> Result<Option<String>> {
+    if let Some(d) = DirectoryInfo::global_handle_if_ready() {
+        if let Some(logs_dir) = d.launcher_logs_dir() {
+            if let Ok(mut entries) = tokio::fs::read_dir(&logs_dir).await {
+                let mut files = Vec::new();
+                while let Ok(Some(entry)) = entries.next_entry().await {
+                    if let Ok(meta) = entry.metadata().await {
+                        if meta.is_file() {
+                            let modified = meta.modified().unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+                            files.push((entry.path(), modified));
+                        }
+                    }
+                }
+                files.sort_by(|a, b| b.1.cmp(&a.1));
+                if let Some((latest_path, _)) = files.first() {
+                    if let Ok(content) = tokio::fs::read_to_string(latest_path).await {
+                        let max_len = 100_000;
+                        if content.len() > max_len {
+                            return Ok(Some(content[content.len() - max_len..].to_string()));
+                        }
+                        return Ok(Some(content));
+                    }
+                }
+            }
+        }
+    }
+    Ok(None)
 }
 
 #[tauri::command]

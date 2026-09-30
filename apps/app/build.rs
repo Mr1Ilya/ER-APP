@@ -262,6 +262,7 @@ fn main() {
                         "highlight_in_folder",
                         "open_path",
                         "show_launcher_logs_folder",
+                        "get_latest_launcher_log",
                         "show_app_db_backups_folder",
                         "progress_bars_list",
                         "get_opening_command",
