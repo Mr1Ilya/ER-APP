@@ -85,7 +85,7 @@ def publish_release(version, tag_name, name, body, file_paths):
                 print(f"  [ERR] Failed to upload {file_name}: {up_resp.status_code} {up_resp.text}")
 
 if __name__ == "__main__":
-    v = "1.0.19"
+    v = "1.0.20"
     base_dir = r"C:\dev\end-rage\ER-Launcher\target\release\bundle\nsis"
     files = [
         os.path.join(base_dir, f"EndRage.Launcher_{v}_x64-setup.nsis.zip"),
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     ]
     notes = (
         f"### EndRage APP v{v}\n\n"
-        "- Разрешено скачивание сборок и модов с CurseForge CDN (`edge.forgecdn.net` и др.)\n"
-        "- Исправлен сдвиг верхней панели (хлебных крошек и кнопок окна) при длинных названиях\n"
-        "- Полная русская локализация создания сборок CurseForge"
+        "- Фоновая установка сборок CurseForge в уведомлении справа внизу (без блокировки лаунчера)\n"
+        "- Устранено зависание скачивания модов: добавлены таймауты, автоматические повторы и альтернативные зеркала CDN\n"
+        "- Полный русский перевод интерфейса CurseForge и фикс сдвига кнопок окна"
     )
     publish_release(v, f"v{v}", f"EndRage Launcher v{v}", notes, files)

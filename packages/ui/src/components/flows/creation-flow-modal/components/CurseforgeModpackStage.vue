@@ -461,9 +461,6 @@ async function runInstallation(options: {
 	downloadUrl?: string
 	customName?: string
 }) {
-	installing.value = true
-	progressPercent.value = null
-	currentProgressStatus.value = 'Подготовка к установке...'
 	errorMessage.value = null
 
 	try {
@@ -471,26 +468,78 @@ async function runInstallation(options: {
 		if (!installFn) {
 			throw new Error('Функция установки CurseForge недоступна')
 		}
-		await installFn({
+
+		const packTitle = options.customName || selectedMod.value?.name || 'CurseForge Pack'
+
+		// Close the blocking modal immediately so user can freely use the launcher!
+		ctx.modal.value?.hide()
+
+		// Get popup notification manager from window
+		const popupMgr = (window as any).__popupNotificationManager
+		let notificationId: string | number | null = null
+
+		if (popupMgr) {
+			const notif = popupMgr.addPopupNotification({
+				title: 'Установка сборки',
+				type: 'download',
+				autoCloseMs: null,
+				progressItems: [
+					{
+						id: 'cf-install',
+						title: packTitle,
+						text: 'Подготовка к установке...',
+						progress: 0,
+						waiting: true,
+						progressType: 'percentage',
+					},
+				],
+			})
+			notificationId = notif.id
+		}
+
+		installFn({
 			...options,
 			onProgress: (status: string, current?: number, total?: number) => {
-				currentProgressStatus.value = status
-				if (typeof current === 'number' && typeof total === 'number' && total > 0) {
-					progressPercent.value = Math.round((current / total) * 100)
+				if (popupMgr && notificationId) {
+					const notif = popupMgr.getNotifications().find((n: any) => n.id === notificationId)
+					if (notif && notif.progressItems?.[0]) {
+						notif.progressItems[0].text = status
+						if (typeof current === 'number' && typeof total === 'number' && total > 0) {
+							notif.progressItems[0].progress = current / total
+							notif.progressItems[0].waiting = false
+							notif.progressItems[0].progressCurrent = current
+							notif.progressItems[0].progressTotal = total
+						}
+					}
 				}
 			},
 		})
-
-		currentProgressStatus.value = 'Сборка успешно установлена!'
-		setTimeout(() => {
-			ctx.modal.value?.hide()
-			// Reload page or list
-			window.location.reload()
-		}, 1200)
+			.then(() => {
+				if (popupMgr && notificationId) {
+					const notif = popupMgr.getNotifications().find((n: any) => n.id === notificationId)
+					if (notif && notif.progressItems?.[0]) {
+						notif.progressItems[0].text = 'Сборка успешно установлена!'
+						notif.progressItems[0].progress = 1
+						notif.progressItems[0].waiting = false
+					}
+					setTimeout(() => {
+						popupMgr.removeNotification(notificationId)
+					}, 4000)
+				}
+			})
+			.catch((err: any) => {
+				console.error('CurseForge install error:', err)
+				if (popupMgr && notificationId) {
+					const notif = popupMgr.getNotifications().find((n: any) => n.id === notificationId)
+					if (notif && notif.progressItems?.[0]) {
+						notif.progressItems[0].text = `Ошибка: ${err.message || err}`
+						notif.progressItems[0].waiting = false
+					}
+				}
+			})
 	} catch (err: any) {
 		console.error('CurseForge install error:', err)
 		errorMessage.value = `Ошибка установки сборки: ${err.message || err}`
-		installing.value = false
 	}
 }
 

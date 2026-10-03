@@ -286,36 +286,61 @@ export async function installCurseForgeModpack(options: InstallCurseForgeModpack
 			}
 		}
 
-		// Download all mods concurrently (5 at a time)
+		// Download all mods concurrently (6 at a time) with timeout and retries
 		let downloaded = 0
 		const totalMods = allResolvedFiles.length
 
-		const downloadMod = async (mod: { id: number; fileName: string; downloadUrl: string }) => {
+		const downloadModWithTimeout = async (mod: { id: number; fileName: string; downloadUrl: string }) => {
 			const targetPath = `${modsDir}\\${mod.fileName}`
-			try {
-				const modRes = await tauriFetch(mod.downloadUrl)
-				if (modRes.ok) {
-					const modBytes = new Uint8Array(await modRes.arrayBuffer())
-					await writeFile(targetPath, modBytes)
+			const urlsToTry = [
+				mod.downloadUrl,
+				`https://mediafilez.forgecdn.net/files/${Math.floor(mod.id / 1000)}/${mod.id % 1000}/${encodeURIComponent(mod.fileName)}`,
+			]
+
+			for (const url of urlsToTry) {
+				for (let attempt = 0; attempt < 2; attempt++) {
+					try {
+						// 20s timeout per download
+						const controller = new AbortController()
+						const timeoutId = setTimeout(() => controller.abort(), 20000)
+
+						let res: Response
+						try {
+							res = await tauriFetch(url, { signal: controller.signal })
+						} catch (_) {
+							res = await fetch(url, { signal: controller.signal })
+						} finally {
+							clearTimeout(timeoutId)
+						}
+
+						if (res && res.ok) {
+							const modBytes = new Uint8Array(await res.arrayBuffer())
+							if (modBytes.length > 0) {
+								await writeFile(targetPath, modBytes)
+								return
+							}
+						}
+					} catch (e) {
+						// retry next
+					}
 				}
-			} catch (e) {
-				console.warn(`Не удалось скачать мод ${mod.fileName}:`, e)
-			} finally {
+			}
+			console.warn(`Не удалось скачать мод после попыток: ${mod.fileName}`)
+		}
+
+		const poolSize = 6
+		const queue = [...allResolvedFiles]
+		const workers = Array.from({ length: poolSize }, async () => {
+			while (queue.length > 0) {
+				const item = queue.shift()
+				if (!item) break
+				await downloadModWithTimeout(item).catch(() => {})
 				downloaded++
 				onProgress?.(
 					`Загрузка модов CurseForge: ${downloaded} из ${totalMods}...`,
 					downloaded,
 					totalMods,
 				)
-			}
-		}
-
-		const poolSize = 5
-		const queue = [...allResolvedFiles]
-		const workers = Array.from({ length: poolSize }, async () => {
-			while (queue.length > 0) {
-				const item = queue.shift()
-				if (item) await downloadMod(item)
 			}
 		})
 

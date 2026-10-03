@@ -181,6 +181,10 @@ const popupNotificationManager = new AppPopupNotificationManager()
 providePopupNotificationManager(popupNotificationManager)
 const { addPopupNotification } = popupNotificationManager
 
+if (typeof window !== 'undefined') {
+	window.__popupNotificationManager = popupNotificationManager
+}
+
 const appVersion = getVersion()
 const tauriApiClient = new TauriModrinthClient({
 	userAgent: async () => `modrinth/theseus/${await appVersion} (support@erteam.com)`,
