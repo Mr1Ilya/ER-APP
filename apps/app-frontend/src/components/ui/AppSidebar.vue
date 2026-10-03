@@ -50,14 +50,10 @@ const avatarUrl = computed(() => {
 
 function onAvatarError(e: Event) {
 	const img = e.target as HTMLImageElement
-	if (activeAccount.value?.access_token?.startsWith('endrage')) {
-		if (!img.src.includes('127.0.0.1:4003')) {
-			img.src = `http://127.0.0.1:4003/head/${encodeURIComponent(activeAccount.value?.profile?.name || '')}?size=64`
-			return
-		}
-	}
 	const name = activeAccount.value?.profile?.name
-	if (name && !img.src.includes('minotar.net')) {
+	if (name && !img.src.includes('mc-heads.net')) {
+		img.src = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`
+	} else if (name && !img.src.includes('minotar.net')) {
 		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
 	} else if (!img.src.includes('steve_head')) {
 		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'

@@ -373,16 +373,16 @@ function isOffline(account: Account) {
 
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'endrage' ? 'bg-surface-3 border-purple-500/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								:class="addType === 'endrage' ? 'bg-surface-3 border-contrast/40' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 								@click="addType = 'endrage'"
 							>
 								<div class="flex items-center justify-between w-full">
-									<span class="text-[10px] font-black uppercase tracking-wider text-purple-400">
+									<span class="text-[10px] font-black uppercase tracking-wider text-contrast/80">
 										EndRage
 									</span>
-									<span v-if="addType === 'endrage'" class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+									<span v-if="addType === 'endrage'" class="w-1.5 h-1.5 rounded-full bg-contrast"></span>
 								</div>
-								<span class="text-xs font-bold text-contrast">EndRage Auth</span>
+								<span class="text-xs font-bold text-contrast">End-Rage ID</span>
 								<span class="text-[10px] text-secondary line-clamp-1">
 									{{ isRu ? 'Аккаунт + Скин' : 'Account + Skin' }}
 								</span>
@@ -390,14 +390,14 @@ function isOffline(account: Account) {
 
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'offline' ? 'bg-surface-3 border-blue-400/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								:class="addType === 'offline' ? 'bg-surface-3 border-contrast/40' : 'bg-surface-2 border-divider hover:bg-surface-3'"
 								@click="addType = 'offline'"
 							>
 								<div class="flex items-center justify-between w-full">
-									<span class="text-[10px] font-black uppercase tracking-wider text-blue-400">
+									<span class="text-[10px] font-black uppercase tracking-wider text-secondary">
 										{{ isRu ? 'Офлайн' : 'Offline' }}
 									</span>
-									<span v-if="addType === 'offline'" class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+									<span v-if="addType === 'offline'" class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
 								</div>
 								<span class="text-xs font-bold text-contrast">{{ isRu ? 'По нику' : 'Free' }}</span>
 								<span class="text-[10px] text-secondary line-clamp-1">
@@ -407,8 +407,8 @@ function isOffline(account: Account) {
 						</div>
 
 						<div v-if="addType === 'endrage'" class="flex flex-col gap-4 p-5 rounded-2xl bg-surface-2 border border-divider text-center items-center">
-							<div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25 mt-1">
-								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<div class="w-11 h-11 rounded-2xl bg-surface-3 text-contrast flex items-center justify-center border border-divider mt-1">
+								<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
 								</svg>
 							</div>
@@ -419,14 +419,14 @@ function isOffline(account: Account) {
 								</span>
 								<span class="text-xs text-secondary leading-relaxed">
 									{{ isRu
-										? 'Откроется официальная страница авторизации в вашем браузере на сайте end-rage.ru. Лаунчер не запрашивает, не видит и не сохраняет ваши пароли.'
+										? 'Откроется официальная страница авторизации в браузере на сайте end-rage.ru. Лаунчер не запрашивает, не видит и не сохраняет ваши пароли.'
 										: 'The official login page will open in your browser on end-rage.ru. The launcher never asks for, sees, or stores your passwords.'
 									}}
 								</span>
 							</div>
 
-							<div class="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[11px] text-purple-300">
-								<svg class="w-4 h-4 shrink-0 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<div class="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-surface-3/50 border border-divider text-[11px] text-secondary">
+								<svg class="w-3.5 h-3.5 shrink-0 text-contrast/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
 									<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
 								</svg>
@@ -440,24 +440,24 @@ function isOffline(account: Account) {
 
 							<button
 								:disabled="isActionRunning"
-								class="w-full py-3 px-4 mt-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-600/20 border-0 cursor-pointer transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+								class="w-full py-3 px-4 mt-1 rounded-xl bg-surface-4 hover:bg-surface-5 active:scale-[0.99] text-contrast font-bold text-xs uppercase tracking-wider border border-white/10 hover:border-white/20 cursor-pointer transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
 								@click="handleAddEndrageOAuth"
 							>
-								<svg v-if="!isOAuthWaiting" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<svg v-if="!isOAuthWaiting" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
 									<polyline points="10 17 15 12 10 7"></polyline>
 									<line x1="15" y1="12" x2="3" y2="12"></line>
 								</svg>
 								<span v-if="!isOAuthWaiting">{{ isRu ? 'Войти через End-Rage ID (в браузере)' : 'Sign in with End-Rage ID (Browser)' }}</span>
 								<span v-else class="flex items-center gap-2">
-									<span class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+									<span class="animate-spin w-4 h-4 border-2 border-contrast border-t-transparent rounded-full"></span>
 									<span>{{ isRu ? 'Ожидание входа в браузере...' : 'Waiting for browser...' }}</span>
 								</span>
 							</button>
 
 							<div class="flex items-center justify-center text-[11px] text-secondary">
 								<span>{{ isRu ? 'Нет аккаунта?' : 'No account?' }}</span>
-								<a href="https://end-rage.ru" target="_blank" class="ml-1 text-purple-400 hover:underline">
+								<a href="https://end-rage.ru" target="_blank" class="ml-1 text-contrast hover:underline">
 									{{ isRu ? 'Зарегистрироваться на сайте' : 'Register on website' }}
 								</a>
 							</div>

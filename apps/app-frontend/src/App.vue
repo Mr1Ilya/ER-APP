@@ -1556,6 +1556,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 					</Suspense>
 				</template>
 			</RouterView>
+			<div id="sidebar-teleport-target" class="sidebar-teleport-content hidden"></div>
 		</div>
 		<div
 			v-if="false"

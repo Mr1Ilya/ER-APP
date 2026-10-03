@@ -295,9 +295,11 @@ const skinTexture = computedAsync(async () => {
 })
 const capeTexture = computed(() => currentCape.value?.texture)
 const skinVariant = computed(() => selectedSkin.value?.variant)
-const skinNametag = computed(() => (themeStore.hideNametagSkinsPage ? undefined : username.value))
+const isEndRageAccount = computed(() => {
+	return Boolean(currentUser.value?.access_token?.startsWith('endrage'))
+})
 const isSkinManagementReadOnly = computed(
-	() => offline.value || (authServerQuery.isError.value && !authServerQuery.isLoading.value),
+	() => offline.value || (!isEndRageAccount.value && authServerQuery.isError.value && !authServerQuery.isLoading.value),
 )
 const hasPendingSkinChange = computed(
 	() => !skinsMatch(selectedSkin.value, originalSelectedSkin.value),
@@ -351,6 +353,40 @@ async function loadCapes() {
 async function loadSkins() {
 	try {
 		const loadedSkins = (await get_available_skins()) ?? []
+
+		if (isEndRageAccount.value && currentUser.value?.profile?.name) {
+			try {
+				const nick = currentUser.value.profile.name
+				const res = await fetch(`https://end-rage.ru/api/minecraft/skin?nick=${encodeURIComponent(nick)}`)
+				if (res.ok) {
+					const data = await res.json()
+					if (data?.success && data?.skin?.value) {
+						const decodedStr = atob(data.skin.value)
+						const parsed = JSON.parse(decodedStr)
+						const skinUrl = parsed?.textures?.SKIN?.url
+						if (skinUrl) {
+							const existingIdx = loadedSkins.findIndex((s) => s.texture_key === `endrage-${nick}`)
+							const endrageSkin: Skin = {
+								texture_key: `endrage-${nick}`,
+								name: `End-Rage (${nick})`,
+								section: 'End-Rage',
+								variant: data.skin.model === 'slim' ? 'SLIM' : 'CLASSIC',
+								texture: skinUrl,
+								source: 'custom',
+								is_equipped: true,
+							}
+							if (existingIdx !== -1) {
+								loadedSkins.splice(existingIdx, 1)
+							}
+							loadedSkins.unshift(endrageSkin)
+						}
+					}
+				}
+			} catch (e) {
+				console.warn('Could not load remote End-Rage skin:', e)
+			}
+		}
+
 		const loadedEquippedSkin = loadedSkins.find((s) => s.is_equipped)
 		const locallyKnownEquippedSkin =
 			originalSelectedSkin.value &&
@@ -699,6 +735,45 @@ function schedulePendingSkinRefresh() {
 	}, PENDING_SKIN_REFRESH_DELAY_MS)
 }
 
+async function applyEndRageSkin(skin: Skin) {
+	try {
+		const token = (currentUser.value?.access_token || '').replace('endrage:', '')
+		const username = currentUser.value?.profile?.name || ''
+		const model = skin.variant === 'SLIM' ? 'slim' : 'classic'
+
+		let base64 = skin.texture || ''
+		if (base64.startsWith('data:image/')) {
+			base64 = base64.split(',')[1] || ''
+		}
+
+		if (username && base64) {
+			await fetch('https://end-rage.ru/api/user/skin', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					nick: username,
+					action: 'upload',
+					fileBase64: base64,
+					model
+				})
+			}).catch((e) => console.warn('Sync to end-rage.ru error:', e))
+		}
+
+		notifications.addNotification({
+			type: 'success',
+			title: isRu.value ? 'Скин применён' : 'Skin applied',
+			text: isRu.value
+				? 'Скин успешно установлен для вашего профиля End-Rage'
+				: 'Skin successfully applied to your End-Rage profile',
+		})
+	} catch (e) {
+		console.error('Failed to apply End-Rage skin:', e)
+	}
+}
+
 async function applySelectedSkin() {
 	const skinToApply = selectedSkin.value
 	if (
@@ -711,9 +786,14 @@ async function applySelectedSkin() {
 
 	isApplyingSkin.value = true
 	try {
-		await equip_skin(skinToApply)
-		setLocallyEquippedSkin(skinToApply)
-		schedulePendingSkinRefresh()
+		if (isEndRageAccount.value) {
+			await applyEndRageSkin(skinToApply)
+			setLocallyEquippedSkin(skinToApply)
+		} else {
+			await equip_skin(skinToApply)
+			setLocallyEquippedSkin(skinToApply)
+			schedulePendingSkinRefresh()
+		}
 	} catch (error) {
 		if (isMinecraftSkinRateLimitError(error)) {
 			notifications.addNotification({
@@ -732,6 +812,9 @@ async function applySelectedSkin() {
 async function onSkinSaved(options: { applied: boolean; skin?: Skin; previousSkin?: Skin }) {
 	if (options.skin) {
 		updateLocalSkin(options.skin, options.applied, options.previousSkin)
+		if (options.applied && isEndRageAccount.value) {
+			await applyEndRageSkin(options.skin).catch(console.warn)
+		}
 	}
 
 	if (!options.skin) {

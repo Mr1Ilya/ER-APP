@@ -256,30 +256,36 @@ pub async fn login_endrage_oauth<R: Runtime>(
                                         if let Some((_, code)) = parsed_url.query_pairs().find(|(k, _)| k == "code") {
                                             auth_code = Some(code.to_string());
 
-                                            let html_body = r#"<!DOCTYPE html>
+                                             let html_body = r#"<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <title>End-Rage ID Авторизация</title>
+  <title>End-Rage Launcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b0c10; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .card { background: #15161e; border: 1px solid #282a36; border-radius: 24px; padding: 48px; text-align: center; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); }
-    .icon { width: 72px; height: 72px; background: rgba(168, 85, 247, 0.15); border: 2px solid rgba(168, 85, 247, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: #c084fc; font-size: 36px; font-weight: bold; }
-    h1 { font-size: 24px; font-weight: 800; margin: 0 0 12px; color: #fff; letter-spacing: -0.5px; }
-    p { font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 28px; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); padding: 8px 16px; border-radius: 9999px; font-size: 13px; color: #d8b4fe; font-weight: 600; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #0c0d11; color: #f1f5f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .card { background: #13141b; border: 1px solid #232634; border-radius: 18px; padding: 36px 32px; text-align: center; max-width: 380px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .brand { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 16px; }
+    h1 { font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
+    p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 24px; }
+    .progress-bar { width: 100%; height: 3px; background: #1e2230; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #6366f1; width: 0%; animation: fill 1.5s linear forwards; }
+    @keyframes fill { from { width: 0%; } to { width: 100%; } }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="icon">✓</div>
-    <h1>Вход выполнен!</h1>
-    <p>Вы успешно авторизовались через End-Rage ID. Теперь можете закрыть эту вкладку и вернуться в лаунчер.</p>
-    <div class="badge">
-      <span>🔒</span> EndRage Launcher
-    </div>
+    <div class="brand">End-Rage Launcher</div>
+    <h1>Вход выполнен</h1>
+    <p>Авторизация через End-Rage ID завершена.<br>Эту вкладку можно закрыть.</p>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
   </div>
-  <script>setTimeout(() => window.close(), 3000);</script>
+  <script>
+    setTimeout(() => {
+      try { window.close(); } catch (e) {}
+    }, 1500);
+  </script>
 </body>
 </html>"#;
                                             let response = format!(
@@ -317,11 +323,10 @@ pub async fn login_endrage_oauth<R: Runtime>(
         }
     };
 
-    tracing::info!("End-Rage OAuth code received, performing server-side exchange...");
+    tracing::info!("End-Rage OAuth code received, exchanging token...");
 
-    // 4. Send code to backend endpoint (backend securely uses CLIENT_SECRET)
     let client = reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(15))
+        .timeout(std::time::Duration::from_secs(12))
         .build()?;
 
     let exchange_payload = serde_json::json!({
@@ -329,38 +334,82 @@ pub async fn login_endrage_oauth<R: Runtime>(
         "redirect_uri": redirect_uri
     });
 
-    let mut resp = client
-        .post("https://api.end-rage.ru/api/oauth/exchange")
-        .json(&exchange_payload)
-        .send()
-        .await;
+    let mut exchange_result: Option<OAuthExchangeResponse> = None;
 
-    if resp.is_err() {
-        tracing::warn!("Primary api.end-rage.ru exchange failed, trying local fallback http://127.0.0.1:4004");
-        resp = client
-            .post("http://127.0.0.1:4004/api/oauth/exchange")
-            .json(&exchange_payload)
-            .send()
-            .await;
+    // 1. Try public backend endpoint
+    let try_endpoints = [
+        "https://api.end-rage.ru/api/oauth/exchange",
+        "http://31.77.146.228:4004/api/oauth/exchange",
+    ];
+
+    for endpoint in try_endpoints {
+        if let Ok(resp) = client.post(endpoint).json(&exchange_payload).send().await {
+            if resp.status().is_success() {
+                if let Ok(data) = resp.json::<OAuthExchangeResponse>().await {
+                    if data.access_token.is_some() {
+                        exchange_result = Some(data);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    let response = resp.map_err(|e| {
-        theseus::ErrorKind::LauncherError(format!(
-            "Не удалось связаться с сервером авторизации End-Rage: {}",
-            e
-        ))
+    // 2. Direct fallback to official end-rage.ru API
+    if exchange_result.is_none() {
+        tracing::info!("Using direct OAuth endpoint on end-rage.ru...");
+        let direct_payload = serde_json::json!({
+            "grant_type": "authorization_code",
+            "client_id": "era_launcher_client_app",
+            "client_secret": "ers_launcher_sec_7f9b2d8e4c1a",
+            "code": code,
+            "redirect_uri": redirect_uri
+        });
+
+        if let Ok(resp) = client.post("https://end-rage.ru/api/oauth/token").json(&direct_payload).send().await {
+            if let Ok(token_data) = resp.json::<serde_json::Value>().await {
+                if let Some(token_str) = token_data.get("access_token").and_then(|v| v.as_str()) {
+                    let mut username = "EndRagePlayer".to_string();
+                    let mut user_id: Option<String> = None;
+
+                    if let Ok(ui_resp) = client.get("https://end-rage.ru/api/oauth/userinfo")
+                        .header("Authorization", format!("Bearer {token_str}"))
+                        .send()
+                        .await
+                    {
+                        if let Ok(ui_data) = ui_resp.json::<serde_json::Value>().await {
+                            if let Some(nick) = ui_data.get("launcherNick").or_else(|| ui_data.get("username")).and_then(|v| v.as_str()) {
+                                username = nick.to_string();
+                            }
+                            if let Some(id_str) = ui_data.get("id").and_then(|v| v.as_str()) {
+                                user_id = Some(id_str.to_string());
+                            }
+                        }
+                    }
+
+                    exchange_result = Some(OAuthExchangeResponse {
+                        success: Some(true),
+                        access_token: Some(token_str.to_string()),
+                        profile: Some(OAuthProfile {
+                            id: user_id,
+                            name: Some(username),
+                        }),
+                        error_message: None,
+                        error: None,
+                    });
+                }
+            }
+        }
+    }
+
+    let final_res = exchange_result.ok_or_else(|| {
+        theseus::ErrorKind::LauncherError(
+            "Не удалось связаться с сервером авторизации End-Rage. Проверьте подключение к интернету.".to_string()
+        )
         .as_error()
     })?;
 
-    let exchange_result: OAuthExchangeResponse = response.json().await.map_err(|e| {
-        theseus::ErrorKind::LauncherError(format!(
-            "Ошибка при расшифровке ответа авторизации: {}",
-            e
-        ))
-        .as_error()
-    })?;
-
-    if let Some(err_msg) = exchange_result.error_message {
+    if let Some(err_msg) = final_res.error_message {
         return Err(theseus::ErrorKind::LauncherError(format!(
             "Ошибка авторизации End-Rage: {}",
             err_msg
@@ -369,7 +418,7 @@ pub async fn login_endrage_oauth<R: Runtime>(
         .into());
     }
 
-    let token = exchange_result.access_token.ok_or_else(|| {
+    let token = final_res.access_token.ok_or_else(|| {
         theseus::ErrorKind::LauncherError("Токен авторизации не был получен от сервера".to_string()).as_error()
     })?;
 
