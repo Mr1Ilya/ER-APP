@@ -25,7 +25,8 @@ pub fn init<R: Runtime>() -> tauri::plugin::TauriPlugin<R> {
             show_app_db_backups_folder,
             progress_bars_list,
             get_opening_command,
-            get_telegram_news
+            get_telegram_news,
+            install_erfeatures_mod
         ])
         .build()
 }
@@ -407,3 +408,53 @@ pub async fn get_telegram_news() -> Result<Vec<NewsItem>> {
 
     Ok(news)
 }
+
+#[tauri::command]
+pub async fn install_erfeatures_mod(
+    instance_id: String,
+    download_url: String,
+    file_name: String,
+) -> Result<String> {
+    tracing::info!("Downloading ERFeatures from {} for instance {}", download_url, instance_id);
+
+    let client = reqwest::Client::builder()
+        .user_agent("ERLauncher/1.0.15 (Windows)")
+        .build()
+        .map_err(|e| theseus::ErrorKind::OtherError(e.to_string()).as_error())?;
+
+    let response = client
+        .get(&download_url)
+        .send()
+        .await
+        .map_err(|e| theseus::ErrorKind::OtherError(format!("Failed to download mod: {e}")).as_error())?;
+
+    if !response.status().is_success() {
+        return Err(theseus::ErrorKind::OtherError(format!(
+            "Failed to download mod: HTTP {}",
+            response.status()
+        )).as_error().into());
+    }
+
+    let bytes = response
+        .bytes()
+        .await
+        .map_err(|e| theseus::ErrorKind::OtherError(format!("Failed to read mod data: {e}")).as_error())?;
+
+    let temp_dir = std::env::temp_dir();
+    let temp_file = temp_dir.join(&file_name);
+    tokio::fs::write(&temp_file, bytes).await.map_err(|e| {
+        theseus::ErrorKind::OtherError(format!("Failed to write temporary mod file: {e}")).as_error()
+    })?;
+
+    let result = theseus::instance::add_project_from_path(
+        &instance_id,
+        &temp_file,
+        Some(theseus::prelude::ProjectType::Mod),
+    )
+    .await;
+
+    let _ = tokio::fs::remove_file(&temp_file).await;
+
+    result.map_err(Into::into)
+}
+

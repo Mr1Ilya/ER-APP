@@ -1393,7 +1393,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 <template>
 	<SplashScreen v-if="!stateFailed" ref="splashScreen" data-tauri-drag-region />
 	<div id="teleports"></div>
-	<div id="sidebar-teleport-target" class="sidebar-teleport-content hidden"></div>
 	<div
 		v-if="stateInitialized"
 		class="app-grid-layout relative"
@@ -1556,7 +1555,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 					</Suspense>
 				</template>
 			</RouterView>
-			<div id="sidebar-teleport-target" class="sidebar-teleport-content hidden"></div>
+			<div id="sidebar-teleport-target" style="display: none !important;"></div>
 		</div>
 		<div
 			v-if="false"
@@ -1569,7 +1568,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 				:class="{ 'pb-12': !hasPlus }"
 				data-overlayscrollbars-initialize
 			>
-				<div id="sidebar-teleport-target" class="sidebar-teleport-content"></div>
 				<div class="sidebar-default-content" :class="{ 'sidebar-enabled': sidebarVisible }">
 					<div class="p-4 border-0 border-b-[1px] border-[--brand-gradient-border] border-solid">
 						<h3 class="text-base text-primary font-medium m-0">Playing as</h3>

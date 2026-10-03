@@ -1148,8 +1148,5 @@ function handleGoBack() {
 			@browse-modpacks="() => {}"
 			@create="handleServerModpackFlowCreate"
 		/>
-		<Teleport to="#sidebar-teleport-target">
-			<BrowseSidebar />
-		</Teleport>
 	</div>
 </template>
