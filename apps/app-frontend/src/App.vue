@@ -1441,36 +1441,36 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 			@open-settings="handleOpenSettings"
 			@open-accounts="handleOpenAccounts"
 		/>
-		<div data-tauri-drag-region class="app-grid-statusbar bg-[var(--er-statusbar-bg)] border-b border-[var(--er-border)] text-[var(--er-text)] h-[--top-bar-height] flex items-center justify-between px-3 select-none">
-			<div data-tauri-drag-region class="flex items-center gap-3 pl-2 min-w-0">
+		<div data-tauri-drag-region class="app-grid-statusbar bg-[var(--er-statusbar-bg)] border-b border-[var(--er-border)] text-[var(--er-text)] h-[--top-bar-height] flex items-center justify-between px-3 select-none overflow-hidden">
+			<div data-tauri-drag-region class="flex items-center gap-3 pl-2 min-w-0 flex-1 overflow-hidden mr-2">
 				<EndRageAppLogo class="h-6 w-auto text-[var(--er-text)] pointer-events-none select-none shrink-0" />
-				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-3">
+				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-1">
 					<button
-						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all shrink-0"
 						title="Назад"
 						@click="router.back()"
 					>
 						<LeftArrowIcon class="w-3.5 h-3.5" />
 					</button>
 					<button
-						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all"
+						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all shrink-0"
 						title="Вперёд"
 						@click="router.forward()"
 					>
 						<RightArrowIcon class="w-3.5 h-3.5" />
 					</button>
 				</div>
-				<div class="min-w-0 max-w-[320px] sm:max-w-[420px] md:max-w-[560px] overflow-hidden">
-					<Breadcrumbs class="pt-[1px] ml-1" />
+				<div class="min-w-0 flex-1 overflow-hidden">
+					<Breadcrumbs class="pt-[1px]" />
 				</div>
 			</div>
-			<section data-tauri-drag-region class="flex shrink-0 items-center gap-3 pl-2">
-				<div class="flex">
+			<section data-tauri-drag-region class="flex shrink-0 items-center gap-2.5">
+				<div class="flex shrink-0">
 					<Suspense>
 						<AppActionBar />
 					</Suspense>
 				</div>
-				<WindowControls />
+				<WindowControls class="shrink-0" />
 			</section>
 		</div>
 	</div>

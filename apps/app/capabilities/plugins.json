@@ -55,6 +55,21 @@
 				},
 				{
 					"url": "https://*.taila228c5.ts.net/*"
+				},
+				{
+					"url": "https://api.curseforge.com/*"
+				},
+				{
+					"url": "https://*.forgecdn.net/*"
+				},
+				{
+					"url": "https://edge.forgecdn.net/*"
+				},
+				{
+					"url": "https://mediafilez.forgecdn.net/*"
+				},
+				{
+					"url": "https://*.curseforge.com/*"
 				}
 			]
 		},
