@@ -20,6 +20,12 @@
 					@click="setSetupType('modpack')"
 				/>
 				<BigOptionButton
+					:icon="CurseForgeIcon"
+					:title="formatMessage(messages.curseforgeBaseTitle)"
+					:description="formatMessage(messages.curseforgeBaseDescription)"
+					@click="setSetupType('curseforge')"
+				/>
+				<BigOptionButton
 					:icon="BoxImportIcon"
 					:title="formatMessage(messages.importInstanceTitle)"
 					:description="formatMessage(messages.importInstanceDescription)"
@@ -58,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { BoxesIcon, BoxIcon, BoxImportIcon, PackageIcon } from '@erteam/assets'
+import { BoxesIcon, BoxIcon, BoxImportIcon, CurseForgeIcon, PackageIcon } from '@erteam/assets'
 import { defineMessages, useVIntl } from '@erteam/ui'
 import { computed } from 'vue'
 
@@ -101,6 +107,14 @@ const messages = defineMessages({
 		id: 'creation-flow.modal.setup-type.option.modpack-base.description',
 		defaultMessage: 'Browse modpacks on Modrinth or import one from a file.',
 	},
+	curseforgeBaseTitle: {
+		id: 'creation-flow.modal.setup-type.option.curseforge-base.title',
+		defaultMessage: 'Install modpack',
+	},
+	curseforgeBaseDescription: {
+		id: 'creation-flow.modal.setup-type.option.curseforge-base.description',
+		defaultMessage: 'Browse modpacks on CurseForge or import one from a file.',
+	},
 	importInstanceTitle: {
 		id: 'creation-flow.modal.setup-type.option.import-instance.title',
 		defaultMessage: 'Import instance',
@@ -133,7 +147,7 @@ const setupTypeTitle = computed(() => {
 	return formatMessage(messages.worldTypeTitle)
 })
 
-function setSetupType(type: 'modpack' | 'custom' | 'vanilla') {
+function setSetupType(type: 'modpack' | 'curseforge' | 'custom' | 'vanilla') {
 	debug('selected:', type)
 	_setSetupType(type)
 }

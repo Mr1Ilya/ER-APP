@@ -12,6 +12,11 @@ import { overlayScrollbarsDirective } from '@/directives/overlayScrollbars'
 import i18nPlugin from '@/plugins/i18n'
 import i18nDebugPlugin from '@/plugins/i18n-debug'
 import router from '@/routes'
+import { installCurseForgeModpack } from '@/helpers/curseforge'
+
+if (typeof window !== 'undefined') {
+	window.__installCurseForgeModpack = installCurseForgeModpack
+}
 
 const pinia = createPinia()
 

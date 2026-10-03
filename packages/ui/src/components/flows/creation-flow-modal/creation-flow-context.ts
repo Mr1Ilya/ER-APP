@@ -19,7 +19,7 @@ import type { ComboboxOption } from '../../base/Combobox.vue'
 import { stageConfigs } from './stages'
 
 export type FlowType = 'world' | 'server-onboarding' | 'reset-server' | 'instance'
-export type SetupType = 'modpack' | 'custom' | 'vanilla'
+export type SetupType = 'modpack' | 'curseforge' | 'custom' | 'vanilla'
 export type Gamemode = 'survival' | 'creative' | 'hardcore'
 export type Difficulty = 'peaceful' | 'easy' | 'normal' | 'hard'
 export type LoaderVersionType = 'stable' | 'latest' | 'other'
@@ -83,6 +83,10 @@ export const creationFlowMessages = defineMessages({
 	chooseModpackTitle: {
 		id: 'creation-flow.title.choose-modpack',
 		defaultMessage: 'Choose modpack',
+	},
+	chooseCurseforgeModpackTitle: {
+		id: 'creation-flow.title.choose-curseforge-modpack',
+		defaultMessage: 'Install modpack',
 	},
 })
 
@@ -481,6 +485,11 @@ export function createCreationFlowContext(
 			selectedLoaderVersion.value = null
 			loaderVersionType.value = 'stable'
 			modal.value?.setStage('modpack')
+		} else if (type === 'curseforge') {
+			selectedLoader.value = null
+			selectedLoaderVersion.value = null
+			loaderVersionType.value = 'stable'
+			modal.value?.setStage('curseforge-modpack')
 		} else {
 			modpackSelection.value = null
 			modpackFile.value = null

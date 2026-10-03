@@ -47,7 +47,7 @@
 				v-if="!isInstalled"
 				:disabled="installing"
 				class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[var(--color-brand)] hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
-				@click="handleInstall"
+				@click="handleInstall(false)"
 			>
 				<span
 					v-if="installing"
@@ -70,23 +70,49 @@
 				<span>{{ installing ? 'Установка...' : 'Установить мод' }}</span>
 			</button>
 
-			<div
-				v-else
-				class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
-			>
-				<svg
-					class="w-3.5 h-3.5"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
+			<template v-else>
+				<div
+					class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
 				>
-					<polyline points="20 6 9 17 4 12"></polyline>
-				</svg>
-				<span>Установлен</span>
-			</div>
+					<svg
+						class="w-3.5 h-3.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<polyline points="20 6 9 17 4 12"></polyline>
+					</svg>
+					<span>Установлен</span>
+				</div>
+
+				<button
+					:disabled="installing"
+					class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--er-text)] bg-surface-3 hover:bg-surface-4 border border-[var(--er-card-border)] active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+					title="Переустановить или обновить файл мода до актуальной версии"
+					@click="handleInstall(true)"
+				>
+					<span
+						v-if="installing"
+						class="animate-spin inline-block w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full"
+					></span>
+					<svg
+						v-else
+						class="w-3.5 h-3.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
+					</svg>
+					<span>{{ installing ? 'Обновление...' : 'Обновить' }}</span>
+				</button>
+			</template>
 		</div>
 	</div>
 </template>
@@ -143,7 +169,7 @@ onMounted(() => {
 	checkInstalled()
 })
 
-async function handleInstall() {
+async function handleInstall(isUpdate = false) {
 	if (!compatibleMod.value || installing.value) return
 
 	installing.value = true
@@ -151,8 +177,10 @@ async function handleInstall() {
 		await installERFeaturesMod(props.instance.id, compatibleMod.value)
 		isInstalled.value = true
 		notificationManager.addNotification({
-			title: 'Мод установлен',
-			text: `Мод ${compatibleMod.value.title} успешно установлен в сборку "${props.instance.name}"!`,
+			title: isUpdate ? 'Мод обновлён' : 'Мод установлен',
+			text: isUpdate
+				? `Мод ${compatibleMod.value.title} успешно обновлён в сборке "${props.instance.name}"!`
+				: `Мод ${compatibleMod.value.title} успешно установлен в сборку "${props.instance.name}"!`,
 			type: 'success',
 		})
 		emit('installed')
