@@ -357,30 +357,36 @@ async function loadSkins() {
 		if (isEndRageAccount.value && currentUser.value?.profile?.name) {
 			try {
 				const nick = currentUser.value.profile.name
-				const res = await fetch(`https://end-rage.ru/api/minecraft/skin?nick=${encodeURIComponent(nick)}`)
-				if (res.ok) {
-					const data = await res.json()
-					if (data?.success && data?.skin?.value) {
-						const decodedStr = atob(data.skin.value)
-						const parsed = JSON.parse(decodedStr)
-						const skinUrl = parsed?.textures?.SKIN?.url
-						if (skinUrl) {
-							const existingIdx = loadedSkins.findIndex((s) => s.texture_key === `endrage-${nick}`)
-							const endrageSkin: Skin = {
-								texture_key: `endrage-${nick}`,
-								name: `End-Rage (${nick})`,
-								section: 'End-Rage',
-								variant: data.skin.model === 'slim' ? 'SLIM' : 'CLASSIC',
-								texture: skinUrl,
-								source: 'custom',
-								is_equipped: true,
+				const urls = [
+					`http://127.0.0.1:4003/textures/${encodeURIComponent(nick)}`,
+					`https://skins.end-rage.ru/textures/${encodeURIComponent(nick)}`
+				]
+				for (const u of urls) {
+					try {
+						const res = await fetch(u)
+						if (res.ok) {
+							const data = await res.json()
+							const skinUrl = data?.textures?.SKIN?.url
+							if (skinUrl) {
+								const isSlim = data?.textures?.SKIN?.metadata?.model === 'slim'
+								const existingIdx = loadedSkins.findIndex((s) => s.texture_key === `endrage-${nick}`)
+								const endrageSkin: Skin = {
+									texture_key: `endrage-${nick}`,
+									name: `End-Rage (${nick})`,
+									section: 'End-Rage',
+									variant: isSlim ? 'SLIM' : 'CLASSIC',
+									texture: skinUrl,
+									source: 'custom',
+									is_equipped: true,
+								}
+								if (existingIdx !== -1) {
+									loadedSkins.splice(existingIdx, 1)
+								}
+								loadedSkins.unshift(endrageSkin)
+								break
 							}
-							if (existingIdx !== -1) {
-								loadedSkins.splice(existingIdx, 1)
-							}
-							loadedSkins.unshift(endrageSkin)
 						}
-					}
+					} catch {}
 				}
 			} catch (e) {
 				console.warn('Could not load remote End-Rage skin:', e)
@@ -747,19 +753,34 @@ async function applyEndRageSkin(skin: Skin) {
 		}
 
 		if (username && base64) {
-			await fetch('https://end-rage.ru/api/user/skin', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`
-				},
-				body: JSON.stringify({
-					nick: username,
-					action: 'upload',
-					fileBase64: base64,
-					model
+			const payload = {
+				username,
+				token,
+				fileBase64: base64,
+				model
+			}
+
+			let synced = false
+			try {
+				const res = await fetch('http://127.0.0.1:4003/upload/skin', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
 				})
-			}).catch((e) => console.warn('Sync to end-rage.ru error:', e))
+				if (res.ok) synced = true
+			} catch {}
+
+			if (!synced) {
+				await fetch('https://skins.end-rage.ru/upload/skin', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				}).catch((e) => console.warn('Sync to skins.end-rage.ru error:', e))
+			}
+
+			if (typeof window !== 'undefined') {
+				window.dispatchEvent(new CustomEvent('endrage-skin-changed', { detail: Date.now() }))
+			}
 		}
 
 		notifications.addNotification({

@@ -34,6 +34,7 @@ import type { LocationQuery } from 'vue-router'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 import ContextMenu from '@/components/ui/ContextMenu.vue'
+import i18n from '@/i18n.config'
 import { useAppServerBrowse } from '@/composables/browse/use-app-server-browse'
 import {
 	get_project,
