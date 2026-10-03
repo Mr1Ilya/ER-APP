@@ -70,7 +70,8 @@
 		"deep-link": {
 			"desktop": {
 				"schemes": [
-					"erteam"
+					"erteam",
+					"endrage"
 				]
 			},
 			"mobile": []

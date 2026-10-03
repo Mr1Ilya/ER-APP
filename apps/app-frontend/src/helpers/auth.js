@@ -41,6 +41,11 @@ export async function login_endrage(username, token, uuidStr) {
 	return await invoke('plugin:auth|login_endrage', { username, token, uuidStr })
 }
 
+export async function login_endrage_oauth() {
+	return await invoke('plugin:auth|login_endrage_oauth')
+}
+
+
 /**
  * Retrieves the default user
  * @return {Promise<UUID | undefined>}

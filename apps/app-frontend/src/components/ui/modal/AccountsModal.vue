@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { get_default_user, login, login_endrage, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
+import { get_default_user, login, login_endrage_oauth, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
 import i18n from '@/i18n.config'
 
 const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
@@ -10,9 +10,8 @@ const activeTab = ref<'list' | 'add'>('list')
 const addType = ref<'microsoft' | 'endrage' | 'offline'>('endrage')
 
 const offlineNickname = ref('')
-const endrageUsername = ref('')
-const endragePassword = ref('')
 const isActionRunning = ref(false)
+const isOAuthWaiting = ref(false)
 const errorMessage = ref<string | null>(null)
 
 interface Account {
@@ -138,53 +137,25 @@ async function handleAddMicrosoft() {
 	}
 }
 
-async function handleAddEndrage() {
-	const username = endrageUsername.value.trim()
-	const password = endragePassword.value
-	if (!username || !password) {
-		errorMessage.value = isRu.value ? 'Пожалуйста, введите логин и пароль' : 'Please enter username and password'
-		return
-	}
-
+async function handleAddEndrageOAuth() {
+	if (isActionRunning.value) return
 	try {
 		isActionRunning.value = true
+		isOAuthWaiting.value = true
 		errorMessage.value = null
 
-		let resp: Response
-		try {
-			resp = await fetch('https://auth.end-rage.ru/authenticate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ username, password, requestUser: true }),
-			})
-		} catch {
-			// Fallback to local address if domain is not routed yet
-			resp = await fetch('http://127.0.0.1:4002/authenticate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ username, password, requestUser: true }),
-			})
-		}
-
-		const data = await resp.json()
-		if (!resp.ok) {
-			throw new Error(data.errorMessage || data.error || (isRu.value ? 'Неверный логин или пароль' : 'Authentication failed'))
-		}
-
-		const profile = data.selectedProfile
-		const account = await login_endrage(profile.name, data.accessToken, profile.id)
+		const account = await login_endrage_oauth()
 		if (account?.profile?.id) {
 			await set_default_user(account.profile.id)
+			notifyAccountChanged()
+			await loadAccounts()
+			activeTab.value = 'list'
 		}
-		endrageUsername.value = ''
-		endragePassword.value = ''
-		notifyAccountChanged()
-		await loadAccounts()
-		activeTab.value = 'list'
 	} catch (e: any) {
-		errorMessage.value = e?.message || (isRu.value ? 'Не удалось войти в аккаунт EndRage' : 'Failed to sign in to EndRage account')
+		errorMessage.value = e?.message || (isRu.value ? 'Ошибка авторизации через сайт End-Rage' : 'Failed to authorize via End-Rage')
 	} finally {
 		isActionRunning.value = false
+		isOAuthWaiting.value = false
 	}
 }
 
@@ -241,7 +212,6 @@ function isOffline(account: Account) {
 				@click.self="hide"
 			>
 				<div class="w-full max-w-lg bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast">
-					<!-- Header -->
 					<div class="flex items-center justify-between pb-3 border-b border-divider">
 						<div class="flex items-center gap-3">
 							<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
@@ -270,7 +240,6 @@ function isOffline(account: Account) {
 						</button>
 					</div>
 
-					<!-- Error alert -->
 					<div v-if="errorMessage" class="p-3 bg-red-500/15 border border-red-500/30 rounded-xl text-xs text-red-300 flex items-center gap-2">
 						<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<circle cx="12" cy="12" r="10"></circle>
@@ -280,7 +249,6 @@ function isOffline(account: Account) {
 						<span>{{ errorMessage }}</span>
 					</div>
 
-					<!-- Top Mode Tabs -->
 					<div class="flex items-center gap-2 bg-surface-2 p-1.5 rounded-2xl border border-divider">
 						<button
 							class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border-0 cursor-pointer flex items-center justify-center gap-2"
@@ -305,7 +273,6 @@ function isOffline(account: Account) {
 						</button>
 					</div>
 
-					<!-- TAB 1: ACCOUNTS LIST -->
 					<div v-if="activeTab === 'list'" class="flex flex-col gap-2.5 max-h-[340px] overflow-y-auto pr-1">
 						<div v-if="accountList.length === 0" class="flex flex-col items-center justify-center py-8 text-center gap-2">
 							<div class="w-12 h-12 rounded-2xl bg-surface-2 flex items-center justify-center text-secondary mb-1">
@@ -385,11 +352,8 @@ function isOffline(account: Account) {
 						</div>
 					</div>
 
-					<!-- TAB 2: ADD ACCOUNT -->
 					<div v-if="activeTab === 'add'" class="flex flex-col gap-4">
-						<!-- 3 Auth Types Selector -->
 						<div class="grid grid-cols-3 gap-2">
-							<!-- 1. Microsoft -->
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
 								:class="addType === 'microsoft' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
@@ -407,7 +371,6 @@ function isOffline(account: Account) {
 								</span>
 							</button>
 
-							<!-- 2. EndRage Auth -->
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
 								:class="addType === 'endrage' ? 'bg-surface-3 border-purple-500/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
@@ -425,7 +388,6 @@ function isOffline(account: Account) {
 								</span>
 							</button>
 
-							<!-- 3. Offline / Free -->
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
 								:class="addType === 'offline' ? 'bg-surface-3 border-blue-400/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
@@ -444,51 +406,63 @@ function isOffline(account: Account) {
 							</button>
 						</div>
 
-						<!-- EndRage Auth Form -->
-						<div v-if="addType === 'endrage'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
-							<div class="flex flex-col gap-1">
-								<label class="text-xs font-semibold text-contrast">
-									{{ isRu ? 'Логин или Email на End-Rage.Ru' : 'Username or Email on End-Rage' }}
-								</label>
-								<input
-									v-model="endrageUsername"
-									type="text"
-									:placeholder="isRu ? 'Например: EndRagePlayer' : 'Username or email'"
-									class="w-full bg-surface-1 border border-divider focus:border-purple-400 rounded-xl px-3.5 py-2 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
-								/>
+						<div v-if="addType === 'endrage'" class="flex flex-col gap-4 p-5 rounded-2xl bg-surface-2 border border-divider text-center items-center">
+							<div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25 mt-1">
+								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+								</svg>
 							</div>
 
-							<div class="flex flex-col gap-1">
-								<label class="text-xs font-semibold text-contrast">
-									{{ isRu ? 'Пароль' : 'Password' }}
-								</label>
-								<input
-									v-model="endragePassword"
-									type="password"
-									placeholder="••••••••"
-									class="w-full bg-surface-1 border border-divider focus:border-purple-400 rounded-xl px-3.5 py-2 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
-									@keyup.enter="handleAddEndrage"
-								/>
+							<div class="flex flex-col gap-1.5 max-w-sm">
+								<span class="text-sm font-bold text-contrast">
+									{{ isRu ? 'Вход через End-Rage ID' : 'Sign in with End-Rage ID' }}
+								</span>
+								<span class="text-xs text-secondary leading-relaxed">
+									{{ isRu
+										? 'Откроется официальная страница авторизации в вашем браузере на сайте end-rage.ru. Лаунчер не запрашивает, не видит и не сохраняет ваши пароли.'
+										: 'The official login page will open in your browser on end-rage.ru. The launcher never asks for, sees, or stores your passwords.'
+									}}
+								</span>
 							</div>
 
-							<div class="flex items-center justify-between text-[11px] text-secondary">
-								<span>{{ isRu ? 'Скин и плащ загрузятся с сайта' : 'Skin and cape will load automatically' }}</span>
-								<a href="https://end-rage.ru" target="_blank" class="text-purple-400 hover:underline">
-									{{ isRu ? 'Регистрация' : 'Register' }}
-								</a>
+							<div class="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[11px] text-purple-300">
+								<svg class="w-4 h-4 shrink-0 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+									<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+								</svg>
+								<span class="font-medium">
+									{{ isRu
+										? 'Официальный протокол защиты OAuth 2.0'
+										: 'Official OAuth 2.0 Security Protocol'
+									}}
+								</span>
 							</div>
 
 							<button
-								:disabled="!endrageUsername.trim() || !endragePassword || isActionRunning"
-								class="w-full py-2.5 px-4 mt-1 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider transition-all border-0 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
-								@click="handleAddEndrage"
+								:disabled="isActionRunning"
+								class="w-full py-3 px-4 mt-1 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-600/20 border-0 cursor-pointer transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+								@click="handleAddEndrageOAuth"
 							>
-								<span v-if="!isActionRunning">{{ isRu ? 'Войти в аккаунт EndRage' : 'Sign in to EndRage' }}</span>
-								<span v-else class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+								<svg v-if="!isOAuthWaiting" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+									<polyline points="10 17 15 12 10 7"></polyline>
+									<line x1="15" y1="12" x2="3" y2="12"></line>
+								</svg>
+								<span v-if="!isOAuthWaiting">{{ isRu ? 'Войти через End-Rage ID (в браузере)' : 'Sign in with End-Rage ID (Browser)' }}</span>
+								<span v-else class="flex items-center gap-2">
+									<span class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+									<span>{{ isRu ? 'Ожидание входа в браузере...' : 'Waiting for browser...' }}</span>
+								</span>
 							</button>
+
+							<div class="flex items-center justify-center text-[11px] text-secondary">
+								<span>{{ isRu ? 'Нет аккаунта?' : 'No account?' }}</span>
+								<a href="https://end-rage.ru" target="_blank" class="ml-1 text-purple-400 hover:underline">
+									{{ isRu ? 'Зарегистрироваться на сайте' : 'Register on website' }}
+								</a>
+							</div>
 						</div>
 
-						<!-- Microsoft Form -->
 						<div v-else-if="addType === 'microsoft'" class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider text-center items-center">
 							<div class="w-12 h-12 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20 mt-1">
 								<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -516,7 +490,6 @@ function isOffline(account: Account) {
 							</button>
 						</div>
 
-						<!-- Offline Form -->
 						<div v-else class="flex flex-col gap-3 p-4 rounded-2xl bg-surface-2 border border-divider">
 							<label class="text-xs font-semibold text-contrast">
 								{{ isRu ? 'Игровой никнейм' : 'Player Nickname' }}
