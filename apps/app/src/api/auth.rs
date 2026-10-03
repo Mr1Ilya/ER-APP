@@ -422,15 +422,14 @@ pub async fn login_endrage_oauth<R: Runtime>(
         theseus::ErrorKind::LauncherError("Токен авторизации не был получен от сервера".to_string()).as_error()
     })?;
 
-    let profile = exchange_result.profile.ok_or_else(|| {
+    let profile = final_res.profile.ok_or_else(|| {
         theseus::ErrorKind::LauncherError("Профиль пользователя не найден в ответе сервера".to_string()).as_error()
     })?;
 
     let username = profile.name.unwrap_or_else(|| "EndRagePlayer".to_string());
-    let uuid_str = profile.id;
 
-    let uuid = if let Some(ref u) = uuid_str {
-        uuid::Uuid::parse_str(u).unwrap_or_else(|_| {
+    let uuid = if let Some(ref u) = profile.id {
+        uuid::Uuid::parse_str(u.as_str()).unwrap_or_else(|_| {
             let hash = md5::compute(format!("OfflinePlayer:{}", username).as_bytes());
             let mut bytes = hash.0;
             bytes[6] = (bytes[6] & 0x0f) | 0x30;
