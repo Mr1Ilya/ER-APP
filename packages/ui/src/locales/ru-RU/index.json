@@ -5590,5 +5590,32 @@
   },
   "version.supplementary-resources.type": {
     "defaultMessage": "Тип"
+  },
+  "creation-flow.modal.curseforge.known-prompt": {
+    "defaultMessage": "Уже знаете, какую сборку CurseForge хотите установить?"
+  },
+  "creation-flow.modal.curseforge.search-placeholder": {
+    "defaultMessage": "Поиск сборок CurseForge..."
+  },
+  "creation-flow.modal.curseforge.no-results": {
+    "defaultMessage": "Сборки не найдены"
+  },
+  "creation-flow.modal.curseforge.select-version": {
+    "defaultMessage": "Версия для установки:"
+  },
+  "creation-flow.modal.curseforge.install-button": {
+    "defaultMessage": "Установить сборку"
+  },
+  "creation-flow.modal.curseforge.import-zip": {
+    "defaultMessage": "Импортировать из файла .zip"
+  },
+  "creation-flow.modal.curseforge.install-url": {
+    "defaultMessage": "Установить по ссылке"
+  },
+  "creation-flow.modal.curseforge.submit-install": {
+    "defaultMessage": "Установить"
+  },
+  "creation-flow.modal.curseforge.installing-prompt": {
+    "defaultMessage": "Установка сборки CurseForge..."
   }
 }

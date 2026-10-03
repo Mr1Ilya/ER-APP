@@ -8,6 +8,8 @@
 	"permissions": [
 		"dialog:allow-open",
 		"dialog:allow-confirm",
+		"dialog:allow-message",
+		"dialog:default",
 		"opener:default",
 		"os:allow-platform",
 		"os:allow-version",

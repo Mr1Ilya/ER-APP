@@ -5716,5 +5716,32 @@
   },
   "version.supplementary-resources.type": {
     "defaultMessage": "Type"
+  },
+  "creation-flow.modal.curseforge.known-prompt": {
+    "defaultMessage": "Already know the CurseForge modpack you want to install?"
+  },
+  "creation-flow.modal.curseforge.search-placeholder": {
+    "defaultMessage": "Search CurseForge modpacks..."
+  },
+  "creation-flow.modal.curseforge.no-results": {
+    "defaultMessage": "No modpacks found"
+  },
+  "creation-flow.modal.curseforge.select-version": {
+    "defaultMessage": "Version to install:"
+  },
+  "creation-flow.modal.curseforge.install-button": {
+    "defaultMessage": "Install modpack"
+  },
+  "creation-flow.modal.curseforge.import-zip": {
+    "defaultMessage": "Import from .zip file"
+  },
+  "creation-flow.modal.curseforge.install-url": {
+    "defaultMessage": "Install by link"
+  },
+  "creation-flow.modal.curseforge.submit-install": {
+    "defaultMessage": "Install"
+  },
+  "creation-flow.modal.curseforge.installing-prompt": {
+    "defaultMessage": "Installing CurseForge modpack..."
   }
 }

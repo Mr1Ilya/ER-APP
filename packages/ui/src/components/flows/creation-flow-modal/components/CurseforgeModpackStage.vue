@@ -1,5 +1,20 @@
 <template>
 	<div class="flex flex-col gap-4">
+		<!-- Error banner if any -->
+		<div
+			v-if="errorMessage"
+			class="flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400"
+		>
+			<span>{{ errorMessage }}</span>
+			<button
+				type="button"
+				class="text-xs font-semibold underline hover:opacity-80"
+				@click="errorMessage = null"
+			>
+				Закрыть
+			</button>
+		</div>
+
 		<!-- Active installation progress overlay/state -->
 		<template v-if="installing">
 			<div class="flex flex-col items-center justify-center gap-4 py-8 text-center">
@@ -255,6 +270,7 @@ const curseforgeUrl = ref('')
 const installing = ref(false)
 const currentProgressStatus = ref('')
 const progressPercent = ref<number | null>(null)
+const errorMessage = ref<string | null>(null)
 
 async function cfApi<T>(path: string, options: RequestInit = {}): Promise<T> {
 	const res = await fetch(`https://api.curseforge.com/v1${path}`, {
@@ -394,7 +410,7 @@ async function triggerZipFileInput() {
 		}
 		input.click()
 	} catch (err: any) {
-		alert(`Ошибка при выборе файла: ${err.message || err}`)
+		errorMessage.value = `Ошибка при выборе файла: ${err.message || err}`
 	}
 }
 
@@ -429,13 +445,13 @@ async function installFromUrl() {
 				return
 			}
 		} catch (err: any) {
-			alert(`Не удалось найти файл по ссылке: ${err.message}`)
+			errorMessage.value = `Не удалось найти файл по ссылке: ${err.message}`
 			installing.value = false
 			return
 		}
 	}
 
-	alert('Пожалуйста, введите прямую ссылку на файл версии сборки (содержащую /files/<ID>).')
+	errorMessage.value = 'Пожалуйста, введите прямую ссылку на файл версии сборки (содержащую /files/<ID>).'
 }
 
 async function runInstallation(options: {
@@ -448,6 +464,7 @@ async function runInstallation(options: {
 	installing.value = true
 	progressPercent.value = null
 	currentProgressStatus.value = 'Подготовка к установке...'
+	errorMessage.value = null
 
 	try {
 		const installFn = (window as any).__installCurseForgeModpack
@@ -472,7 +489,7 @@ async function runInstallation(options: {
 		}, 1200)
 	} catch (err: any) {
 		console.error('CurseForge install error:', err)
-		alert(`Ошибка установки сборки: ${err.message || err}`)
+		errorMessage.value = `Ошибка установки сборки: ${err.message || err}`
 		installing.value = false
 	}
 }
