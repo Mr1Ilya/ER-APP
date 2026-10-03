@@ -698,6 +698,10 @@ async function preserveExternalSkins(skinsToPersist: Skin[]) {
 }
 
 function schedulePendingSkinRefresh() {
+	if (isEndRageAccount.value || offline.value) {
+		return
+	}
+
 	if (pendingSkinRefreshTimeout !== null) {
 		window.clearTimeout(pendingSkinRefreshTimeout)
 	}
@@ -826,7 +830,7 @@ async function onSkinSaved(options: { applied: boolean; skin?: Skin; previousSki
 		await loadSkins()
 	}
 
-	if (options.applied) {
+	if (options.applied && !isEndRageAccount.value && !offline.value) {
 		schedulePendingSkinRefresh()
 	}
 }

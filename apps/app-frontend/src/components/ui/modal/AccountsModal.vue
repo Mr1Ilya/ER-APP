@@ -24,6 +24,13 @@ interface Account {
 
 const accountList = ref<Account[]>([])
 const currentDefaultId = ref<string | null>(null)
+const skinVersion = ref(Date.now())
+
+if (typeof window !== 'undefined') {
+	window.addEventListener('endrage-skin-changed', (e: any) => {
+		skinVersion.value = e.detail || Date.now()
+	})
+}
 
 async function loadAccounts() {
 	try {
@@ -41,6 +48,7 @@ async function loadAccounts() {
 
 function show() {
 	errorMessage.value = null
+	skinVersion.value = Date.now()
 	isVisible.value = true
 	void loadAccounts()
 }
@@ -162,7 +170,7 @@ async function handleAddEndrageOAuth() {
 function getAvatar(account: Account) {
 	if (!account.profile) return 'https://launcher-files.modrinth.com/assets/steve_head.png'
 	if (account.access_token?.startsWith('endrage')) {
-		return `https://skins.end-rage.ru/head/${encodeURIComponent(account.profile.name)}?size=64`
+		return `https://skins.end-rage.ru/head/${encodeURIComponent(account.profile.name)}?size=64&v=${skinVersion.value}`
 	}
 	if (account.access_token?.startsWith('offline')) {
 		return 'https://launcher-files.modrinth.com/assets/steve_head.png'
@@ -179,14 +187,22 @@ function getAvatar(account: Account) {
 
 function handleAvatarError(e: Event, account: Account) {
 	const img = e.target as HTMLImageElement
+	const name = account.profile?.name
+	if (!name) {
+		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
+		return
+	}
 	if (account.access_token?.startsWith('endrage')) {
-		if (!img.src.includes('steve_head')) {
-			img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
+		if (!img.src.includes('&retry=')) {
+			img.src = `https://skins.end-rage.ru/head/${encodeURIComponent(name)}?size=64&retry=${Date.now()}`
+			return
+		}
+		if (!img.src.includes('mc-heads.net')) {
+			img.src = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`
 			return
 		}
 	}
-	const name = account.profile?.name
-	if (name && !img.src.includes('minotar.net')) {
+	if (!img.src.includes('minotar.net')) {
 		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`
 	} else if (!img.src.includes('steve_head')) {
 		img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'

@@ -268,6 +268,7 @@ fn main() {
                         "progress_bars_list",
                         "get_opening_command",
                         "get_telegram_news",
+                        "install_erfeatures_mod",
                     ])
                     .default_permission(
                         DefaultPermissionRule::AllowAllCommands,

@@ -1441,10 +1441,10 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 			@open-settings="handleOpenSettings"
 			@open-accounts="handleOpenAccounts"
 		/>
-		<div data-tauri-drag-region class="app-grid-statusbar bg-[var(--er-statusbar-bg)] border-b border-[var(--er-border)] text-[var(--er-text)] h-[--top-bar-height] flex items-center justify-between px-4 select-none">
-			<div data-tauri-drag-region class="flex items-center gap-3">
-				<EndRageAppLogo class="h-6 w-auto text-[var(--er-text)] pointer-events-none select-none" />
-				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-4">
+		<div data-tauri-drag-region class="app-grid-statusbar bg-[var(--er-statusbar-bg)] border-b border-[var(--er-border)] text-[var(--er-text)] h-[--top-bar-height] flex items-center justify-between px-3 select-none">
+			<div data-tauri-drag-region class="flex items-center gap-3 pl-2 min-w-0">
+				<EndRageAppLogo class="h-6 w-auto text-[var(--er-text)] pointer-events-none select-none shrink-0" />
+				<div data-tauri-drag-region class="flex shrink-0 items-center gap-1.5 ml-3">
 					<button
 						class="cursor-pointer p-0 m-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] border-none outline-none bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] rounded-lg flex items-center justify-center w-7 h-7 transition-all"
 						title="Назад"
@@ -1460,10 +1460,12 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 						<RightArrowIcon class="w-3.5 h-3.5" />
 					</button>
 				</div>
-				<Breadcrumbs class="pt-[1px] ml-1" />
+				<div class="min-w-0 max-w-[320px] sm:max-w-[420px] md:max-w-[560px] overflow-hidden">
+					<Breadcrumbs class="pt-[1px] ml-1" />
+				</div>
 			</div>
-			<section data-tauri-drag-region class="flex shrink-0 items-center gap-2">
-				<div class="flex mr-2">
+			<section data-tauri-drag-region class="flex shrink-0 items-center gap-3 pl-2">
+				<div class="flex">
 					<Suspense>
 						<AppActionBar />
 					</Suspense>
@@ -1703,7 +1705,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 
 .app-grid-statusbar {
 	grid-area: status;
-	padding-right: var(--window-controls-width, 0px);
 	position: relative;
 	z-index: 2;
 }
