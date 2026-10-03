@@ -147,6 +147,7 @@ import {
 import { arrayBufferToBase64 } from '@erteam/utils'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
+import defaultSteveSkin from '@/assets/skins/steve.png'
 import {
 	type Cape,
 	determineModelType,
@@ -303,10 +304,10 @@ async function loadPreviewSkin() {
 			previewSkin.value = await get_normalized_skin_texture(currentSkin.value)
 		} catch (error) {
 			console.error('Failed to load skin texture:', error)
-			previewSkin.value = '/src/assets/skins/steve.png'
+			previewSkin.value = defaultSteveSkin
 		}
 	} else {
-		previewSkin.value = '/src/assets/skins/steve.png'
+		previewSkin.value = defaultSteveSkin
 	}
 }
 

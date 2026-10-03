@@ -79,7 +79,7 @@
 		"updater": {
 			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE5NUJCQzk1QTlFRkM4MDIKUldRQ3lPK3BsYnhiR1RwM0xmenFMS1ppNTBwTlpDVFF4M01LZXRRV0EzWU5Vc3plTklmRHh2dUgK",
 			"endpoints": [
-				"https://github.com/Mr1Ilya/ER-APP/releases/latest/download/latest.json"
+				"https://releases.end-rage.ru/latest.json"
 			]
 		}
 	},

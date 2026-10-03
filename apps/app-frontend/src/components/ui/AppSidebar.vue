@@ -58,9 +58,7 @@ const avatarUrl = computed(() => {
 function onAvatarError(e: Event) {
 	const img = e.target as HTMLImageElement
 	const name = activeAccount.value?.profile?.name
-	if (name && !img.src.includes('127.0.0.1:4003') && !img.src.includes('localhost')) {
-		img.src = `http://127.0.0.1:4003/head/${encodeURIComponent(name)}?size=64&v=${skinVersion.value}`
-	} else if (name && !img.src.includes('mc-heads.net')) {
+	if (name && !img.src.includes('mc-heads.net')) {
 		img.src = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`
 	} else if (name && !img.src.includes('minotar.net')) {
 		img.src = `https://minotar.net/helm/${encodeURIComponent(name)}/64`

@@ -180,9 +180,8 @@ function getAvatar(account: Account) {
 function handleAvatarError(e: Event, account: Account) {
 	const img = e.target as HTMLImageElement
 	if (account.access_token?.startsWith('endrage')) {
-		// Fallback to local skins port if domain is not yet active
-		if (!img.src.includes('127.0.0.1:4003')) {
-			img.src = `http://127.0.0.1:4003/head/${encodeURIComponent(account.profile.name)}?size=64`
+		if (!img.src.includes('steve_head')) {
+			img.src = 'https://launcher-files.modrinth.com/assets/steve_head.png'
 			return
 		}
 	}
