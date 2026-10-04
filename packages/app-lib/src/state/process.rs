@@ -241,7 +241,26 @@ impl ProcessManager {
         self.processes.get(&id).map(|x| x.rpc_server.clone())
     }
 
+    pub fn clean_dead_processes(&self) -> Vec<Uuid> {
+        let dead_uuids: Vec<Uuid> = self
+            .processes
+            .iter_mut()
+            .filter_map(|mut entry| {
+                match entry.value_mut().child.try_wait() {
+                    Ok(Some(_)) | Err(_) => Some(*entry.key()),
+                    Ok(None) => None,
+                }
+            })
+            .collect();
+
+        for uuid in &dead_uuids {
+            self.processes.remove(uuid);
+        }
+        dead_uuids
+    }
+
     pub fn get_all(&self) -> Vec<ProcessMetadata> {
+        self.clean_dead_processes();
         self.processes
             .iter()
             .map(|x| x.value().metadata.clone())
@@ -253,7 +272,13 @@ impl ProcessManager {
         id: Uuid,
     ) -> crate::Result<Option<Option<ExitStatus>>> {
         if let Some(mut process) = self.processes.get_mut(&id) {
-            Ok(Some(process.child.try_wait()?))
+            match process.child.try_wait() {
+                Ok(status) => Ok(Some(status)),
+                Err(err) => {
+                    tracing::warn!("Failed try_wait on process {id}: {err}");
+                    Ok(Some(Some(ExitStatus::default())))
+                }
+            }
         } else {
             Ok(None)
         }
@@ -263,18 +288,20 @@ impl ProcessManager {
         if let Some(mut process) = self.processes.get_mut(&id) {
             process.child.wait().await?;
         }
+        self.clean_dead_processes();
         Ok(())
     }
 
     pub async fn kill(&self, id: Uuid) -> crate::Result<()> {
         if let Some(mut process) = self.processes.get_mut(&id) {
-            process.child.kill().await?;
+            let _ = process.child.kill().await;
         }
+        self.clean_dead_processes();
 
         Ok(())
     }
 
-    fn remove(&self, id: Uuid) {
+    pub fn remove(&self, id: Uuid) {
         self.processes.remove(&id);
     }
 }
@@ -796,17 +823,25 @@ impl Process {
 
         let state = crate::State::get().await?;
         loop {
-            if let Some(process) = state.process_manager.try_wait(uuid)? {
-                if let Some(t) = process {
+            match state.process_manager.try_wait(uuid) {
+                Ok(Some(Some(t))) => {
                     mc_exit_status = t;
                     break;
                 }
-            } else {
-                mc_exit_status = ExitStatus::default();
-                break;
+                Ok(Some(None)) => {
+                    // Still running
+                }
+                Ok(None) => {
+                    mc_exit_status = ExitStatus::default();
+                    break;
+                }
+                Err(_) => {
+                    mc_exit_status = ExitStatus::default();
+                    break;
+                }
             }
 
-            // sleep for 10ms
+            // sleep for 50ms
             tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
 
             // Auto-update playtime every minute
@@ -815,13 +850,13 @@ impl Process {
         }
 
         state.process_manager.remove(uuid);
-        emit_process(
+        let _ = emit_process(
             &instance_id,
             uuid,
             ProcessPayloadType::Finished,
             "Exited process",
         )
-        .await?;
+        .await;
 
         // Now fully complete- update playtime one last time
         update_playtime(&mut last_updated_playtime, &instance_id, true).await;

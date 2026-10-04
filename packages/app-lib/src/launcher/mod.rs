@@ -773,23 +773,99 @@ pub async fn launch_minecraft(
     let _ =
         download_log_config(&state, &version_info, None, false, None).await?;
 
+    let java_key = version_info
+        .java_version
+        .as_ref()
+        .map_or(8, |it| it.major_version);
+
     let java_version =
         get_java_version_from_launch_context(context, &version_info)
-            .await?
-            .ok_or_else(|| {
-                crate::ErrorKind::LauncherError(
-                    "Missing correct java installation".to_string(),
-                )
-            })?;
+            .await?;
 
-    // Test jre version
-    let java_version =
-        crate::api::jre::check_jre(java_version.path.clone().into()).await?;
+    // Test and ensure valid JRE
+    let java_version = match java_version {
+        Some(jv) => match crate::api::jre::check_jre(jv.path.clone().into()).await {
+            Ok(checked) => checked,
+            Err(e) => {
+                tracing::warn!(
+                    "Configured Java at {} is invalid or missing ({e}). Auto-installing Java {java_key}...",
+                    jv.path
+                );
+                let path = crate::api::jre::auto_install_java_with_loading(java_key, true).await?;
+                let checked = crate::api::jre::check_jre(path).await?;
+                let _ = checked.upsert(&state.pool).await;
+                checked
+            }
+        },
+        None => {
+            tracing::info!("No Java found for version {java_key}. Auto-installing...");
+            let path = crate::api::jre::auto_install_java_with_loading(java_key, true).await?;
+            let checked = crate::api::jre::check_jre(path).await?;
+            let _ = checked.upsert(&state.pool).await;
+            checked
+        }
+    };
 
     let client_path = state
         .directories
         .version_dir(&version_jar)
         .join(format!("{version_jar}.jar"));
+
+    if !client_path.exists() {
+        tracing::warn!(
+            "Client jar {} missing, attempting recovery/download...",
+            client_path.display()
+        );
+
+        let mut recovered = false;
+
+        // 1. Try finding in default settings dir (e.g. C:\Users\...\AppData\Roaming\ERTeamApp)
+        if let Some(default_dir) = crate::state::DirectoryInfo::initial_settings_dir_path(&state.directories.app_identifier) {
+            let alt_path = default_dir
+                .join("meta")
+                .join("versions")
+                .join(&version_jar)
+                .join(format!("{version_jar}.jar"));
+            if alt_path.exists() {
+                if let Some(parent) = client_path.parent() {
+                    let _ = tokio::fs::create_dir_all(parent).await;
+                }
+                if let Ok(_) = tokio::fs::copy(&alt_path, &client_path).await {
+                    tracing::info!("Recovered client jar from {}", alt_path.display());
+                    recovered = true;
+                }
+            }
+        }
+
+        // 2. Try finding in custom_dir if different from state.directories.config_dir
+        if !recovered && let Ok(settings) = crate::state::Settings::get(&state.pool).await {
+            if let Some(ref custom_dir) = settings.custom_dir {
+                let alt_path = std::path::PathBuf::from(custom_dir)
+                    .join("meta")
+                    .join("versions")
+                    .join(&version_jar)
+                    .join(format!("{version_jar}.jar"));
+                if alt_path.exists() {
+                    if let Some(parent) = client_path.parent() {
+                        let _ = tokio::fs::create_dir_all(parent).await;
+                    }
+                    if let Ok(_) = tokio::fs::copy(&alt_path, &client_path).await {
+                        tracing::info!("Recovered client jar from {}", alt_path.display());
+                        recovered = true;
+                    }
+                }
+            }
+        }
+
+        // 3. If still not recovered, download or install client jar
+        if !recovered {
+            tracing::info!("Downloading missing client jar for {}...", version_jar);
+            if let Err(e) = download::download_client(&state, &version_info, None, false, None).await {
+                tracing::warn!("Failed direct download_client: {e}. Running install_minecraft...");
+                let _ = install_minecraft_with_reporter(context, false, None).await;
+            }
+        }
+    }
 
     let args = version_info.arguments.clone().unwrap_or_default();
     let mut command = match wrapper {
@@ -818,12 +894,20 @@ pub async fn launch_minecraft(
     // Check if instance has a running process, and reject running the command if it does
     // Done late so a quick double call doesn't launch two instances
     let existing_processes = process::get_by_instance_id(&instance.id).await?;
-    if let Some(process) = existing_processes.first() {
-        return Err(crate::ErrorKind::LauncherError(format!(
-            "Instance {} is already running as process {}",
-            instance.id, process.uuid
-        ))
-        .as_error());
+    for proc in existing_processes {
+        match state.process_manager.try_wait(proc.uuid) {
+            Ok(Some(None)) => {
+                return Err(crate::ErrorKind::LauncherError(format!(
+                    "Instance {} is already running as process {}",
+                    instance.id, proc.uuid
+                ))
+                .as_error());
+            }
+            _ => {
+                // Process has already terminated or handle gone, safely remove from manager
+                state.process_manager.remove(proc.uuid);
+            }
+        }
     }
 
     let natives_dir = state.directories.version_natives_dir(&version_jar);

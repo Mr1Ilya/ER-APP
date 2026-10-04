@@ -43,10 +43,6 @@ watch(
 			setSettings.hooks.post_exit = null
 		}
 
-		if (!setSettings.custom_dir) {
-			setSettings.custom_dir = null
-		}
-
 		await set(setSettings)
 	},
 	{ deep: true },

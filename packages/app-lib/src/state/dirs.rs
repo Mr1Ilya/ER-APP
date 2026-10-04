@@ -266,7 +266,6 @@ impl DirectoryInfo {
                 }
 
                 const MOVE_DIRS: &[&str] = &[
-                    CACHES_FOLDER_NAME,
                     INSTANCES_FOLDER_NAME,
                     METADATA_FOLDER_NAME,
                 ];
@@ -465,12 +464,18 @@ impl DirectoryInfo {
                     .await;
                 }
 
+                let _ = crate::util::io::create_dir_all(&move_dir.join(CACHES_FOLDER_NAME)).await;
+
+                let new_dir_clean = new_dir.trim_end_matches('/').trim_end_matches('\\');
+                let prev_custom_dir_clean = prev_custom_dir.trim_end_matches('/').trim_end_matches('\\');
+                let prev_alt_backslash = prev_custom_dir_clean.replace('/', "\\");
+                let prev_alt_slash = prev_custom_dir_clean.replace('\\', "/");
+
                 let java_versions = JavaVersion::get_all(exec).await?;
                 for (_, mut java_version) in java_versions {
-                    java_version.path = java_version.path.replace(
-                        prev_custom_dir,
-                        new_dir.trim_end_matches('/').trim_end_matches('\\'),
-                    );
+                    java_version.path = java_version.path
+                        .replace(&prev_alt_backslash, new_dir_clean)
+                        .replace(&prev_alt_slash, new_dir_clean);
                     java_version.upsert(exec).await?
                 }
 

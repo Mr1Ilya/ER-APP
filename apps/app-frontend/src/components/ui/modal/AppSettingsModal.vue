@@ -105,20 +105,20 @@ const osPlatform = getOsPlatform()
 const osVersion = getOsVersion()
 const settings = ref(await get())
 
-watch(
-	settings,
-	async () => {
-		await set(settings.value)
-	},
-	{ deep: true },
-)
-
-function devModeCount() {
+async function devModeCount() {
 	devModeCounter.value++
 	if (devModeCounter.value > 5) {
 		themeStore.devMode = !themeStore.devMode
 		settings.value.developer_mode = !!themeStore.devMode
 		devModeCounter.value = 0
+
+		try {
+			const current = await get()
+			current.developer_mode = !!themeStore.devMode
+			await set(current)
+		} catch (e) {
+			console.warn('Failed to update developer_mode setting', e)
+		}
 
 		if (!themeStore.devMode && tabs.value[modal.value!.selectedTab].developerOnly) {
 			modal.value!.setTab(0)
