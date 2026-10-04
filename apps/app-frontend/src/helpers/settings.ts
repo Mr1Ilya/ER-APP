@@ -85,3 +85,7 @@ export async function set(settings: AppSettings) {
 export async function cancel_directory_change(): Promise<void> {
 	return await invoke('plugin:settings|cancel_directory_change')
 }
+
+export async function set_launcher_directory(customDir: string | null): Promise<void> {
+	return await invoke('plugin:settings|set_launcher_directory', { customDir })
+}

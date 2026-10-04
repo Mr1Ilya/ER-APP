@@ -19,17 +19,42 @@ pub async fn set(mut settings: Settings) -> crate::Result<()> {
     let state = State::get().await?;
     let current = Settings::get(&state.pool).await?;
 
-    // Protect custom_dir and prev_custom_dir against accidental overwrite from tabs that don't manage them
-    if settings.custom_dir != current.custom_dir {
-        let default_dir = crate::state::DirectoryInfo::initial_settings_dir_path(&state.directories.app_identifier)
-            .map(|p| p.to_string_lossy().to_string());
-        let old_dir = current.custom_dir.clone().or(default_dir);
-        settings.prev_custom_dir = old_dir;
-    } else {
-        settings.prev_custom_dir = current.prev_custom_dir;
-    }
+    // Always preserve custom_dir and prev_custom_dir during general settings updates
+    // to prevent other settings tabs from overwriting directory configuration.
+    settings.custom_dir = current.custom_dir;
+    settings.prev_custom_dir = current.prev_custom_dir;
 
     settings.update(&state.pool).await?;
+
+    Ok(())
+}
+
+/// Changes the launcher directory safely
+#[tracing::instrument]
+pub async fn set_launcher_directory(
+    custom_dir: Option<String>,
+) -> crate::Result<()> {
+    let state = State::get().await?;
+    let mut current = Settings::get(&state.pool).await?;
+
+    let default_dir = crate::state::DirectoryInfo::initial_settings_dir_path(&state.directories.app_identifier)
+        .map(|p| p.to_string_lossy().to_string());
+    let old_dir = current.custom_dir.clone().or(default_dir);
+
+    if custom_dir == current.custom_dir {
+        return Ok(());
+    }
+
+    if let Some(ref dir_str) = custom_dir {
+        let p = std::path::Path::new(dir_str);
+        tokio::fs::create_dir_all(p).await.map_err(|e| {
+            crate::ErrorKind::FSError(format!("Failed to create directory {dir_str}: {e}"))
+        })?;
+    }
+
+    current.prev_custom_dir = old_dir;
+    current.custom_dir = custom_dir;
+    current.update(&state.pool).await?;
 
     Ok(())
 }

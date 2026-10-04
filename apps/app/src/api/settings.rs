@@ -7,7 +7,8 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
         .invoke_handler(tauri::generate_handler![
             settings_get,
             settings_set,
-            cancel_directory_change
+            cancel_directory_change,
+            set_launcher_directory,
         ])
         .build()
 }
@@ -34,5 +35,13 @@ pub async fn cancel_directory_change<R: Runtime>(
 ) -> Result<()> {
     let identifier = &app.config().identifier;
     settings::cancel_directory_change(identifier).await?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn set_launcher_directory(
+    custom_dir: Option<String>,
+) -> Result<()> {
+    settings::set_launcher_directory(custom_dir).await?;
     Ok(())
 }

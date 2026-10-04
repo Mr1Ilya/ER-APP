@@ -218,15 +218,24 @@ impl DirectoryInfo {
             async fn is_dir_writable(
                 new_config_dir: &Path,
             ) -> crate::Result<bool> {
+                if let Err(e) = fs::create_dir_all(new_config_dir).await {
+                    tracing::error!(
+                        "Error creating new config dir {}: {}",
+                        new_config_dir.display(),
+                        e
+                    );
+                    return Ok(false);
+                }
                 let temp_path = new_config_dir.join(".tmp");
-                match fs::write(temp_path.clone(), "test").await {
+                match fs::write(&temp_path, "test").await {
                     Ok(_) => {
-                        fs::remove_file(temp_path).await?;
+                        let _ = fs::remove_file(temp_path).await;
                         Ok(true)
                     }
                     Err(e) => {
                         tracing::error!(
-                            "Error writing to new config dir: {}",
+                            "Error writing to new config dir {}: {}",
+                            new_config_dir.display(),
                             e
                         );
                         Ok(false)

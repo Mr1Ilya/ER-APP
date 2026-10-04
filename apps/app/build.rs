@@ -226,6 +226,7 @@ fn main() {
                         "settings_get",
                         "settings_set",
                         "cancel_directory_change",
+                        "set_launcher_directory",
                     ])
                     .default_permission(
                         DefaultPermissionRule::AllowAllCommands,

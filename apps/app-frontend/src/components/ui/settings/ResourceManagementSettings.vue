@@ -6,8 +6,8 @@ import { computed, ref, watch } from 'vue'
 
 import ConfirmModalWrapper from '@/components/ui/modal/ConfirmModalWrapper.vue'
 import { purge_cache_types } from '@/helpers/cache.js'
-import { get, set } from '@/helpers/settings.ts'
-import { showAppDbBackupsFolder } from '@/helpers/utils.js'
+import { get, set, set_launcher_directory } from '@/helpers/settings.ts'
+import { restartApp, showAppDbBackupsFolder } from '@/helpers/utils.js'
 import i18n from '@/i18n.config'
 import { useTheming } from '@/store/state'
 
@@ -17,20 +17,33 @@ const { handleError } = injectNotificationManager()
 const themeStore = useTheming()
 const settings = ref(await get())
 const purgeCacheConfirmModal = ref(null)
+const restartConfirmModal = ref(null)
+const restartRequired = ref(false)
+const initialCustomDir = ref(settings.value.custom_dir)
 
 watch(
-	settings,
+	() => [settings.value.max_concurrent_downloads, settings.value.max_concurrent_writes],
 	async () => {
 		const setSettings = JSON.parse(JSON.stringify(settings.value))
-
-		if (!setSettings.custom_dir) {
-			setSettings.custom_dir = null
-		}
-
-		await set(setSettings)
+		await set(setSettings).catch(handleError)
 	},
-	{ deep: true },
 )
+
+async function applyLauncherDir(newDir) {
+	if (newDir !== settings.value.custom_dir) {
+		settings.value.custom_dir = newDir
+	}
+	const targetDir = newDir ? newDir.trim() : null
+	await set_launcher_directory(targetDir).catch(handleError)
+	if (targetDir !== initialCustomDir.value) {
+		restartRequired.value = true
+		restartConfirmModal.value?.show()
+	}
+}
+
+async function handleRestart() {
+	await restartApp().catch(handleError)
+}
 
 async function purgeCache() {
 	await purge_cache_types([
@@ -72,11 +85,11 @@ async function findLauncherDir() {
 	const newDir = await open({
 		multiple: false,
 		directory: true,
-		title: 'Select a new app directory',
+		title: isRu.value ? 'Выберите новую папку для лаунчера' : 'Select a new app directory',
 	})
 
 	if (newDir) {
-		settings.value.custom_dir = newDir
+		await applyLauncherDir(newDir)
 	}
 }
 </script>
@@ -93,6 +106,8 @@ async function findLauncherDir() {
 				:icon="BoxIcon"
 				type="text"
 				wrapper-class="w-full"
+				:placeholder="isRu ? 'C:\\Users\\...\\AppData\\Roaming\\ERTeamApp (по умолчанию)' : 'Default system directory'"
+				@change="() => applyLauncherDir(settings.custom_dir)"
 			>
 				<template #right>
 					<ButtonStyled circular>
@@ -102,8 +117,32 @@ async function findLauncherDir() {
 					</ButtonStyled>
 				</template>
 			</StyledInput>
+
+			<div
+				v-if="restartRequired"
+				class="flex items-center justify-between p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-200 mt-1"
+			>
+				<div class="flex items-center gap-2 text-sm font-medium">
+					<span>⚠️ {{ isRu ? 'Папка сохранена! Для переноса файлов и загрузки сборок на новый диск требуется перезапуск лаунчера.' : 'Directory saved! To move files and download to the new disk, restart the launcher.' }}</span>
+				</div>
+				<button class="btn btn-primary text-xs py-1.5 px-3 whitespace-nowrap ml-3" @click="handleRestart">
+					{{ isRu ? 'Перезапустить сейчас' : 'Restart now' }}
+				</button>
+			</div>
+
+			<ConfirmModalWrapper
+				ref="restartConfirmModal"
+				:title="isRu ? 'Перезапустить лаунчер?' : 'Restart launcher?'"
+				:description="isRu ? `Папка лаунчера изменена на: ${settings.custom_dir}. Чтобы лаунчер перенёс ваши файлы и сборки на новый диск, необходимо перезапустить приложение сейчас.` : `App directory set to: ${settings.custom_dir}. To move files and start using the new directory, the app needs to restart now.`"
+				:has-to-type="false"
+				:danger="false"
+				:proceed-label="isRu ? 'Перезапустить сейчас' : 'Restart now'"
+				:show-ad-on-close="false"
+				@proceed="handleRestart"
+			/>
+
 			<p class="m-0 leading-tight text-sm text-secondary">
-				{{ isRu ? 'Папка, где лаунчер сохраняет все свои файлы, сборки и кэш. Изменения вступят в силу после перезапуска.' : 'The directory where the launcher stores all of its files. Changes will be applied after restarting the launcher.' }}
+				{{ isRu ? 'Папка, где лаунчер сохраняет все свои файлы, сборки и кэш. Изменения вступают в силу после перезапуска.' : 'The directory where the launcher stores all of its files. Changes will be applied after restarting the launcher.' }}
 			</p>
 		</div>
 

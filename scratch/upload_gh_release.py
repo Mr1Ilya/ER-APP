@@ -85,7 +85,7 @@ def publish_release(version, tag_name, name, body, file_paths):
                 print(f"  [ERR] Failed to upload {file_name}: {up_resp.status_code} {up_resp.text}")
 
 if __name__ == "__main__":
-    v = "1.0.21"
+    v = "1.0.22"
     base_dir = r"C:\dev\end-rage\ER-Launcher\target\release\bundle\nsis"
     files = [
         os.path.join(base_dir, f"EndRage.Launcher_{v}_x64-setup.nsis.zip"),
@@ -97,9 +97,10 @@ if __name__ == "__main__":
     ]
     notes = (
         f"### EndRage APP v{v}\n\n"
-        "- Исправлен запуск и скачивание сборок при установке на другой диск (диск D / произвольный путь)\n"
-        "- Автоматическое восстановление и докачивание отсутствующих client.jar и JRE Java при запуске\n"
-        "- Устранена блокировка 'Instance is already running as process' при сбоях или зависаниях процессов\n"
-        "- Защита от потери путей кастомной директории в настройках и ложных ошибок ранней инициализации"
+        "- Надежное переключение рабочей папки лаунчера на другой диск (диск D / произвольный путь)\n"
+        "- Модальный диалог и кнопка мгновенного перезапуска после смены директории\n"
+        "- Автоматическое создание целевой папки на диске перед проверкой прав на запись\n"
+        "- Полная изоляция настройки директории: другие вкладки настроек больше не могут затереть путь обратно на диск C\n"
+        "- Самовосстановление и автоматическое докачивание client.jar и JRE Java"
     )
     publish_release(v, f"v{v}", f"EndRage Launcher v{v}", notes, files)
