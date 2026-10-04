@@ -17,9 +17,9 @@ print("Copying setup executables...")
 shutil.copy2(src_setup, dst_launcher_space)
 shutil.copy2(src_setup, dst_launcher_dot)
 
-print("Creating nsis.zip...")
-with zipfile.ZipFile(dst_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-    zf.write(dst_launcher_dot, arcname=f"EndRage.Launcher_{v}_x64-setup.exe")
+print("Creating nsis.zip (ZIP_STORED)...")
+with zipfile.ZipFile(dst_zip, "w", zipfile.ZIP_STORED) as zf:
+    zf.write(dst_launcher_space, arcname=f"EndRage Launcher_{v}_x64-setup.exe")
 
 print("Signing files with tauri signer...")
 key_path = os.path.expanduser(r"~/.tauri/endrage.key")
