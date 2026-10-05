@@ -89,6 +89,10 @@ jobs:
       - name: Build Web Application frontend
         run: pnpm --filter @erteam/app-frontend build
 
+      - name: Prepare app-lib environment
+        shell: bash
+        run: cp packages/app-lib/.env.prod packages/app-lib/.env
+
       - name: Build Tauri Application
         uses: tauri-apps/tauri-action@v0
         env:

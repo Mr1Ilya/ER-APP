@@ -217,7 +217,6 @@
 		</div>
 		<div :class="['px-6', { 'shrink-0': isFixedRender }]">
 			<ERFeaturesBanner :instance="instance" @installed="fetchInstance" />
-			<LANFeaturesBanner :instance="instance" @installed="fetchInstance" />
 			<NavTabs :links="tabs" />
 		</div>
 		<div :class="['p-6 pt-4', { 'min-h-0 flex-1 overflow-y-auto': isFixedRender }]">
@@ -318,7 +317,6 @@ import { useRoute, useRouter } from 'vue-router'
 import ContextMenu from '@/components/ui/ContextMenu.vue'
 import ExportModal from '@/components/ui/ExportModal.vue'
 import ERFeaturesBanner from '@/components/ui/instance/ERFeaturesBanner.vue'
-import LANFeaturesBanner from '@/components/ui/instance/LANFeaturesBanner.vue'
 import InstanceSettingsModal from '@/components/ui/modal/InstanceSettingsModal.vue'
 import UpdateToPlayModal from '@/components/ui/modal/UpdateToPlayModal.vue'
 import { useInstanceConsole } from '@/composables/useInstanceConsole'
