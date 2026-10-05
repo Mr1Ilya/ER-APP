@@ -10,7 +10,7 @@
 		"active": true,
 		"category": "Game",
 		"copyright": "",
-		"targets": ["nsis"],
+		"targets": ["nsis", "dmg", "deb", "appimage"],
 		"externalBin": [],
 		"icon": [
 			"icons/128x128.png",

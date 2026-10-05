@@ -21,6 +21,12 @@ import ConfirmDeleteInstanceModal from '@/components/ui/modal/ConfirmDeleteInsta
 import { trackEvent } from '@/helpers/analytics'
 import { install_duplicate_instance } from '@/helpers/install'
 import { edit, edit_icon, list, remove } from '@/helpers/instance'
+import {
+	getCompatibleLanMod,
+	installLanMod,
+	isLanModInstalled,
+	type LanModInfo,
+} from '@/helpers/lanmod'
 import { injectInstanceSettings } from '@/providers/instance-settings'
 
 import type { GameInstance } from '../../../helpers/types'
@@ -48,6 +54,37 @@ const releaseChannelDisabledItems = computed<ReleaseChannel[]>(() =>
 const newCategoryInput = ref('')
 
 const installing = computed(() => instance.value.install_stage !== 'installed')
+
+const isLanInstalled = ref(false)
+const installingLan = ref(false)
+const compatibleLanMod = ref<LanModInfo | null>(null)
+
+async function checkLanStatus() {
+	if (!instance.value?.id) return
+	isLanInstalled.value = await isLanModInstalled(instance.value.id)
+	compatibleLanMod.value = await getCompatibleLanMod(instance.value.loader, instance.value.game_version)
+}
+
+watch(
+	() => [instance.value?.id, instance.value?.loader, instance.value?.game_version],
+	() => {
+		checkLanStatus()
+	},
+	{ immediate: true },
+)
+
+async function installLan() {
+	if (!compatibleLanMod.value || installingLan.value || !instance.value?.id) return
+	installingLan.value = true
+	try {
+		await installLanMod(instance.value.id, compatibleLanMod.value)
+		isLanInstalled.value = true
+	} catch (e: any) {
+		handleError(e)
+	} finally {
+		installingLan.value = false
+	}
+}
 
 async function duplicateInstance() {
 	await install_duplicate_instance(instance.value.id).catch(handleError)
@@ -408,6 +445,40 @@ const messages = defineMessages({
 			<p class="m-0">
 				{{ formatReleaseChannelDescription(selectedReleaseChannel) }}
 			</p>
+		</div>
+
+		<div v-if="compatibleLanMod" class="flex flex-col gap-2.5 mt-6">
+			<h2 class="m-0 text-lg font-semibold text-contrast block">
+				Совместная игра (LAN / Без ошибки сессии)
+			</h2>
+			<div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-surface-2 border border-surface-4">
+				<div class="flex flex-col gap-1 min-w-0">
+					<span class="text-sm font-semibold text-contrast">
+						Мод {{ compatibleLanMod.title }}
+					</span>
+					<p class="m-0 text-xs text-secondary leading-tight">
+						Позволяет подключаться к локальному миру по сети и через Radmin VPN без ошибки «Недействительная сессия».
+					</p>
+				</div>
+				<div class="shrink-0">
+					<span
+						v-if="isLanInstalled"
+						class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/20"
+					>
+						✓ Установлен
+					</span>
+					<ButtonStyled v-else color="standard">
+						<button
+							:disabled="installingLan"
+							class="!shadow-none text-xs"
+							@click="installLan"
+						>
+							<SpinnerIcon v-if="installingLan" class="animate-spin" />
+							{{ installingLan ? 'Установка...' : 'Установить мод' }}
+						</button>
+					</ButtonStyled>
+				</div>
+			</div>
 		</div>
 
 		<div class="flex flex-col gap-2.5 mt-6">

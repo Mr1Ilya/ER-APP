@@ -85,7 +85,7 @@ def publish_release(version, tag_name, name, body, file_paths):
                 print(f"  [ERR] Failed to upload {file_name}: {up_resp.status_code} {up_resp.text}")
 
 if __name__ == "__main__":
-    v = "1.0.22"
+    v = "1.1.0-b.1"
     base_dir = r"C:\dev\end-rage\ER-Launcher\target\release\bundle\nsis"
     files = [
         os.path.join(base_dir, f"EndRage.Launcher_{v}_x64-setup.nsis.zip"),
@@ -97,10 +97,9 @@ if __name__ == "__main__":
     ]
     notes = (
         f"### EndRage APP v{v}\n\n"
-        "- Надежное переключение рабочей папки лаунчера на другой диск (диск D / произвольный путь)\n"
-        "- Модальный диалог и кнопка мгновенного перезапуска после смены директории\n"
-        "- Автоматическое создание целевой папки на диске перед проверкой прав на запись\n"
-        "- Полная изоляция настройки директории: другие вкладки настроек больше не могут затереть путь обратно на диск C\n"
-        "- Самовосстановление и автоматическое докачивание client.jar и JRE Java"
+        "- Переход на новую структуру версий (1.1.0-b.1)\n"
+        "- Встроенная система совместной игры (LAN / Radmin): установка мода в 1 клик на странице сборки и в настройках для устранения ошибки 'Недействительная сессия'\n"
+        "- Цифровая подпись издателя: Самозанятый Удалов Илья Игоревич - EndRage Team\n"
+        "- Подготовка таргетов сборки для Linux (.AppImage, .deb) и macOS (.dmg)"
     )
     publish_release(v, f"v{v}", f"EndRage Launcher v{v}", notes, files)
