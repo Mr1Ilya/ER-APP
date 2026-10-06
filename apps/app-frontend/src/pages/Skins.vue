@@ -742,32 +742,39 @@ async function applyEndRageSkin(skin: Skin) {
 		const username = currentUser.value?.profile?.name || ''
 		const model = skin.variant === 'SLIM' ? 'slim' : 'classic'
 
-		let base64 = skin.texture || ''
-		if (base64.startsWith('data:image/')) {
-			base64 = base64.split(',')[1] || ''
+		let base64 = ''
+		if (skin.texture?.startsWith('data:image/')) {
+			base64 = skin.texture.split(',')[1] || ''
+		} else if (skin.texture) {
+			const textureBlob = await normalize_skin_texture(skin.texture)
+			base64 = arrayBufferToBase64(textureBlob.buffer)
 		}
 
-		if (username && base64) {
-			const payload = {
-				username,
-				token,
-				fileBase64: base64,
-				model
-			}
+		if (!username || !base64) {
+			throw new Error(isRu.value ? 'Не удалось подготовить текстуру скина' : 'Failed to prepare skin texture')
+		}
 
-			try {
-				await fetch('https://skins.end-rage.ru/upload/skin', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(payload)
-				})
-			} catch (e) {
-				console.warn('Sync to skins.end-rage.ru error:', e)
-			}
+		const payload = {
+			username,
+			token,
+			fileBase64: base64,
+			model,
+		}
 
-			if (typeof window !== 'undefined') {
-				window.dispatchEvent(new CustomEvent('endrage-skin-changed', { detail: Date.now() }))
-			}
+		const res = await fetch('https://skins.end-rage.ru/upload/skin', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		})
+
+		if (!res.ok) {
+			const errData = await res.json().catch(() => null)
+			const errMsg = errData?.error || errData?.message || `HTTP ${res.status}`
+			throw new Error(errMsg)
+		}
+
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new CustomEvent('endrage-skin-changed', { detail: Date.now() }))
 		}
 
 		notifications.addNotification({
@@ -777,8 +784,14 @@ async function applyEndRageSkin(skin: Skin) {
 				? 'Скин успешно установлен для вашего профиля End-Rage'
 				: 'Skin successfully applied to your End-Rage profile',
 		})
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Failed to apply End-Rage skin:', e)
+		notifications.addNotification({
+			type: 'error',
+			title: isRu.value ? 'Ошибка установки скина' : 'Skin apply error',
+			text: e?.message || (isRu.value ? 'Не удалось применить скин' : 'Failed to apply skin'),
+		})
+		throw e
 	}
 }
 
