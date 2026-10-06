@@ -122,10 +122,12 @@ import { injectNotificationManager } from '@erteam/ui'
 import { computed, onMounted, ref, watch } from 'vue'
 
 import {
+	fetchRemoteManifest,
 	getCompatibleERFeaturesMod,
+	getInstalledERFeaturesMod,
 	installERFeaturesMod,
-	isERFeaturesModInstalled,
 	type ERFeaturesModInfo,
+	type InstalledERFeaturesMod,
 } from '@/helpers/erfeatures'
 import type { GameInstance } from '@/helpers/types'
 
@@ -146,15 +148,25 @@ const emit = defineEmits<{
 const notificationManager = injectNotificationManager()
 const isInstalled = ref(false)
 const installing = ref(false)
+const manifestLoaded = ref(0)
+const installedInfo = ref<InstalledERFeaturesMod>({ installed: false })
 
 const compatibleMod = computed<ERFeaturesModInfo | null>(() => {
 	if (!props.instance) return null
+	const _ = manifestLoaded.value
 	return getCompatibleERFeaturesMod(props.instance.loader, props.instance.game_version)
 })
 
 async function checkInstalled() {
 	if (!props.instance?.id) return
-	isInstalled.value = await isERFeaturesModInstalled(props.instance.id)
+	await fetchRemoteManifest()
+	manifestLoaded.value++
+	const info = await getInstalledERFeaturesMod(props.instance.id, compatibleMod.value)
+	installedInfo.value = info
+	isInstalled.value = info.installed
+	if (info.installed && info.needsUpdate && compatibleMod.value && !installing.value) {
+		await handleInstall(true)
+	}
 }
 
 watch(
@@ -174,7 +186,9 @@ async function handleInstall(isUpdate = false) {
 
 	installing.value = true
 	try {
-		await installERFeaturesMod(props.instance.id, compatibleMod.value)
+		await installERFeaturesMod(props.instance.id, compatibleMod.value, installedInfo.value.installedPath)
+		const info = await getInstalledERFeaturesMod(props.instance.id, compatibleMod.value)
+		installedInfo.value = info
 		isInstalled.value = true
 		notificationManager.addNotification({
 			title: isUpdate ? 'Мод обновлён' : 'Мод установлен',

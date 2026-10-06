@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core'
-import { get_projects } from './instance'
+import { get, get_projects, remove_project } from './instance'
 
 export interface ERFeaturesModInfo {
 	filename: string
@@ -9,9 +9,40 @@ export interface ERFeaturesModInfo {
 	compatibilityDesc: string
 }
 
+export interface InstalledERFeaturesMod {
+	installed: boolean
+	installedPath?: string
+	installedFilename?: string
+	needsUpdate?: boolean
+}
+
+let cachedManifest: any = null
+let manifestFetchPromise: Promise<any> | null = null
+
+export async function fetchRemoteManifest(): Promise<any> {
+	if (cachedManifest) return cachedManifest
+	if (manifestFetchPromise) return await manifestFetchPromise
+
+	manifestFetchPromise = (async () => {
+		try {
+			const res = await fetch('https://releases.end-rage.ru/mods/manifest.json', {
+				headers: { 'Cache-Control': 'no-cache' },
+			})
+			if (res.ok) {
+				const json = await res.json()
+				cachedManifest = json
+				return json
+			}
+		} catch {
+		}
+		return null
+	})()
+
+	return await manifestFetchPromise
+}
+
 function parseVersionNumbers(v: string): number[] {
 	if (!v) return [0]
-	// Handle strings like "1.20.1", "1.16.5", "26.1", etc.
 	const parts = v.split(/[-_+.]/)
 	const numbers: number[] = []
 	for (const p of parts) {
@@ -37,10 +68,6 @@ export function compareMinecraftVersions(a: string, b: string): number {
 	return 0
 }
 
-/**
- * Returns matching ERFeatures mod information for a given instance loader and Minecraft version.
- * Returns null if the instance version/loader is not supported.
- */
 export function getCompatibleERFeaturesMod(
 	loader?: string | null,
 	gameVersion?: string | null,
@@ -49,106 +76,135 @@ export function getCompatibleERFeaturesMod(
 
 	const normLoader = loader.trim().toLowerCase()
 	const v = gameVersion.trim()
+	const remoteMods = cachedManifest?.mods
 
-	// Fabric & Quilt
 	if (normLoader === 'fabric' || normLoader === 'quilt') {
-		// Modern: 1.20.5+ and 26.x+
 		if (compareMinecraftVersions(v, '1.20.5') >= 0) {
+			const m = remoteMods?.fabric_modern
 			return {
-				filename: 'ERFeatures-1.2.0-fabric-1.21.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-fabric-1.21.jar',
-				title: 'ERFeatures (Fabric/Quilt)',
-				version: '1.2.0',
-				compatibilityDesc: 'Для Fabric & Quilt 1.20.5 – 1.21.4+',
+				filename: m?.filename ?? 'ERFeatures-1.2.0-fabric-1.21.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-fabric-1.21.jar',
+				title: m?.title ?? 'ERFeatures (Fabric/Quilt)',
+				version: m?.version ?? '1.2.0',
+				compatibilityDesc: m?.compatibilityDesc ?? 'Для Fabric и Quilt 1.20.5 – 1.21.4+',
 			}
 		}
-		// Legacy: 1.14 <= v < 1.20.5
 		if (compareMinecraftVersions(v, '1.14') >= 0 && compareMinecraftVersions(v, '1.20.5') < 0) {
+			const m = remoteMods?.fabric_legacy
 			return {
-				filename: 'ERFeatures-1.1.0-fabric-legacy-1.14-1.20.4.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-fabric-legacy-1.14-1.20.4.jar',
-				title: 'ERFeatures (Fabric Legacy)',
-				version: '1.1.0',
-				compatibilityDesc: 'Для Fabric & Quilt 1.14 – 1.20.4',
+				filename: m?.filename ?? 'ERFeatures-1.1.0-fabric-legacy-1.14-1.20.4.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-fabric-legacy-1.14-1.20.4.jar',
+				title: m?.title ?? 'ERFeatures (Fabric Legacy)',
+				version: m?.version ?? '1.1.0',
+				compatibilityDesc: m?.compatibilityDesc ?? 'Для Fabric и Quilt 1.14 – 1.20.4',
 			}
 		}
 	}
 
-	// NeoForge: 1.20.2+
 	if (normLoader === 'neoforge') {
 		if (compareMinecraftVersions(v, '1.20.2') >= 0) {
+			const m = remoteMods?.neoforge
 			return {
-				filename: 'ERFeatures-1.1.0-neoforge-1.20.2-plus.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-neoforge-1.20.2-plus.jar',
-				title: 'ERFeatures (NeoForge)',
-				version: '1.1.0',
-				compatibilityDesc: 'Для NeoForge 1.20.2 – 1.21.4+',
+				filename: m?.filename ?? 'ERFeatures-1.1.0-neoforge-1.20.2-plus.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-neoforge-1.20.2-plus.jar',
+				title: m?.title ?? 'ERFeatures (NeoForge)',
+				version: m?.version ?? '1.1.0',
+				compatibilityDesc: m?.compatibilityDesc ?? 'Для NeoForge 1.20.2 – 1.21.4+',
 			}
 		}
 	}
 
-	// Forge
 	if (normLoader === 'forge') {
-		// Classic / Legacy: 1.8 <= v <= 1.16.5
 		if (compareMinecraftVersions(v, '1.8') >= 0 && compareMinecraftVersions(v, '1.16.5') <= 0) {
+			const m = remoteMods?.forge_legacy
 			return {
-				filename: 'ERFeatures-1.1.0-forge-1.8-1.16.5.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-forge-1.8-1.16.5.jar',
-				title: 'ERFeatures (Forge 1.16.5)',
-				version: '1.1.0',
-				compatibilityDesc: 'Для Forge 1.8 – 1.16.5',
+				filename: m?.filename ?? 'ERFeatures-1.1.0-forge-1.8-1.16.5.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-forge-1.8-1.16.5.jar',
+				title: m?.title ?? 'ERFeatures (Forge 1.16.5)',
+				version: m?.version ?? '1.1.0',
+				compatibilityDesc: m?.compatibilityDesc ?? 'Для Forge 1.8 – 1.16.5',
 			}
 		}
-		// Modern: 1.20.6+
 		if (compareMinecraftVersions(v, '1.20.6') >= 0) {
+			const m = remoteMods?.forge_modern
 			return {
-				filename: 'ERFeatures-1.1.0-forge-1.20.6-plus.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-forge-1.20.6-plus.jar',
-				title: 'ERFeatures (Forge Modern)',
-				version: '1.1.0',
-				compatibilityDesc: 'Для Forge 1.20.6 – 1.21.4+',
+				filename: m?.filename ?? 'ERFeatures-1.1.0-forge-1.20.6-plus.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-forge-1.20.6-plus.jar',
+				title: m?.title ?? 'ERFeatures (Forge Modern)',
+				version: m?.version ?? '1.1.0',
+				compatibilityDesc: m?.compatibilityDesc ?? 'Для Forge 1.20.6 – 1.21.4+',
 			}
 		}
 	}
 
-	// Loader/version not supported (e.g. Vanilla, or Forge 1.18.2)
 	return null
 }
 
-/**
- * Checks if ERFeatures or ELFeatures is already installed in the specified instance.
- */
-export async function isERFeaturesModInstalled(instanceId: string): Promise<boolean> {
+export async function getInstalledERFeaturesMod(
+	instanceId: string,
+	compatibleMod?: ERFeaturesModInfo | null,
+): Promise<InstalledERFeaturesMod> {
 	try {
 		const projects = await get_projects(instanceId)
-		if (!projects) return false
+		if (!projects) return { installed: false }
 
-		for (const key of Object.keys(projects)) {
-			const lower = key.toLowerCase()
-			if (lower.includes('erfeatures') || lower.includes('elfeatures')) {
-				return true
-			}
-			const item = projects[key]
-			if (item?.name && (item.name.toLowerCase().includes('erfeatures') || item.name.toLowerCase().includes('elfeatures'))) {
-				return true
+		for (const [pathKey, item] of Object.entries(projects)) {
+			const lowerKey = pathKey.toLowerCase()
+			const lowerName = item?.name ? item.name.toLowerCase() : ''
+			if (lowerKey.includes('erfeatures') || lowerKey.includes('elfeatures') || lowerName.includes('erfeatures') || lowerName.includes('elfeatures')) {
+				const filename = pathKey.split('/').pop()?.split('\\').pop() || item?.name || ''
+				const needsUpdate = compatibleMod ? filename.toLowerCase() !== compatibleMod.filename.toLowerCase() : false
+				return {
+					installed: true,
+					installedPath: pathKey,
+					installedFilename: filename,
+					needsUpdate,
+				}
 			}
 		}
-		return false
+		return { installed: false }
 	} catch {
-		return false
+		return { installed: false }
 	}
 }
 
-/**
- * Downloads and installs the compatible ERFeatures mod into the instance.
- */
+export async function isERFeaturesModInstalled(instanceId: string): Promise<boolean> {
+	const info = await getInstalledERFeaturesMod(instanceId)
+	return info.installed
+}
+
 export async function installERFeaturesMod(
 	instanceId: string,
 	modInfo: ERFeaturesModInfo,
+	oldPath?: string | null,
 ): Promise<string> {
+	if (oldPath) {
+		try {
+			await remove_project(instanceId, oldPath)
+		} catch {
+		}
+	}
 	return await invoke('plugin:utils|install_erfeatures_mod', {
 		instanceId,
 		downloadUrl: modInfo.downloadUrl,
 		fileName: modInfo.filename,
 	})
+}
+
+export async function autoSyncERFeaturesForInstance(instanceId: string): Promise<boolean> {
+	try {
+		await fetchRemoteManifest()
+		const inst = await get(instanceId)
+		if (!inst) return false
+		const modInfo = getCompatibleERFeaturesMod(inst.loader, inst.game_version)
+		if (!modInfo) return false
+		const installedInfo = await getInstalledERFeaturesMod(instanceId, modInfo)
+		if (installedInfo.installed && installedInfo.needsUpdate) {
+			await installERFeaturesMod(instanceId, modInfo, installedInfo.installedPath)
+			return true
+		}
+		return false
+	} catch {
+		return false
+	}
 }

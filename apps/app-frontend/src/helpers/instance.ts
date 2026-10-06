@@ -309,12 +309,15 @@ export async function get_pack_export_candidates(instanceId: string): Promise<st
 	return await invoke('plugin:instance|instance_get_pack_export_candidates', { instanceId })
 }
 
-// Run Minecraft using an instance
-// Returns PID of child
 export async function run(
 	instanceId: string,
 	serverAddress: string | null = null,
 ): Promise<unknown> {
+	try {
+		const { autoSyncERFeaturesForInstance } = await import('./erfeatures')
+		await autoSyncERFeaturesForInstance(instanceId)
+	} catch {
+	}
 	return await invoke('plugin:instance|instance_run', { instanceId, serverAddress })
 }
 
