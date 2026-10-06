@@ -1,6 +1,7 @@
 package com.modrinth.theseus.agent;
 
 import com.modrinth.theseus.agent.transformers.ClassTransformer;
+import com.modrinth.theseus.agent.transformers.IntegratedServerTransformer;
 import com.modrinth.theseus.agent.transformers.MinecraftTransformer;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -49,9 +50,13 @@ public final class TheseusAgent {
 
         final Map<String, ClassTransformer> transformers = new HashMap<>();
         transformers.put("net/minecraft/client/Minecraft", new MinecraftTransformer());
+        transformers.put("net/minecraft/server/integrated/IntegratedServer", new IntegratedServerTransformer());
 
         instrumentation.addTransformer((loader, className, classBeingRedefined, protectionDomain, classData) -> {
-            final ClassTransformer transformer = transformers.get(className);
+            ClassTransformer transformer = transformers.get(className);
+            if (transformer == null && className != null && className.endsWith("IntegratedServer")) {
+                transformer = transformers.get("net/minecraft/server/integrated/IntegratedServer");
+            }
             if (transformer == null) {
                 return null;
             }
