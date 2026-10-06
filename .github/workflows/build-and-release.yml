@@ -1,4 +1,4 @@
-name: Build and Release End-Rage Launcher
+name: Build and Release EndRage APP
 
 on:
   push:
@@ -64,7 +64,7 @@ jobs:
           VERSION="${{ github.ref_name }}"
           VERSION="${VERSION#v}"
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            VERSION="1.1.0-b.1"
+            VERSION="1.1.0-b.2"
           fi
           echo "Setting application version to $VERSION"
           node -e "
@@ -99,7 +99,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: "End-Rage Launcher ${{ github.ref_name }}"
+          releaseName: "EndRage APP ${{ github.ref_name }}"
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
