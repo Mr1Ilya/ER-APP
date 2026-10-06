@@ -28,7 +28,7 @@
 								: 'bg-[var(--color-brand)]/15 text-[var(--color-brand)]'
 						"
 					>
-						{{ compatibleMod.version }}
+						{{ displayVersion }}
 					</span>
 				</div>
 				<span class="text-xs text-[var(--er-text-secondary)] truncate">
@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import { injectNotificationManager } from '@erteam/ui'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import {
 	fetchRemoteManifest,
@@ -157,6 +157,13 @@ const compatibleMod = computed<ERFeaturesModInfo | null>(() => {
 	return getCompatibleERFeaturesMod(props.instance.loader, props.instance.game_version)
 })
 
+const displayVersion = computed(() => {
+	if (isInstalled.value) {
+		return installedInfo.value.installedVersion || compatibleMod.value?.version || '1.2.0'
+	}
+	return compatibleMod.value?.version || '1.2.0'
+})
+
 async function checkInstalled() {
 	if (!props.instance?.id) return
 	await fetchRemoteManifest()
@@ -179,6 +186,11 @@ watch(
 
 onMounted(() => {
 	checkInstalled()
+	window.addEventListener('focus', checkInstalled)
+})
+
+onUnmounted(() => {
+	window.removeEventListener('focus', checkInstalled)
 })
 
 async function handleInstall(isUpdate = false) {
