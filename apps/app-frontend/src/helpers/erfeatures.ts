@@ -55,10 +55,10 @@ export function getCompatibleERFeaturesMod(
 		// Modern: 1.20.5+ and 26.x+
 		if (compareMinecraftVersions(v, '1.20.5') >= 0) {
 			return {
-				filename: 'ERFeatures-1.1.0-fabric-1.21.jar',
-				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.1.0-fabric-1.21.jar',
+				filename: 'ERFeatures-1.2.0-fabric-1.21.jar',
+				downloadUrl: 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-fabric-1.21.jar',
 				title: 'ERFeatures (Fabric/Quilt)',
-				version: '1.1.0',
+				version: '1.2.0',
 				compatibilityDesc: 'Для Fabric & Quilt 1.20.5 – 1.21.4+',
 			}
 		}
