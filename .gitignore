@@ -88,6 +88,7 @@ apps/frontend/src/public/robots.txt
 
 packages/tooling-config/script-utils/import-sort.js
 
-# End-Rage Private Landing Page
 apps/landing/
 apps/landing
+scratch/
+package_and_sign*.py
