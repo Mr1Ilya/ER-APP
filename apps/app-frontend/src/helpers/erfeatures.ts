@@ -88,20 +88,20 @@ export function getCompatibleERFeaturesMod(
 		if (compareMinecraftVersions(v, '1.20.5') >= 0) {
 			const m = remoteMods?.fabric_modern
 			return {
-				filename: m?.filename ?? 'ERFeatures-1.2.0-fabric-1.21.jar',
-				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-fabric-1.21.jar',
+				filename: m?.filename ?? 'ERFeatures-1.2.1-fabric-1.21.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.1-fabric-1.21.jar',
 				title: m?.title ?? 'ERFeatures (Fabric/Quilt)',
-				version: m?.version ?? '1.2.0',
+				version: m?.version ?? '1.2.1',
 				compatibilityDesc: m?.compatibilityDesc ?? 'Для Fabric и Quilt 1.20.5 – 1.21.4+',
 			}
 		}
 		if (compareMinecraftVersions(v, '1.14') >= 0 && compareMinecraftVersions(v, '1.20.5') < 0) {
 			const m = remoteMods?.fabric_legacy
 			return {
-				filename: m?.filename ?? 'ERFeatures-1.2.0-fabric-legacy-1.14-1.20.4.jar',
-				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-fabric-legacy-1.14-1.20.4.jar',
+				filename: m?.filename ?? 'ERFeatures-1.2.1-fabric-legacy-1.14-1.20.4.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.1-fabric-legacy-1.14-1.20.4.jar',
 				title: m?.title ?? 'ERFeatures (Fabric Legacy)',
-				version: m?.version ?? '1.2.0',
+				version: m?.version ?? '1.2.1',
 				compatibilityDesc: m?.compatibilityDesc ?? 'Для Fabric и Quilt 1.14 – 1.20.4',
 			}
 		}
@@ -111,10 +111,10 @@ export function getCompatibleERFeaturesMod(
 		if (compareMinecraftVersions(v, '1.20.2') >= 0) {
 			const m = remoteMods?.neoforge
 			return {
-				filename: m?.filename ?? 'ERFeatures-1.2.0-neoforge-1.20.2-plus.jar',
-				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-neoforge-1.20.2-plus.jar',
+				filename: m?.filename ?? 'ERFeatures-1.2.1-neoforge-1.20.2-plus.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.1-neoforge-1.20.2-plus.jar',
 				title: m?.title ?? 'ERFeatures (NeoForge)',
-				version: m?.version ?? '1.2.0',
+				version: m?.version ?? '1.2.1',
 				compatibilityDesc: m?.compatibilityDesc ?? 'Для NeoForge 1.20.2 – 1.21.4+',
 			}
 		}
@@ -124,20 +124,20 @@ export function getCompatibleERFeaturesMod(
 		if (compareMinecraftVersions(v, '1.8') >= 0 && compareMinecraftVersions(v, '1.16.5') <= 0) {
 			const m = remoteMods?.forge_legacy
 			return {
-				filename: m?.filename ?? 'ERFeatures-1.2.0-forge-1.8-1.16.5.jar',
-				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-forge-1.8-1.16.5.jar',
+				filename: m?.filename ?? 'ERFeatures-1.2.1-forge-1.8-1.16.5.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.1-forge-1.8-1.16.5.jar',
 				title: m?.title ?? 'ERFeatures (Forge 1.16.5)',
-				version: m?.version ?? '1.2.0',
+				version: m?.version ?? '1.2.1',
 				compatibilityDesc: m?.compatibilityDesc ?? 'Для Forge 1.8 – 1.16.5',
 			}
 		}
 		if (compareMinecraftVersions(v, '1.20.6') >= 0) {
 			const m = remoteMods?.forge_modern
 			return {
-				filename: m?.filename ?? 'ERFeatures-1.2.0-forge-1.20.6-plus.jar',
-				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.0-forge-1.20.6-plus.jar',
+				filename: m?.filename ?? 'ERFeatures-1.2.1-forge-1.20.6-plus.jar',
+				downloadUrl: m?.url ?? 'https://releases.end-rage.ru/mods/ERFeatures-1.2.1-forge-1.20.6-plus.jar',
 				title: m?.title ?? 'ERFeatures (Forge Modern)',
-				version: m?.version ?? '1.2.0',
+				version: m?.version ?? '1.2.1',
 				compatibilityDesc: m?.compatibilityDesc ?? 'Для Forge 1.20.6 – 1.21.4+',
 			}
 		}
