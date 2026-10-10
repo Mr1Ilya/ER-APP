@@ -503,52 +503,60 @@ onUnmounted(() => {
 
 						<div class="relative">
 							<button
-								class="group-menu-trigger w-8 h-8 rounded-xl bg-[#1c1e24] hover:bg-[#252831] text-gray-400 hover:text-white flex items-center justify-center border border-white/5 cursor-pointer transition-colors"
+								class="group-menu-trigger w-8 h-8 rounded-xl bg-surface-2 hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center border border-divider cursor-pointer transition-colors"
 								@click.stop="toggleGroupMenu(group.id)"
 							>
-								<span class="text-xs font-bold">⋯</span>
+								<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+									<circle cx="5" cy="12" r="2"></circle>
+									<circle cx="12" cy="12" r="2"></circle>
+									<circle cx="19" cy="12" r="2"></circle>
+								</svg>
 							</button>
 
 							<div
 								v-if="activeMenuGroupId === group.id"
-								class="group-menu-popover absolute top-10 right-0 z-50 w-52 rounded-2xl bg-[#181a20] border border-[#2d303b] shadow-2xl p-2 flex flex-col gap-1 text-xs select-none"
+								class="group-menu-popover absolute top-10 right-0 z-50 w-52 rounded-2xl bg-bg-raised border border-divider shadow-2xl p-2 flex flex-col gap-1 text-xs select-none"
 								@click.stop
 							>
 								<button
-									class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-colors text-left border-0 bg-transparent cursor-pointer"
+									class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-contrast/90 hover:text-contrast hover:bg-surface-3 transition-colors text-left border-0 bg-transparent cursor-pointer"
 									@click="openGroupConfigModal(group)"
 								>
-									<svg class="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg class="w-3.5 h-3.5 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<circle cx="12" cy="12" r="3"></circle>
 										<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
 									</svg>
 									<span>{{ isRu ? 'Настроить блок' : 'Configure block' }}</span>
 								</button>
 
-								<div class="grid grid-cols-2 gap-1 py-1 border-y border-white/5">
+								<div class="grid grid-cols-2 gap-1 py-1 border-y border-divider">
 									<button
-										class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors border-0 bg-transparent cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+										class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-contrast/90 hover:text-contrast hover:bg-surface-3 transition-colors border-0 bg-transparent cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
 										:disabled="gIndex <= 0"
 										@click="handleMoveGroupUp(gIndex)"
 									>
-										<span>▲</span>
+										<svg class="w-3 h-3 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="18 15 12 9 6 15"></polyline>
+										</svg>
 										<span>{{ isRu ? 'Выше' : 'Up' }}</span>
 									</button>
 									<button
-										class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors border-0 bg-transparent cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+										class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-contrast/90 hover:text-contrast hover:bg-surface-3 transition-colors border-0 bg-transparent cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
 										:disabled="gIndex >= displayedGroups.length - 1"
 										@click="handleMoveGroupDown(gIndex)"
 									>
-										<span>▼</span>
+										<svg class="w-3 h-3 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="6 9 12 15 18 9"></polyline>
+										</svg>
 										<span>{{ isRu ? 'Ниже' : 'Down' }}</span>
 									</button>
 								</div>
 
 								<button
-									class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-colors text-left border-0 bg-transparent cursor-pointer"
+									class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-contrast/90 hover:text-contrast hover:bg-surface-3 transition-colors text-left border-0 bg-transparent cursor-pointer"
 									@click="handleHideGroup(group.id)"
 								>
-									<svg class="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<svg class="w-3.5 h-3.5 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 										<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
 										<line x1="1" y1="1" x2="23" y2="23"></line>
 									</svg>
@@ -567,8 +575,11 @@ onUnmounted(() => {
 									<span>{{ isRu ? 'Удалить группу' : 'Delete group' }}</span>
 								</button>
 
-								<div class="px-3 py-1.5 mt-1 rounded-xl bg-black/40 text-[10px] text-gray-400 flex items-center gap-1.5 border border-white/5">
-									<span>🖌</span>
+								<div class="px-3 py-1.5 mt-1 rounded-xl bg-surface-2 text-[10px] text-secondary flex items-center gap-1.5 border border-divider">
+									<svg class="w-3 h-3 text-secondary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M12 20h9"></path>
+										<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+									</svg>
 									<span>{{ isRu ? 'Вернуть можно в режиме настройки главной' : 'Can restore in home customize mode' }}</span>
 								</div>
 							</div>
@@ -576,7 +587,7 @@ onUnmounted(() => {
 					</div>
 				</div>
 
-				<div v-if="group.id === 'pinned' && getInstancesForGroup(group).length === 0" class="flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-6 rounded-2xl bg-[var(--er-card-bg)] border border-dashed border-[var(--er-border)] text-sm text-[var(--er-text-secondary)]">
+				<div v-if="group.id === 'pinned' && getInstancesForGroup(group).length === 0" class="flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-6 rounded-2xl bg-surface-1 border border-dashed border-divider text-sm text-secondary">
 					<div class="flex items-center gap-3">
 						<div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
 							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -587,12 +598,12 @@ onUnmounted(() => {
 						<div>
 							<h4 class="text-sm font-bold text-contrast m-0">{{ isRu ? 'Закрепленных сборок пока нет' : 'No pinned instances yet' }}</h4>
 							<p class="text-xs text-secondary m-0 mt-0.5">
-								{{ isRu ? 'Нажмите на булавку 📌 на любой сборке, чтобы закрепить её здесь' : 'Click the pin icon 📌 on any instance to keep it pinned here' }}
+								{{ isRu ? 'Нажмите на булавку на любой сборке, чтобы закрепить её здесь' : 'Click the pin icon on any instance to keep it pinned here' }}
 							</p>
 						</div>
 					</div>
 					<button
-						class="px-4 py-2 rounded-xl bg-[#1c1e24] hover:bg-[#252831] border border-white/10 text-xs font-semibold text-gray-200 cursor-pointer transition-colors"
+						class="px-4 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 border border-divider text-xs font-semibold text-contrast cursor-pointer transition-colors"
 						@click="router.push('/library')"
 					>
 						{{ isRu ? '+ Закрепить из библиотеки' : '+ Pin from library' }}
@@ -603,18 +614,18 @@ onUnmounted(() => {
 					<div
 						v-for="instance in getInstancesForGroup(group)"
 						:key="instance.id"
-						class="w-52 h-56 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[var(--er-border)] rounded-2xl p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-md relative"
+						class="w-56 h-60 bg-surface-1 hover:bg-surface-2 border border-divider hover:border-contrast/30 rounded-2xl p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-md relative"
 						@click="handlePlay(instance)"
 					>
-						<div class="w-full h-32 rounded-xl bg-[var(--er-subtle-bg)] border border-[var(--er-card-border)] overflow-hidden relative">
+						<div class="w-full h-36 rounded-xl bg-surface-2 border border-divider overflow-hidden relative">
 							<img
 								:src="getInstanceCover(instance)"
 								alt="Instance cover"
-								class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+								class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
 								@error="(e) => ((e.target as HTMLImageElement).src = wallpapers[0] || defaultMinecraftBlock)"
 							/>
 
-							<div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none"></div>
+							<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
 
 							<div class="absolute top-2 right-2 flex items-center gap-1.5 z-10">
 								<button
@@ -649,18 +660,18 @@ onUnmounted(() => {
 							</div>
 						</div>
 
-						<div class="flex items-center justify-between gap-2 pt-1 px-1">
+						<div class="flex items-center justify-between gap-2 pt-1.5 px-1">
 							<div class="flex flex-col min-w-0 flex-1">
-								<span class="text-xs font-bold text-white group-hover:text-blue-400 truncate transition-colors leading-tight">
+								<span class="text-xs font-bold text-contrast group-hover:text-brand truncate transition-colors leading-tight">
 									{{ instance.name }}
 								</span>
-								<span class="text-[11px] text-gray-400 truncate capitalize leading-tight mt-0.5">
+								<span class="text-[11px] text-secondary truncate capitalize leading-tight mt-0.5">
 									{{ instance.loader }} · {{ instance.game_version }}
 								</span>
 							</div>
 
 							<button
-								class="w-8 h-8 rounded-xl bg-[#0066ff] hover:bg-[#0055d4] flex items-center justify-center text-white transition-all shadow-md active:scale-95 border-0 cursor-pointer shrink-0"
+								class="w-8 h-8 rounded-xl bg-brand hover:brightness-110 flex items-center justify-center text-white transition-all shadow-md active:scale-95 border-0 cursor-pointer shrink-0"
 								:title="isRu ? 'Играть' : 'Play'"
 								@click.stop="handlePlay(instance)"
 							>
@@ -673,22 +684,22 @@ onUnmounted(() => {
 					</div>
 
 					<div
-						class="w-52 h-56 bg-[var(--er-subtle-bg)] hover:bg-[var(--er-card-hover)] border-2 border-dashed border-[var(--er-border)] hover:border-[#0066ff] rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shrink-0 text-[var(--er-text-secondary)] hover:text-[var(--er-text)] group select-none"
+						class="w-56 h-60 bg-surface-1 hover:bg-surface-2 border-2 border-dashed border-divider hover:border-brand rounded-2xl flex flex-col items-center justify-center gap-2.5 cursor-pointer transition-all duration-200 shrink-0 text-secondary hover:text-contrast group select-none"
 						@click="handleCreateNewInstance"
 					>
-						<div class="w-10 h-10 rounded-full bg-[var(--er-card-bg)] group-hover:bg-[var(--er-card-hover)] flex items-center justify-center transition-colors">
-							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<div class="w-11 h-11 rounded-2xl bg-surface-2 group-hover:bg-surface-3 flex items-center justify-center transition-colors border border-divider">
+							<svg class="w-5 h-5 text-secondary group-hover:text-contrast transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 								<line x1="12" y1="5" x2="12" y2="19"></line>
 								<line x1="5" y1="12" x2="19" y2="12"></line>
 							</svg>
 						</div>
-						<span class="text-xs font-semibold">{{ isRu ? 'Новая сборка' : 'New instance' }}</span>
+						<span class="text-xs font-bold">{{ isRu ? 'Новая сборка' : 'New instance' }}</span>
 					</div>
 				</div>
 
 				<div v-if="isEditMode" class="flex items-center justify-center gap-3 pt-2">
 					<button
-						class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#181a20] hover:bg-[#22252c] text-xs font-medium text-gray-300 hover:text-white border border-white/5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+						class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-xs font-medium text-secondary hover:text-contrast border border-divider cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
 						:disabled="group.rows <= 1"
 						@click="group.rows = Math.max(1, group.rows - 1)"
 					>
@@ -699,16 +710,19 @@ onUnmounted(() => {
 						<span>{{ isRu ? 'Убрать ряд' : 'Remove row' }}</span>
 					</button>
 
-					<span class="text-xs font-semibold text-gray-400 font-mono">
+					<span class="text-xs font-semibold text-secondary font-mono">
 						{{ group.rows }} {{ isRu ? 'из 4 рядов' : 'of 4 rows' }}
 					</span>
 
 					<button
-						class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#181a20] hover:bg-[#22252c] text-xs font-medium text-gray-300 hover:text-white border border-white/5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+						class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-xs font-medium text-secondary hover:text-contrast border border-divider cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
 						:disabled="group.rows >= 4"
 						@click="group.rows = Math.min(4, group.rows + 1)"
 					>
-						<span>+</span>
+						<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="12" y1="5" x2="12" y2="19"></line>
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+						</svg>
 						<span>{{ isRu ? 'Добавить ряд' : 'Add row' }}</span>
 					</button>
 				</div>
@@ -717,20 +731,20 @@ onUnmounted(() => {
 
 		<div
 			v-if="isEditMode && hiddenGroups.length > 0"
-			class="border-2 border-dashed border-[#2d303a] rounded-3xl p-5 bg-[#14151a]/20 flex flex-col gap-3"
+			class="border-2 border-dashed border-divider rounded-3xl p-5 bg-surface-1/40 flex flex-col gap-3"
 		>
-			<h3 class="text-xs font-bold text-gray-400 m-0 uppercase tracking-wider">
+			<h3 class="text-xs font-bold text-secondary m-0 uppercase tracking-wider">
 				{{ isRu ? 'Скрытые блоки' : 'Hidden blocks' }}
 			</h3>
 			<div class="flex flex-wrap gap-2.5">
 				<div
 					v-for="hg in hiddenGroups"
 					:key="hg.id"
-					class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#181a20] border border-white/5 text-xs text-gray-300"
+					class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-surface-2 border border-divider text-xs text-contrast"
 				>
 					<span class="font-medium">{{ hg.title }}</span>
 					<button
-						class="px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs font-semibold border border-blue-500/20 cursor-pointer transition-colors"
+						class="px-2.5 py-1 rounded-lg bg-brand/15 hover:bg-brand/25 text-brand text-xs font-semibold border border-brand/20 cursor-pointer transition-colors"
 						@click="toggleHomeGroupVisibility(hg.id)"
 					>
 						{{ isRu ? 'Показать' : 'Show' }}
@@ -741,19 +755,22 @@ onUnmounted(() => {
 
 		<div
 			v-if="isEditMode"
-			class="w-full py-4 border-2 border-dashed border-[#2d303a] hover:border-blue-500/50 rounded-3xl flex items-center justify-center gap-2 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer transition-colors"
+			class="w-full py-4 border-2 border-dashed border-divider hover:border-brand/50 rounded-3xl flex items-center justify-center gap-2 text-xs font-semibold text-secondary hover:text-contrast cursor-pointer transition-colors"
 			@click="showCreateGroupModal = true"
 		>
-			<span>+</span>
+			<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
 			<span>{{ isRu ? 'Создать группу' : 'Create group' }}</span>
 		</div>
 
 		<div v-if="!isEditMode" class="flex items-center justify-center pt-4">
 			<button
-				class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#1c1e24] hover:bg-[#252831] border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all cursor-pointer shadow-md"
+				class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-surface-2 hover:bg-surface-3 border border-divider text-xs font-semibold text-secondary hover:text-contrast transition-all cursor-pointer shadow-md"
 				@click="isEditMode = true"
 			>
-				<svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg class="w-4 h-4 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<circle cx="12" cy="12" r="3"></circle>
 					<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
 				</svg>
@@ -764,16 +781,16 @@ onUnmounted(() => {
 		<Transition name="fade">
 			<div
 				v-if="isEditMode"
-				class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#14151a]/95 backdrop-blur-xl border border-white/10 shadow-2xl"
+				class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-bg-raised/95 backdrop-blur-xl border border-divider shadow-2xl"
 			>
 				<button
-					class="px-4 py-2 rounded-xl bg-[#1c1e24] hover:bg-[#252831] text-xs font-semibold text-gray-200 border border-white/10 cursor-pointer transition-colors"
+					class="px-4 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-xs font-semibold text-contrast border border-divider cursor-pointer transition-colors"
 					@click="showCreateGroupModal = true"
 				>
 					{{ isRu ? '+ Создать группу' : '+ Create group' }}
 				</button>
 				<button
-					class="px-5 py-2 rounded-xl bg-[#0066ff] hover:bg-[#0055d4] text-xs font-bold text-white border-0 cursor-pointer shadow-md flex items-center gap-1.5 transition-colors active:scale-95"
+					class="px-5 py-2 rounded-xl bg-brand hover:brightness-110 text-xs font-bold text-white border-0 cursor-pointer shadow-md flex items-center gap-1.5 transition-all active:scale-95"
 					@click="isEditMode = false"
 				>
 					<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -786,203 +803,76 @@ onUnmounted(() => {
 
 		<div
 			v-if="editingGroup"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto"
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto select-none"
 			@click.self="closeGroupConfigModal"
 		>
 			<div
-				class="w-full max-w-3xl rounded-3xl bg-[#14151a] border border-[#23252e] p-7 shadow-2xl relative flex flex-col md:flex-row gap-8 select-none my-auto"
+				class="w-full max-w-2xl bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
 				@click.stop
 			>
-				<button
-					class="absolute top-5 right-5 flex flex-col items-center justify-center w-8 h-8 rounded-xl bg-[#1c1e24] hover:bg-[#252831] text-gray-400 hover:text-white border border-white/5 cursor-pointer transition-colors"
-					:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
-					@click="closeGroupConfigModal"
-				>
-					<span class="text-xs leading-none">✕</span>
-					<span class="text-[9px] uppercase font-mono tracking-wider opacity-60 leading-none mt-0.5">esc</span>
-				</button>
-
-				<div class="w-full md:w-56 flex flex-col justify-between shrink-0">
-					<div class="flex flex-col gap-2">
-						<div class="w-10 h-10 rounded-2xl bg-[#1c1e24] flex items-center justify-center border border-white/5">
-							<svg v-if="editingGroup.icon === 'zap'" class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 24 24">
+				<div class="flex items-center justify-between pb-3 border-b border-divider">
+					<div class="flex items-center gap-3">
+						<div class="w-10 h-10 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
+							<svg v-if="editingGroup.icon === 'zap'" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
 								<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
 							</svg>
-							<svg v-else-if="editingGroup.icon === 'creeper'" class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg v-else-if="editingGroup.icon === 'creeper'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
 								<path d="M8 8h2v3H8zM14 8h2v3h-2zM10 13h4v4h-4zM8 17h2v2H8zM14 17h2v2h-2z"></path>
 							</svg>
-							<svg v-else-if="editingGroup.icon === 'pin'" class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg v-else-if="editingGroup.icon === 'pin'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<line x1="12" y1="17" x2="12" y2="22"></line>
 								<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
 							</svg>
-							<svg v-else class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
 							</svg>
 						</div>
-
-						<h3 class="m-0 text-2xl font-black text-white tracking-tight leading-tight whitespace-pre-line mt-1">
-							{{ editingGroup.title.replace(' ', '\n') }}
-						</h3>
-						<p class="m-0 text-xs text-secondary font-medium">
-							{{ isRu ? 'Настройка отображения' : 'Display settings' }}
-						</p>
+						<div>
+							<h3 class="text-lg font-bold text-contrast m-0">
+								{{ editingGroup.title }}
+							</h3>
+							<p class="text-xs text-secondary m-0">
+								{{ isRu ? 'Настройка отображения группы на главной' : 'Group display settings on home page' }}
+							</p>
+						</div>
 					</div>
 
-					<div class="flex items-center gap-2.5 mt-8 md:mt-0">
-						<button
-							class="px-6 py-2.5 rounded-xl bg-[#0066ff] hover:bg-[#0055d4] text-xs font-bold text-white border-0 cursor-pointer shadow-lg transition-colors active:scale-95"
-							@click="saveGroupConfig"
-						>
-							{{ isRu ? 'Сохранить' : 'Save' }}
-						</button>
-						<button
-							class="px-5 py-2.5 rounded-xl bg-[#1c1e24] hover:bg-[#252831] text-xs font-semibold text-gray-300 border border-white/5 cursor-pointer transition-colors"
-							@click="closeGroupConfigModal"
-						>
-							{{ isRu ? 'Отмена' : 'Cancel' }}
-						</button>
-					</div>
+					<button
+						class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
+						:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
+						@click="closeGroupConfigModal"
+					>
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
+					</button>
 				</div>
 
-				<div class="flex-1 flex flex-col gap-4">
-					<div class="grid grid-cols-2 gap-3">
-						<div
-							class="rounded-xl p-3 bg-[#181a20] border transition-all cursor-pointer flex flex-col justify-between h-28"
-							:class="tempRows === 1 ? 'border-[#0066ff] bg-[#1a1e28]' : 'border-[#23252e] hover:border-[#30333f]'"
-							@click="tempRows = 1"
-						>
-							<div class="flex flex-col gap-1.5 opacity-60">
-								<div class="flex gap-2">
-									<div class="flex-1 h-5 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-8 h-1.5 rounded-full bg-gray-400"></div>
-										<div class="w-2 h-2 rounded bg-gray-400"></div>
-									</div>
-									<div class="flex-1 h-5 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-8 h-1.5 rounded-full bg-gray-400"></div>
-										<div class="w-2 h-2 rounded bg-gray-400"></div>
-									</div>
-								</div>
-							</div>
-
-							<div class="flex items-center gap-2 pt-1">
-								<div
-									class="w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors"
-									:class="tempRows === 1 ? 'border-[#0066ff] bg-[#0066ff]' : 'border-gray-600 bg-transparent'"
-								>
-									<div v-if="tempRows === 1" class="w-1.5 h-1.5 rounded-full bg-white"></div>
-								</div>
-								<span class="text-xs" :class="tempRows === 1 ? 'text-white font-semibold' : 'text-gray-400'">
-									{{ isRu ? 'только 1 ряд' : 'only 1 row' }}
+				<div class="flex flex-col gap-4">
+					<div class="flex flex-col gap-2">
+						<label class="text-xs font-semibold text-secondary">
+							{{ isRu ? 'Количество рядов для отображения' : 'Number of rows to display' }}
+						</label>
+						<div class="grid grid-cols-4 gap-2.5">
+							<button
+								v-for="r in [1, 2, 3, 4] as const"
+								:key="r"
+								type="button"
+								class="py-2.5 px-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
+								:class="tempRows === r ? 'bg-surface-3 border-brand text-contrast ring-1 ring-brand' : 'bg-surface-2 border-divider hover:bg-surface-3 text-secondary hover:text-contrast'"
+								@click="tempRows = r"
+							>
+								<span class="text-xs font-bold">{{ r }} {{ isRu ? (r === 1 ? 'ряд' : (r < 5 ? 'ряда' : 'рядов')) : (r === 1 ? 'row' : 'rows') }}</span>
+								<span class="text-[10px] text-secondary">
+									{{ r === 1 ? (isRu ? 'в одну строку' : 'single line') : (isRu ? `сетка до ${r}` : `grid up to ${r}`) }}
 								</span>
-							</div>
-						</div>
-
-						<div
-							class="rounded-xl p-3 bg-[#181a20] border transition-all cursor-pointer flex flex-col justify-between h-28"
-							:class="tempRows === 2 ? 'border-[#0066ff] bg-[#1a1e28]' : 'border-[#23252e] hover:border-[#30333f]'"
-							@click="tempRows = 2"
-						>
-							<div class="flex flex-col gap-1 opacity-60">
-								<div class="flex gap-2">
-									<div class="flex-1 h-4 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-6 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1.5 h-1.5 rounded bg-gray-400"></div>
-									</div>
-									<div class="flex-1 h-4 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-6 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1.5 h-1.5 rounded bg-gray-400"></div>
-									</div>
-								</div>
-								<div class="flex gap-2">
-									<div class="flex-1 h-4 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-6 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1.5 h-1.5 rounded bg-gray-400"></div>
-									</div>
-									<div class="flex-1 h-4 rounded-md bg-[#252833] border border-[#303442] flex items-center justify-between px-2">
-										<div class="w-6 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1.5 h-1.5 rounded bg-gray-400"></div>
-									</div>
-								</div>
-							</div>
-
-							<div class="flex items-center gap-2 pt-1">
-								<div
-									class="w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors"
-									:class="tempRows === 2 ? 'border-[#0066ff] bg-[#0066ff]' : 'border-gray-600 bg-transparent'"
-								>
-									<div v-if="tempRows === 2" class="w-1.5 h-1.5 rounded-full bg-white"></div>
-								</div>
-								<span class="text-xs" :class="tempRows === 2 ? 'text-white font-semibold' : 'text-gray-400'">
-									{{ isRu ? 'до 2 рядов' : 'up to 2 rows' }}
-								</span>
-							</div>
-						</div>
-
-						<div
-							class="rounded-xl p-3 bg-[#181a20] border transition-all cursor-pointer flex flex-col justify-between h-28"
-							:class="tempRows === 3 ? 'border-[#0066ff] bg-[#1a1e28]' : 'border-[#23252e] hover:border-[#30333f]'"
-							@click="tempRows = 3"
-						>
-							<div class="flex flex-col gap-1 opacity-60">
-								<div v-for="r in 3" :key="r" class="flex gap-2">
-									<div class="flex-1 h-2.5 rounded bg-[#252833] border border-[#303442] flex items-center justify-between px-1.5">
-										<div class="w-4 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1 h-1 rounded bg-gray-400"></div>
-									</div>
-									<div class="flex-1 h-2.5 rounded bg-[#252833] border border-[#303442] flex items-center justify-between px-1.5">
-										<div class="w-4 h-1 rounded-full bg-gray-400"></div>
-										<div class="w-1 h-1 rounded bg-gray-400"></div>
-									</div>
-								</div>
-							</div>
-
-							<div class="flex items-center gap-2 pt-1">
-								<div
-									class="w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors"
-									:class="tempRows === 3 ? 'border-[#0066ff] bg-[#0066ff]' : 'border-gray-600 bg-transparent'"
-								>
-									<div v-if="tempRows === 3" class="w-1.5 h-1.5 rounded-full bg-white"></div>
-								</div>
-								<span class="text-xs" :class="tempRows === 3 ? 'text-white font-semibold' : 'text-gray-400'">
-									{{ isRu ? 'до 3 рядов' : 'up to 3 rows' }}
-								</span>
-							</div>
-						</div>
-
-						<div
-							class="rounded-xl p-3 bg-[#181a20] border transition-all cursor-pointer flex flex-col justify-between h-28"
-							:class="tempRows === 4 ? 'border-[#0066ff] bg-[#1a1e28]' : 'border-[#23252e] hover:border-[#30333f]'"
-							@click="tempRows = 4"
-						>
-							<div class="flex flex-col gap-0.5 opacity-60">
-								<div v-for="r in 4" :key="r" class="flex gap-2">
-									<div class="flex-1 h-2 rounded bg-[#252833] border border-[#303442] flex items-center justify-between px-1.5">
-										<div class="w-4 h-0.5 rounded-full bg-gray-400"></div>
-										<div class="w-0.5 h-0.5 rounded bg-gray-400"></div>
-									</div>
-									<div class="flex-1 h-2 rounded bg-[#252833] border border-[#303442] flex items-center justify-between px-1.5">
-										<div class="w-4 h-0.5 rounded-full bg-gray-400"></div>
-										<div class="w-0.5 h-0.5 rounded bg-gray-400"></div>
-									</div>
-								</div>
-							</div>
-
-							<div class="flex items-center gap-2 pt-1">
-								<div
-									class="w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors"
-									:class="tempRows === 4 ? 'border-[#0066ff] bg-[#0066ff]' : 'border-gray-600 bg-transparent'"
-								>
-									<div v-if="tempRows === 4" class="w-1.5 h-1.5 rounded-full bg-white"></div>
-								</div>
-								<span class="text-xs" :class="tempRows === 4 ? 'text-white font-semibold' : 'text-gray-400'">
-									{{ isRu ? 'до 4 рядов' : 'up to 4 rows' }}
-								</span>
-							</div>
+							</button>
 						</div>
 					</div>
 
-					<div class="rounded-xl bg-[#181a20] border border-[#23252e] p-4 flex flex-col gap-3">
+					<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
 						<h4 class="m-0 text-xs font-bold text-contrast">
 							{{ isRu ? 'Фиксируемая активность' : 'Tracked activity' }}
 						</h4>
@@ -990,11 +880,6 @@ onUnmounted(() => {
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
 								<Toggle id="home-multiplayer-toggle" v-model="tempMultiplayer" />
-								<svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-									<line x1="8" y1="21" x2="16" y2="21"></line>
-									<line x1="12" y1="17" x2="12" y2="21"></line>
-								</svg>
 								<span>{{ isRu ? 'В сетевых играх' : 'In multiplayer' }}</span>
 							</div>
 						</div>
@@ -1002,50 +887,48 @@ onUnmounted(() => {
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
 								<Toggle id="home-singleplayer-toggle" v-model="tempSingleplayer" />
-								<svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<circle cx="12" cy="12" r="10"></circle>
-									<line x1="2" y1="12" x2="22" y2="12"></line>
-									<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-								</svg>
 								<span>{{ isRu ? 'В одиночных мирах' : 'In singleplayer' }}</span>
 							</div>
 						</div>
 					</div>
 
-					<div v-if="editingGroup.id.startsWith('custom_') || editingGroup.id === 'pinned'" class="rounded-xl bg-[#181a20] border border-[#23252e] p-4 flex flex-col gap-3">
+					<div v-if="editingGroup.id.startsWith('custom_') || editingGroup.id === 'pinned'" class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
 						<h4 class="m-0 text-xs font-bold text-contrast">
 							{{ isRu ? 'Содержимое группы' : 'Group content' }}
 						</h4>
 
 						<div class="grid grid-cols-3 gap-2">
 							<button
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-								:class="tempFilterType === 'all' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
+								type="button"
+								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="tempFilterType === 'all' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
 								@click="tempFilterType = 'all'"
 							>
 								{{ isRu ? 'Все сборки' : 'All instances' }}
 							</button>
 							<button
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-								:class="tempFilterType === 'manual' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
+								type="button"
+								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="tempFilterType === 'manual' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
 								@click="tempFilterType = 'manual'"
 							>
 								{{ isRu ? 'Вручную' : 'Manually' }}
 							</button>
 							<button
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-								:class="tempFilterType === 'loader' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
+								type="button"
+								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="tempFilterType === 'loader' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
 								@click="tempFilterType = 'loader'"
 							>
 								{{ isRu ? 'Загрузчик' : 'Loader' }}
 							</button>
 						</div>
 
-						<div v-if="tempFilterType === 'manual'" class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
+						<div v-if="tempFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
 							<div
 								v-for="inst in instances"
 								:key="inst.id"
-								class="flex items-center justify-between p-2 rounded-xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] cursor-pointer"
+								class="flex items-center justify-between p-2.5 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
 								@click="toggleManualSelection(inst.id, tempSelectedIds)"
 							>
 								<div class="flex items-center gap-2">
@@ -1053,22 +936,23 @@ onUnmounted(() => {
 									<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
 								</div>
 								<div
-									class="w-4 h-4 rounded border flex items-center justify-center"
-									:class="tempSelectedIds.includes(inst.id) ? 'bg-[#0066ff] border-[#0066ff]' : 'border-gray-500'"
+									class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
+									:class="tempSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
 								>
-									<svg v-if="tempSelectedIds.includes(inst.id)" class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+									<svg v-if="tempSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								</div>
 							</div>
 						</div>
 
-						<div v-if="tempFilterType === 'loader'" class="flex gap-1.5">
+						<div v-if="tempFilterType === 'loader'" class="flex gap-2">
 							<button
 								v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
 								:key="l"
-								class="flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize border cursor-pointer transition-colors"
-								:class="tempTargetLoader === l ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
+								type="button"
+								class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border cursor-pointer transition-all"
+								:class="tempTargetLoader === l ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
 								@click="tempTargetLoader = l"
 							>
 								{{ l }}
@@ -1076,105 +960,156 @@ onUnmounted(() => {
 						</div>
 					</div>
 				</div>
+
+				<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
+					<button
+						type="button"
+						class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
+						@click="closeGroupConfigModal"
+					>
+						{{ isRu ? 'Отмена' : 'Cancel' }}
+					</button>
+					<button
+						type="button"
+						class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all"
+						@click="saveGroupConfig"
+					>
+						{{ isRu ? 'Сохранить' : 'Save' }}
+					</button>
+				</div>
 			</div>
 		</div>
 
 		<div
 			v-if="showCreateGroupModal"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto"
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto select-none"
 			@click.self="showCreateGroupModal = false"
 		>
 			<div
-				class="w-full max-w-md rounded-3xl bg-[#14151a] border border-[#23252e] p-6 shadow-2xl flex flex-col gap-4 my-auto select-none"
+				class="w-full max-w-md bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
 				@click.stop
 			>
-				<div class="flex items-center justify-between">
-					<h3 class="m-0 text-base font-bold text-contrast">{{ isRu ? 'Создать новую группу' : 'Create new group' }}</h3>
-					<button
-						class="text-gray-400 hover:text-white bg-transparent border-0 cursor-pointer p-1"
-						@click="showCreateGroupModal = false"
-					>
-						✕
-					</button>
-				</div>
-
-				<input
-					v-model="newGroupTitle"
-					type="text"
-					placeholder="Название группы..."
-					class="w-full px-3.5 py-2.5 rounded-xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] text-sm text-[var(--er-text)] focus:outline-none focus:border-[#0066ff]"
-				/>
-
-				<div class="flex flex-col gap-2">
-					<label class="text-xs font-semibold text-secondary">{{ isRu ? 'Что будет в группе' : 'Group content' }}</label>
-					<div class="grid grid-cols-3 gap-2">
-						<button
-							class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-							:class="newGroupFilterType === 'all' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
-							@click="newGroupFilterType = 'all'"
-						>
-							{{ isRu ? 'Все сборки' : 'All instances' }}
-						</button>
-						<button
-							class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-							:class="newGroupFilterType === 'manual' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
-							@click="newGroupFilterType = 'manual'"
-						>
-							{{ isRu ? 'Вручную' : 'Manually' }}
-						</button>
-						<button
-							class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-colors"
-							:class="newGroupFilterType === 'loader' ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
-							@click="newGroupFilterType = 'loader'"
-						>
-							{{ isRu ? 'Загрузчик' : 'Loader' }}
-						</button>
-					</div>
-
-					<div v-if="newGroupFilterType === 'manual'" class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1 mt-2">
-						<div
-							v-for="inst in instances"
-							:key="inst.id"
-							class="flex items-center justify-between p-2 rounded-xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] cursor-pointer"
-							@click="toggleManualSelection(inst.id, newGroupSelectedIds)"
-						>
-							<div class="flex items-center gap-2">
-								<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
-								<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
-							</div>
-							<div
-								class="w-4 h-4 rounded border flex items-center justify-center"
-								:class="newGroupSelectedIds.includes(inst.id) ? 'bg-[#0066ff] border-[#0066ff]' : 'border-gray-500'"
-							>
-								<svg v-if="newGroupSelectedIds.includes(inst.id)" class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-							</div>
+				<div class="flex items-center justify-between pb-3 border-b border-divider">
+					<div class="flex items-center gap-3">
+						<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<line x1="12" y1="5" x2="12" y2="19"></line>
+								<line x1="5" y1="12" x2="19" y2="12"></line>
+							</svg>
+						</div>
+						<div>
+							<h3 class="text-base font-bold text-contrast m-0">
+								{{ isRu ? 'Создать новую группу' : 'Create new group' }}
+							</h3>
+							<p class="text-xs text-secondary m-0">
+								{{ isRu ? 'Группа появится на вашей главной странице' : 'The group will appear on your home page' }}
+							</p>
 						</div>
 					</div>
 
-					<div v-if="newGroupFilterType === 'loader'" class="flex gap-1.5 mt-2">
-						<button
-							v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
-							:key="l"
-							class="flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize border cursor-pointer transition-colors"
-							:class="newGroupTargetLoader === l ? 'bg-[#0066ff] text-white border-[#0066ff]' : 'bg-[var(--er-card-bg)] text-secondary border-[var(--er-card-border)]'"
-							@click="newGroupTargetLoader = l"
-						>
-							{{ l }}
-						</button>
+					<button
+						class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
+						:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
+						@click="showCreateGroupModal = false"
+					>
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
+					</button>
+				</div>
+
+				<div class="flex flex-col gap-4">
+					<div class="flex flex-col gap-1.5">
+						<label class="text-xs font-semibold text-secondary">
+							{{ isRu ? 'Название группы' : 'Group title' }}
+						</label>
+						<input
+							v-model="newGroupTitle"
+							type="text"
+							:placeholder="isRu ? 'Например: Избранные сборки' : 'e.g. Favorite Instances'"
+							class="w-full bg-surface-1 border border-divider focus:border-brand rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
+						/>
+					</div>
+
+					<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
+						<label class="text-xs font-semibold text-contrast">{{ isRu ? 'Что будет в группе' : 'Group content' }}</label>
+						<div class="grid grid-cols-3 gap-2">
+							<button
+								type="button"
+								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="newGroupFilterType === 'all' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
+								@click="newGroupFilterType = 'all'"
+							>
+								{{ isRu ? 'Все сборки' : 'All instances' }}
+							</button>
+							<button
+								type="button"
+								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="newGroupFilterType === 'manual' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
+								@click="newGroupFilterType = 'manual'"
+							>
+								{{ isRu ? 'Вручную' : 'Manually' }}
+							</button>
+							<button
+								type="button"
+								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+								:class="newGroupFilterType === 'loader' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
+								@click="newGroupFilterType = 'loader'"
+							>
+								{{ isRu ? 'Загрузчик' : 'Loader' }}
+							</button>
+						</div>
+
+						<div v-if="newGroupFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1 mt-1">
+							<div
+								v-for="inst in instances"
+								:key="inst.id"
+								class="flex items-center justify-between p-2 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
+								@click="toggleManualSelection(inst.id, newGroupSelectedIds)"
+							>
+								<div class="flex items-center gap-2">
+									<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
+									<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
+								</div>
+								<div
+									class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
+									:class="newGroupSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
+								>
+									<svg v-if="newGroupSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+										<polyline points="20 6 9 17 4 12"></polyline>
+									</svg>
+								</div>
+							</div>
+						</div>
+
+						<div v-if="newGroupFilterType === 'loader'" class="flex gap-1.5 mt-1">
+							<button
+								v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
+								:key="l"
+								type="button"
+								class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border cursor-pointer transition-all"
+								:class="newGroupTargetLoader === l ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
+								@click="newGroupTargetLoader = l"
+							>
+								{{ l }}
+							</button>
+						</div>
 					</div>
 				</div>
 
-				<div class="flex items-center justify-end gap-2.5 mt-2">
+				<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
 					<button
-						class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white bg-transparent border-0 cursor-pointer"
+						type="button"
+						class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
 						@click="showCreateGroupModal = false"
 					>
 						{{ isRu ? 'Отмена' : 'Cancel' }}
 					</button>
 					<button
-						class="px-5 py-2 rounded-xl bg-[#0066ff] hover:bg-[#0055d4] text-xs font-semibold text-white border-0 cursor-pointer shadow-md"
+						type="button"
+						class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+						:disabled="!newGroupTitle.trim()"
 						@click="handleCreateNewGroup"
 					>
 						{{ isRu ? 'Создать' : 'Create' }}
