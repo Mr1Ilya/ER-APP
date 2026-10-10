@@ -1,37 +1,77 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { connectionSettings } from '@/store/launcherPreferences'
+import { Toggle } from '@erteam/ui'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import {
+	connectionSettings,
+	measureRealPing,
+	refreshAllPings,
+	type ConnectionItem,
+} from '@/store/launcherPreferences'
 import i18n from '@/i18n.config'
 
 const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const showAddModal = ref(false)
-const newProxyHost = ref('')
-const newProxyPort = ref('')
-const newProxyType = ref<'http' | 'socks5'>('http')
+const newServerTitle = ref('')
+const newServerHost = ref('')
+const newServerType = ref<'direct' | 'system' | 'custom'>('custom')
+const isCheckingPing = ref(false)
 
-function handleAddProxy() {
-	if (!newProxyHost.value || !newProxyPort.value) return
-	const id = 'custom_' + Date.now()
-	connectionSettings.value.items.push({
-		id,
-		title: `${newProxyType.value.toUpperCase()} Прокси`,
-		subtitle: `${newProxyHost.value}:${newProxyPort.value}`,
+function onGlobalKeydown(e: KeyboardEvent) {
+	if (e.key === 'Escape' && showAddModal.value) {
+		closeAddModal()
+	}
+}
+
+onMounted(async () => {
+	window.addEventListener('keydown', onGlobalKeydown)
+	await refreshAllPings()
+})
+
+onUnmounted(() => {
+	window.removeEventListener('keydown', onGlobalKeydown)
+})
+
+async function handleAddServer() {
+	if (!newServerHost.value.trim()) return
+	const host = newServerHost.value.trim()
+	const title = newServerTitle.value.trim() || host
+	isCheckingPing.value = true
+	const realPing = await measureRealPing(host)
+	isCheckingPing.value = false
+
+	const newItem: ConnectionItem = {
+		id: 'custom_' + Date.now(),
+		title,
+		subtitle: host,
+		host,
 		locked: false,
-		pingMs: Math.floor(Math.random() * 80) + 120,
+		pingMs: realPing,
 		active: false,
-		type: 'custom',
-		proxyUrl: `${newProxyType.value}://${newProxyHost.value}:${newProxyPort.value}`,
-	})
-	newProxyHost.value = ''
-	newProxyPort.value = ''
+		type: newServerType.value,
+	}
+
+	connectionSettings.value.items.push(newItem)
+	newServerTitle.value = ''
+	newServerHost.value = ''
 	showAddModal.value = false
 }
 
-function selectConnection(item: any) {
+function selectConnection(item: ConnectionItem) {
 	connectionSettings.value.items.forEach((c) => {
 		c.active = c.id === item.id
 	})
+}
+
+function removeConnection(id: string) {
+	const idx = connectionSettings.value.items.findIndex((c) => c.id === id)
+	if (idx !== -1 && !connectionSettings.value.items[idx].locked) {
+		connectionSettings.value.items.splice(idx, 1)
+	}
+}
+
+function closeAddModal() {
+	showAddModal.value = false
 }
 </script>
 
@@ -65,7 +105,7 @@ function selectConnection(item: any) {
 			</p>
 		</div>
 
-		<div class="px-4 py-3 rounded-2xl bg-[#1e2025]/70 border border-[#2b2e38] flex items-center gap-3 text-sm text-secondary">
+		<div class="px-4 py-3 rounded-2xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] flex items-center gap-3 text-sm text-secondary">
 			<svg class="w-5 h-5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<circle cx="12" cy="12" r="10"></circle>
 				<line x1="12" y1="16" x2="12" y2="12"></line>
@@ -74,17 +114,7 @@ function selectConnection(item: any) {
 			<span>{{ isRu ? 'Не используется в игре, только для лаунчера.' : 'Not used in the Minecraft game, only for the launcher itself.' }}</span>
 		</div>
 
-		<div class="flex items-center gap-4 py-1">
-			<button
-				class="w-12 h-6 rounded-full transition-colors relative cursor-pointer border-0"
-				:class="connectionSettings.autoSelect ? 'bg-[#3b82f6]' : 'bg-[#2b2e38]'"
-				@click="connectionSettings.autoSelect = !connectionSettings.autoSelect"
-			>
-				<div
-					class="w-5 h-5 rounded-full bg-white transition-transform duration-200 absolute top-0.5"
-					:class="connectionSettings.autoSelect ? 'left-6.5' : 'left-0.5'"
-				></div>
-			</button>
+		<div class="flex items-center justify-between py-1">
 			<div class="flex flex-col">
 				<div class="flex items-center gap-1.5 text-sm font-semibold text-contrast">
 					<span class="text-amber-400">★</span>
@@ -94,16 +124,20 @@ function selectConnection(item: any) {
 					{{ isRu ? 'Используется прямое подключение' : 'Direct connection in use' }}
 				</span>
 			</div>
+			<Toggle id="auto-connection-toggle" v-model="connectionSettings.autoSelect" />
 		</div>
 
-		<div class="w-full h-px bg-[#262830]"></div>
+		<div class="w-full h-px bg-[var(--er-border)]"></div>
 
 		<div class="flex flex-col gap-2.5">
 			<div
 				v-for="item in connectionSettings.items"
 				:key="item.id"
-				class="px-4 py-3.5 rounded-2xl bg-[#16181d] border border-[#23252d] flex items-center justify-between transition-all cursor-pointer hover:border-[#333642]"
-				:class="{ 'opacity-65': connectionSettings.autoSelect && !item.active }"
+				class="group/conn px-4 py-3.5 rounded-2xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] flex items-center justify-between transition-all cursor-pointer hover:border-[var(--er-border)]"
+				:class="{
+					'ring-1 ring-[#0066ff] border-[#0066ff]': item.active && !connectionSettings.autoSelect,
+					'opacity-65': connectionSettings.autoSelect && !item.active
+				}"
 				@click="selectConnection(item)"
 			>
 				<div class="flex items-center gap-3.5">
@@ -124,15 +158,35 @@ function selectConnection(item: any) {
 					</div>
 				</div>
 
-				<div class="px-2.5 py-1 rounded-full bg-[#1e2320] border border-[#27382d] flex items-center gap-1.5 text-xs font-mono text-[#4ade80]">
-					<div class="w-2 h-2 rounded-full bg-[#22c55e]"></div>
-					<span>{{ item.pingMs }} {{ isRu ? 'мс' : 'ms' }}</span>
+				<div class="flex items-center gap-3">
+					<div
+						class="px-2.5 py-1 rounded-full border flex items-center gap-1.5 text-xs font-mono"
+						:class="item.pingMs < 300 ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400' : 'bg-amber-950/40 border-amber-800/40 text-amber-400'"
+					>
+						<div
+							class="w-2 h-2 rounded-full"
+							:class="item.pingMs < 300 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'"
+						></div>
+						<span>{{ item.pingMs }} {{ isRu ? 'мс' : 'ms' }}</span>
+					</div>
+
+					<button
+						v-if="!item.locked"
+						class="opacity-0 group-hover/conn:opacity-100 p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all bg-transparent border-0 cursor-pointer"
+						:title="isRu ? 'Удалить сервер' : 'Delete connection'"
+						@click.stop="removeConnection(item.id)"
+					>
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="3 6 5 6 21 6"></polyline>
+							<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+						</svg>
+					</button>
 				</div>
 			</div>
 		</div>
 
 		<button
-			class="w-full py-3 rounded-2xl bg-[#1e2026] hover:bg-[#282a33] text-gray-300 hover:text-white border border-[#2b2e38] text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
+			class="w-full py-3 rounded-2xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] text-gray-300 hover:text-white border border-[var(--er-card-border)] hover:border-[var(--er-border)] text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
 			@click="showAddModal = true"
 		>
 			<span>{{ isRu ? 'Добавить подключение +' : 'Add connection +' }}</span>
@@ -140,67 +194,56 @@ function selectConnection(item: any) {
 
 		<div
 			v-if="showAddModal"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto"
+			@click.self="closeAddModal"
 		>
-			<div class="w-full max-w-md rounded-3xl bg-[#141518] border border-[#2a2d36] p-6 shadow-2xl flex flex-col gap-5">
+			<div
+				class="w-full max-w-md rounded-3xl bg-[#14151a] border border-[#23252e] p-6 shadow-2xl flex flex-col gap-5 select-none my-auto"
+				@click.stop
+			>
 				<div class="flex items-center justify-between">
-					<h3 class="m-0 text-lg font-bold text-white">{{ isRu ? 'Новое подключение' : 'New connection' }}</h3>
+					<h3 class="m-0 text-lg font-bold text-contrast">{{ isRu ? 'Добавить сервер или подключение' : 'Add server or connection' }}</h3>
 					<button
-						class="text-gray-400 hover:text-white bg-transparent border-0 cursor-pointer"
-						@click="showAddModal = false"
+						class="text-gray-400 hover:text-white bg-transparent border-0 cursor-pointer p-1"
+						@click="closeAddModal"
 					>
 						✕
 					</button>
 				</div>
 
 				<div class="flex flex-col gap-3">
-					<label class="text-xs font-semibold text-gray-400">{{ isRu ? 'Протокол' : 'Protocol' }}</label>
-					<div class="flex gap-2">
-						<button
-							class="flex-1 py-2 rounded-xl text-xs font-bold transition-colors border cursor-pointer"
-							:class="newProxyType === 'http' ? 'bg-[#3b82f6] text-white border-[#3b82f6]' : 'bg-[#1e2026] text-gray-400 border-[#2b2e38]'"
-							@click="newProxyType = 'http'"
-						>
-							HTTP / HTTPS
-						</button>
-						<button
-							class="flex-1 py-2 rounded-xl text-xs font-bold transition-colors border cursor-pointer"
-							:class="newProxyType === 'socks5' ? 'bg-[#3b82f6] text-white border-[#3b82f6]' : 'bg-[#1e2026] text-gray-400 border-[#2b2e38]'"
-							@click="newProxyType = 'socks5'"
-						>
-							SOCKS5
-						</button>
-					</div>
-
-					<label class="text-xs font-semibold text-gray-400 mt-2">{{ isRu ? 'Хост или IP' : 'Host / IP' }}</label>
+					<label class="text-xs font-semibold text-secondary">{{ isRu ? 'Название (опционально)' : 'Title (optional)' }}</label>
 					<input
-						v-model="newProxyHost"
+						v-model="newServerTitle"
 						type="text"
-						placeholder="127.0.0.1"
-						class="w-full px-3.5 py-2.5 rounded-xl bg-[#1e2026] border border-[#2b2e38] text-sm text-white focus:outline-none focus:border-[#3b82f6]"
+						placeholder="Например: Мой сервер EndRage"
+						class="w-full px-3.5 py-2.5 rounded-xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] text-sm text-[var(--er-text)] focus:outline-none focus:border-[#0066ff]"
 					/>
 
-					<label class="text-xs font-semibold text-gray-400 mt-2">{{ isRu ? 'Порт' : 'Port' }}</label>
+					<label class="text-xs font-semibold text-secondary mt-1">{{ isRu ? 'Адрес сервера или сайта' : 'Server address or domain' }}</label>
 					<input
-						v-model="newProxyPort"
+						v-model="newServerHost"
 						type="text"
-						placeholder="1080"
-						class="w-full px-3.5 py-2.5 rounded-xl bg-[#1e2026] border border-[#2b2e38] text-sm text-white focus:outline-none focus:border-[#3b82f6]"
+						placeholder="mc.end-rage.ru или 127.0.0.1"
+						class="w-full px-3.5 py-2.5 rounded-xl bg-[var(--er-card-bg)] border border-[var(--er-card-border)] text-sm text-[var(--er-text)] focus:outline-none focus:border-[#0066ff]"
+						@keydown.enter="handleAddServer"
 					/>
 				</div>
 
 				<div class="flex items-center gap-3 justify-end mt-2">
 					<button
 						class="px-5 py-2.5 rounded-xl bg-transparent hover:bg-white/5 text-sm font-semibold text-gray-300 border border-transparent cursor-pointer"
-						@click="showAddModal = false"
+						@click="closeAddModal"
 					>
 						{{ isRu ? 'Отмена' : 'Cancel' }}
 					</button>
 					<button
-						class="px-5 py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-sm font-semibold text-white border-0 cursor-pointer shadow-md"
-						@click="handleAddProxy"
+						class="px-5 py-2.5 rounded-xl bg-[#0066ff] hover:bg-[#0055d4] text-sm font-semibold text-white border-0 cursor-pointer shadow-md flex items-center gap-2"
+						:disabled="isCheckingPing"
+						@click="handleAddServer"
 					>
-						{{ isRu ? 'Сохранить' : 'Save' }}
+						<div v-if="isCheckingPing" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+						<span>{{ isRu ? 'Добавить и проверить' : 'Add & Test' }}</span>
 					</button>
 				</div>
 			</div>

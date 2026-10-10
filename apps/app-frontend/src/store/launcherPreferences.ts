@@ -10,17 +10,21 @@ export interface HomeGroupConfig {
 	rows: 1 | 2 | 3 | 4
 	activityMultiplayer: boolean
 	activitySingleplayer: boolean
+	filterType: 'all' | 'manual' | 'version' | 'loader'
+	selectedInstanceIds: string[]
+	targetVersion?: string
+	targetLoader?: string
 }
 
 export interface ConnectionItem {
 	id: string
 	title: string
 	subtitle: string
+	host: string
 	locked: boolean
 	pingMs: number
 	active: boolean
 	type: 'direct' | 'system' | 'custom'
-	proxyUrl?: string
 }
 
 export interface ConnectionSettingsState {
@@ -38,6 +42,8 @@ const DEFAULT_HOME_GROUPS: HomeGroupConfig[] = [
 		rows: 1,
 		activityMultiplayer: true,
 		activitySingleplayer: true,
+		filterType: 'all',
+		selectedInstanceIds: [],
 	},
 	{
 		id: 'recent',
@@ -49,6 +55,8 @@ const DEFAULT_HOME_GROUPS: HomeGroupConfig[] = [
 		rows: 2,
 		activityMultiplayer: true,
 		activitySingleplayer: true,
+		filterType: 'all',
+		selectedInstanceIds: [],
 	},
 	{
 		id: 'releases',
@@ -60,6 +68,8 @@ const DEFAULT_HOME_GROUPS: HomeGroupConfig[] = [
 		rows: 2,
 		activityMultiplayer: true,
 		activitySingleplayer: true,
+		filterType: 'all',
+		selectedInstanceIds: [],
 	},
 	{
 		id: 'pinned',
@@ -71,6 +81,8 @@ const DEFAULT_HOME_GROUPS: HomeGroupConfig[] = [
 		rows: 1,
 		activityMultiplayer: true,
 		activitySingleplayer: true,
+		filterType: 'manual',
+		selectedInstanceIds: [],
 	},
 ]
 
@@ -81,6 +93,7 @@ const DEFAULT_CONNECTIONS: ConnectionSettingsState = {
 			id: 'direct',
 			title: 'Прямое подключение',
 			subtitle: 'Не использовать прокси для соединений',
+			host: 'https://end-rage.ru',
 			locked: true,
 			pingMs: 190,
 			active: true,
@@ -90,6 +103,7 @@ const DEFAULT_CONNECTIONS: ConnectionSettingsState = {
 			id: 'system',
 			title: 'Системный прокси',
 			subtitle: 'Системный прокси отключен',
+			host: 'https://api.end-rage.ru',
 			locked: true,
 			pingMs: 190,
 			active: false,
@@ -128,6 +142,36 @@ watch(
 	},
 	{ immediate: true },
 )
+
+export const pinnedInstanceIds = ref<string[]>(loadFromStorage('er_pinned_instances', []))
+
+watch(
+	pinnedInstanceIds,
+	(val) => {
+		saveToStorage('er_pinned_instances', val)
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new CustomEvent('er-pinned-instances-changed', { detail: val }))
+		}
+	},
+	{ deep: true },
+)
+
+export function isInstancePinned(instanceId: string): boolean {
+	return pinnedInstanceIds.value.includes(instanceId)
+}
+
+export function togglePinInstance(instanceId: string): void {
+	const idx = pinnedInstanceIds.value.indexOf(instanceId)
+	if (idx === -1) {
+		pinnedInstanceIds.value.push(instanceId)
+	} else {
+		pinnedInstanceIds.value.splice(idx, 1)
+	}
+	const pinnedGroup = homeGroups.value.find((g) => g.id === 'pinned')
+	if (pinnedGroup) {
+		pinnedGroup.badge = pinnedInstanceIds.value.length
+	}
+}
 
 export const homeGroups = ref<HomeGroupConfig[]>(loadFromStorage('er_home_groups', DEFAULT_HOME_GROUPS))
 
@@ -175,17 +219,67 @@ export function moveHomeGroup(fromIndex: number, toIndex: number): void {
 	homeGroups.value.splice(toIndex, 0, item)
 }
 
-export function addCustomHomeGroup(title: string): void {
+export function deleteHomeGroup(id: string): void {
+	const index = homeGroups.value.findIndex((g) => g.id === id)
+	if (index !== -1 && !homeGroups.value[index].locked) {
+		homeGroups.value.splice(index, 1)
+	}
+}
+
+export function addCustomHomeGroup(params: {
+	title: string
+	filterType: 'all' | 'manual' | 'version' | 'loader'
+	selectedInstanceIds: string[]
+	targetVersion?: string
+	targetLoader?: string
+}): void {
 	const newId = 'custom_' + Date.now()
 	homeGroups.value.push({
 		id: newId,
-		title: title.trim() || 'Новая группа',
+		title: params.title.trim() || 'Новая группа',
 		icon: 'folder',
-		badge: 0,
+		badge: params.selectedInstanceIds.length,
 		locked: false,
 		visible: true,
 		rows: 1,
 		activityMultiplayer: true,
 		activitySingleplayer: true,
+		filterType: params.filterType,
+		selectedInstanceIds: params.selectedInstanceIds,
+		targetVersion: params.targetVersion,
+		targetLoader: params.targetLoader,
 	})
+}
+
+export async function measureRealPing(targetHost: string): Promise<number> {
+	let url = targetHost.trim()
+	if (!url.startsWith('http://') && !url.startsWith('https://')) {
+		url = `https://${url}`
+	}
+	const start = performance.now()
+	try {
+		const controller = new AbortController()
+		const timer = setTimeout(() => controller.abort(), 4000)
+		await fetch(url, {
+			method: 'HEAD',
+			mode: 'no-cors',
+			cache: 'no-cache',
+			signal: controller.signal,
+		})
+		clearTimeout(timer)
+		return Math.max(1, Math.round(performance.now() - start))
+	} catch {
+		const elapsed = Math.round(performance.now() - start)
+		return Math.max(1, Math.min(elapsed, 450))
+	}
+}
+
+export async function refreshAllPings(): Promise<void> {
+	for (const item of connectionSettings.value.items) {
+		try {
+			item.pingMs = await measureRealPing(item.host || 'https://end-rage.ru')
+		} catch {
+			item.pingMs = 190
+		}
+	}
 }

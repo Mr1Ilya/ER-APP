@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { streamerMode } from '@/store/launcherPreferences'
 import { get_default_user, login, login_endrage_oauth, login_offline, remove_user, set_default_user, users } from '@/helpers/auth'
 import i18n from '@/i18n.config'
 
@@ -326,7 +327,7 @@ function isOffline(account: Account) {
 								/>
 								<div class="flex flex-col min-w-0">
 									<div class="flex items-center gap-2">
-										<span class="text-sm font-bold text-contrast truncate">{{ account.profile.name }}</span>
+										<span class="text-sm font-bold text-contrast truncate">{{ streamerMode ? '••••••••' : account.profile.name }}</span>
 										<span
 											v-if="account.profile.id === currentDefaultId"
 											class="text-[10px] font-black uppercase tracking-wider bg-brand/15 text-brand px-2 py-0.5 rounded-full border border-brand/30 shrink-0"

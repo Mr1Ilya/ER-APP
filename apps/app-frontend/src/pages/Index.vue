@@ -9,7 +9,12 @@ import { instance_listener } from '@/helpers/events'
 import { list, run } from '@/helpers/instance'
 import type { GameInstance } from '@/helpers/types'
 import { useBreadcrumbs } from '@/store/breadcrumbs'
-import { homeGroups, type HomeGroupConfig } from '@/store/launcherPreferences'
+import {
+	homeGroups,
+	isInstancePinned,
+	togglePinInstance,
+	type HomeGroupConfig,
+} from '@/store/launcherPreferences'
 import defaultMinecraftBlock from '@/assets/minecraft_block.png'
 import InstanceSettingsModal from '@/components/ui/modal/InstanceSettingsModal.vue'
 
@@ -42,7 +47,6 @@ const wallpaperModules = import.meta.glob<{ default: string }>(
 )
 const wallpapers = Object.values(wallpaperModules).map((m) => m.default)
 
-
 const recentInstances = computed(() =>
 	instances.value
 		.filter((x) => x.last_played)
@@ -57,10 +61,20 @@ function getInstancesForGroup(group: HomeGroupConfig) {
 		return recentInstances.value.length ? recentInstances.value : instances.value
 	}
 	if (group.id === 'pinned') {
-		return instances.value.filter((x: any) => x.pinned)
+		return instances.value.filter((x) => isInstancePinned(x.id))
+	}
+	if (group.filterType === 'manual' && group.selectedInstanceIds) {
+		return instances.value.filter((x) => group.selectedInstanceIds?.includes(x.id))
+	}
+	if (group.filterType === 'loader' && group.targetLoader) {
+		return instances.value.filter(
+			(x) => (x.loader || '').toLowerCase() === (group.targetLoader || '').toLowerCase(),
+		)
 	}
 	if (group.id === 'releases') {
-		return instances.value.slice().sort((a, b) => b.game_version.localeCompare(a.game_version, undefined, { numeric: true }))
+		return instances.value
+			.slice()
+			.sort((a, b) => b.game_version.localeCompare(a.game_version, undefined, { numeric: true }))
 	}
 	return instances.value
 }
@@ -159,7 +173,6 @@ onUnmounted(() => {
 		unlistenInstance()
 	}
 })
-
 </script>
 
 <template>
@@ -228,6 +241,19 @@ onUnmounted(() => {
 				<div class="flex items-center gap-3">
 					<button
 						v-if="activeHeroInstance"
+						class="w-11 h-11 rounded-2xl bg-[#1e2025]/80 hover:bg-[#282b32] backdrop-blur border border-white/10 flex items-center justify-center transition-all cursor-pointer shadow-md"
+						:class="isInstancePinned(activeHeroInstance.id) ? 'text-amber-400 border-amber-400/50 bg-amber-500/20' : 'text-gray-300 hover:text-white'"
+						:title="isInstancePinned(activeHeroInstance.id) ? (isRu ? 'Открепить сборку' : 'Unpin instance') : (isRu ? 'Закрепить сборку' : 'Pin instance')"
+						@click="togglePinInstance(activeHeroInstance.id)"
+					>
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="12" y1="17" x2="12" y2="22"></line>
+							<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+						</svg>
+					</button>
+
+					<button
+						v-if="activeHeroInstance"
 						class="w-11 h-11 rounded-2xl bg-[#1e2025]/80 hover:bg-[#282b32] backdrop-blur border border-white/10 text-white/90 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
 						:title="isRu ? 'Настройки сборки' : 'Instance settings'"
 						@click="handleOpenInstanceSettings(activeHeroInstance)"
@@ -276,7 +302,15 @@ onUnmounted(() => {
 					</button>
 				</div>
 
-				<div :class="getGridClass(group.rows)">
+				<div v-if="group.id === 'pinned' && getInstancesForGroup(group).length === 0" class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-[var(--er-card-bg)] border border-dashed border-[var(--er-border)] text-sm text-[var(--er-text-secondary)]">
+					<svg class="w-5 h-5 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="12" y1="17" x2="12" y2="22"></line>
+						<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+					</svg>
+					<span>{{ isRu ? 'Нажмите на булавку 📌 на любой сборке, чтобы закрепить её здесь' : 'Click the pin icon 📌 on any instance to keep it pinned here' }}</span>
+				</div>
+
+				<div v-else :class="getGridClass(group.rows)">
 					<div
 						v-for="instance in getInstancesForGroup(group)"
 						:key="instance.id"
@@ -284,16 +318,31 @@ onUnmounted(() => {
 						@click="handlePlay(instance)"
 					>
 						<div class="w-full h-28 rounded-xl bg-[var(--er-subtle-bg)] border border-[var(--er-card-border)] flex items-center justify-center overflow-hidden relative">
-							<button
-								class="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/60 hover:bg-black/90 text-gray-300 hover:text-white flex items-center justify-center transition-all z-10 border border-white/10"
-								:title="isRu ? 'Настройки сборки' : 'Instance settings'"
-								@click.stop="handleOpenInstanceSettings(instance)"
-							>
-								<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<circle cx="12" cy="12" r="3"></circle>
-									<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-								</svg>
-							</button>
+							<div class="absolute top-2 right-2 flex items-center gap-1.5 z-10">
+								<button
+									class="w-7 h-7 rounded-lg bg-black/60 hover:bg-black/90 flex items-center justify-center transition-all border border-white/10 cursor-pointer"
+									:class="isInstancePinned(instance.id) ? 'text-amber-400 border-amber-400/50 bg-amber-500/20' : 'text-gray-300 hover:text-white'"
+									:title="isInstancePinned(instance.id) ? (isRu ? 'Открепить сборку' : 'Unpin instance') : (isRu ? 'Закрепить сборку' : 'Pin instance')"
+									@click.stop="togglePinInstance(instance.id)"
+								>
+									<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<line x1="12" y1="17" x2="12" y2="22"></line>
+										<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+									</svg>
+								</button>
+
+								<button
+									class="w-7 h-7 rounded-lg bg-black/60 hover:bg-black/90 text-gray-300 hover:text-white flex items-center justify-center transition-all border border-white/10 cursor-pointer"
+									:title="isRu ? 'Настройки сборки' : 'Instance settings'"
+									@click.stop="handleOpenInstanceSettings(instance)"
+								>
+									<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<circle cx="12" cy="12" r="3"></circle>
+										<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+									</svg>
+								</button>
+							</div>
+
 							<img
 								:src="instance.icon_path ? convertFileSrc(instance.icon_path) : defaultMinecraftBlock"
 								alt="Instance icon"

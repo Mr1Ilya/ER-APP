@@ -20,6 +20,7 @@ import { kill, run } from '@/helpers/instance'
 import { get_by_instance_id } from '@/helpers/process'
 import { showInstanceInFolder } from '@/helpers/utils.js'
 import { handleSevereError } from '@/store/error.js'
+import { isInstancePinned, togglePinInstance } from '@/store/launcherPreferences'
 
 const { handleError } = injectNotificationManager()
 const formatRelativeTime = useRelativeTime()
@@ -166,7 +167,18 @@ onUnmounted(() => unlisten())
 			<div class="h-full flex items-center font-bold text-contrast leading-normal">
 				<span class="line-clamp-2">{{ instance.name }}</span>
 			</div>
-			<div class="flex items-center">
+			<div class="flex items-center gap-1.5">
+				<button
+					class="p-1.5 rounded-lg bg-transparent hover:bg-surface-3 transition-colors cursor-pointer border-0"
+					:class="isInstancePinned(instance.id) ? 'text-amber-400' : 'text-secondary hover:text-contrast'"
+					:title="isInstancePinned(instance.id) ? (isRu ? 'Открепить сборку' : 'Unpin instance') : (isRu ? 'Закрепить сборку' : 'Pin instance')"
+					@click.stop="togglePinInstance(instance.id)"
+				>
+					<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="12" y1="17" x2="12" y2="22"></line>
+						<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+					</svg>
+				</button>
 				<ButtonStyled v-if="playing" color="red" circular @mousehover="checkProcess">
 					<button :v-tooltip="isRu ? 'Остановить' : 'Stop'" @click="(e) => stop(e, 'InstanceCard')">
 						<StopCircleIcon />
@@ -183,7 +195,6 @@ onUnmounted(() => unlisten())
 						@click="(e) => play(e, 'InstanceCard')"
 						@mousehover="checkProcess"
 					>
-						<!-- Translate for optical centering -->
 						<PlayIcon class="translate-x-[1px]" />
 					</button>
 				</ButtonStyled>
@@ -252,10 +263,23 @@ onUnmounted(() => unlisten())
 					</ButtonStyled>
 				</div>
 			</div>
-			<div class="flex flex-col gap-1">
-				<p class="m-0 text-md font-bold text-contrast leading-tight line-clamp-1">
-					{{ instance.name }}
-				</p>
+			<div class="flex flex-col gap-1 flex-1 min-w-0">
+				<div class="flex items-center justify-between gap-2">
+					<p class="m-0 text-md font-bold text-contrast leading-tight line-clamp-1">
+						{{ instance.name }}
+					</p>
+					<button
+						class="p-1 rounded-lg bg-transparent hover:bg-surface-3 transition-colors cursor-pointer border-0 shrink-0"
+						:class="isInstancePinned(instance.id) ? 'text-amber-400' : 'text-secondary hover:text-contrast'"
+						:title="isInstancePinned(instance.id) ? (isRu ? 'Открепить сборку' : 'Unpin instance') : (isRu ? 'Закрепить сборку' : 'Pin instance')"
+						@click.stop="togglePinInstance(instance.id)"
+					>
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="12" y1="17" x2="12" y2="22"></line>
+							<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+						</svg>
+					</button>
+				</div>
 				<div class="flex items-center col-span-3 gap-1 text-secondary font-semibold mt-auto">
 					<GameIcon class="shrink-0" />
 					<span class="text-sm capitalize">
