@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { get_default_user, users } from '@/helpers/auth'
+import { streamerMode } from '@/store/launcherPreferences'
 
 const props = defineProps<{
 	collapsed?: boolean
@@ -157,9 +158,7 @@ function navigate(to: string) {
 		class="sidebar-container select-none flex flex-col justify-between h-full bg-[var(--er-sidebar-bg)] border-r border-[var(--er-border)] transition-all duration-200 z-20"
 		:class="collapsed ? 'w-[72px] px-2 py-3' : 'w-[220px] px-3 py-3'"
 	>
-		<!-- Top section -->
 		<div class="flex flex-col gap-1.5">
-			<!-- Collapse Toggle Button -->
 			<div class="mb-2 px-1 flex items-center" :class="collapsed ? 'justify-center' : 'justify-start'">
 				<button
 					class="flex items-center gap-2 text-xs font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] transition-colors bg-transparent border-0 cursor-pointer p-1.5 rounded-lg hover:bg-[var(--er-subtle-bg)]"
@@ -182,7 +181,6 @@ function navigate(to: string) {
 				</button>
 			</div>
 
-			<!-- Nav links -->
 			<nav class="flex flex-col gap-1">
 				<button
 					v-for="item in navItems"
@@ -197,7 +195,6 @@ function navigate(to: string) {
 					:title="collapsed ? item.label : undefined"
 					@click="navigate(item.to)"
 				>
-					<!-- Icon: Play -->
 					<svg
 						v-if="item.icon === 'play'"
 						class="w-4 h-4 shrink-0"
@@ -207,7 +204,6 @@ function navigate(to: string) {
 						<polygon points="6,4 20,12 6,20"></polygon>
 					</svg>
 
-					<!-- Icon: Cube (Мои сборки) -->
 					<svg
 						v-else-if="item.icon === 'cube'"
 						class="w-4 h-4 shrink-0"
@@ -223,7 +219,6 @@ function navigate(to: string) {
 						<line x1="12" y1="22.08" x2="12" y2="12"></line>
 					</svg>
 
-					<!-- Icon: Content (Контент) -->
 					<svg
 						v-else-if="item.icon === 'content'"
 						class="w-4 h-4 shrink-0"
@@ -240,7 +235,6 @@ function navigate(to: string) {
 						<rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
 					</svg>
 
-					<!-- Icon: Skins (Скины) -->
 					<svg
 						v-else-if="item.icon === 'skins'"
 						class="w-4 h-4 shrink-0"
@@ -254,15 +248,12 @@ function navigate(to: string) {
 						<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 2 1.67h1.49v9.14a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-9.14h1.49a2 2 0 0 0 2-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z"></path>
 					</svg>
 
-					<!-- Text label -->
 					<span v-if="!collapsed" class="truncate flex-1 tracking-wide">{{ item.label }}</span>
 				</button>
 			</nav>
 		</div>
 
-		<!-- Bottom section -->
 		<div class="flex flex-col gap-2 pt-2 border-t border-[var(--er-border)]">
-			<!-- Settings button -->
 			<button
 				class="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-[var(--er-text-secondary)] hover:text-[var(--er-text)] hover:bg-[var(--er-subtle-bg)] transition-all bg-transparent border-0 cursor-pointer w-full"
 				:class="collapsed ? 'justify-center px-2' : ''"
@@ -284,7 +275,6 @@ function navigate(to: string) {
 				<span v-if="!collapsed" class="truncate tracking-wide">{{ isRu ? 'Настройки' : 'Settings' }}</span>
 			</button>
 
-			<!-- Account Card -->
 			<button
 				class="account-card group flex items-center gap-2.5 p-2 rounded-xl bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-[var(--er-card-border)] hover:border-[var(--er-border)] transition-all cursor-pointer text-left w-full"
 				:class="collapsed ? 'justify-center p-1.5' : ''"
@@ -298,11 +288,12 @@ function navigate(to: string) {
 					@error="onAvatarError"
 				/>
 				<div v-if="!collapsed" class="flex flex-col min-w-0 flex-1">
-					<span class="text-xs font-semibold text-[var(--er-text)] truncate leading-tight">
+					<div v-if="streamerMode" class="w-16 h-2.5 rounded bg-gray-500/60 my-0.5"></div>
+					<span v-else class="text-xs font-semibold text-[var(--er-text)] truncate leading-tight">
 						{{ activeAccount?.profile?.name || (isRu ? 'Войти в игру' : 'Log in') }}
 					</span>
 					<span class="text-[10px] text-[var(--er-text-secondary)] truncate leading-tight mt-0.5">
-						{{ accountTypeLabel }}
+						{{ streamerMode ? '••••••••' : accountTypeLabel }}
 					</span>
 				</div>
 				<svg

@@ -2,6 +2,7 @@
 import { Toggle } from '@erteam/ui'
 import { computed, ref, watch } from 'vue'
 
+import StreamerModeBlock from '@/components/ui/settings/StreamerModeBlock.vue'
 import { optInAnalytics, optOutAnalytics } from '@/helpers/analytics'
 import { get, set } from '@/helpers/settings.ts'
 import i18n from '@/i18n.config'
@@ -64,4 +65,6 @@ watch(
 		</div>
 		<Toggle id="disable-discord-rpc" v-model="settings.discord_rpc" />
 	</div>
+
+	<StreamerModeBlock />
 </template>

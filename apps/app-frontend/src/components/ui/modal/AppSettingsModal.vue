@@ -3,6 +3,7 @@ import {
 	CoffeeIcon,
 	GameIcon,
 	GaugeIcon,
+	HomeIcon,
 	LanguagesIcon,
 	ModrinthIcon,
 	PaintbrushIcon,
@@ -10,6 +11,7 @@ import {
 	SettingsIcon,
 	ShieldIcon,
 	ToggleRightIcon,
+	WorldIcon,
 } from '@erteam/assets'
 import {
 	commonMessages,
@@ -25,10 +27,12 @@ import { platform as getOsPlatform, version as getOsVersion } from '@tauri-apps/
 import { computed, ref, watch } from 'vue'
 
 import AppearanceSettings from '@/components/ui/settings/AppearanceSettings.vue'
+import ConnectionSettings from '@/components/ui/settings/ConnectionSettings.vue'
 import DefaultInstanceSettings from '@/components/ui/settings/DefaultInstanceSettings.vue'
 import FeatureFlagSettings from '@/components/ui/settings/FeatureFlagSettings.vue'
 import JavaSettings from '@/components/ui/settings/JavaSettings.vue'
 import LanguageSettings from '@/components/ui/settings/LanguageSettings.vue'
+import PlaySettings from '@/components/ui/settings/PlaySettings.vue'
 import PrivacySettings from '@/components/ui/settings/PrivacySettings.vue'
 import ResourceManagementSettings from '@/components/ui/settings/ResourceManagementSettings.vue'
 import { get, set } from '@/helpers/settings.ts'
@@ -52,6 +56,11 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 
 const tabs = computed(() => [
 	{
+		name: isRu.value ? 'Играть' : 'Play',
+		icon: HomeIcon,
+		content: PlaySettings,
+	},
+	{
 		name: isRu.value ? 'Внешний вид' : 'Appearance',
 		icon: PaintbrushIcon,
 		content: AppearanceSettings,
@@ -66,6 +75,11 @@ const tabs = computed(() => [
 		name: isRu.value ? 'Приватность' : 'Privacy',
 		icon: ShieldIcon,
 		content: PrivacySettings,
+	},
+	{
+		name: isRu.value ? 'Подключения' : 'Connections',
+		icon: WorldIcon,
+		content: ConnectionSettings,
 	},
 	{
 		name: isRu.value ? 'Установки Java' : 'Java installations',
