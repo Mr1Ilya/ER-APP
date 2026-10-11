@@ -10,15 +10,17 @@ license = "GPL-3.0-only"
 async_zip = { workspace = true, features = ["deflate", "tokio-fs"] }
 chrono = { workspace = true }
 daedalus = { workspace = true }
-md5 = { workspace = true }
 dashmap = { workspace = true }
 either = { workspace = true }
 enumset = { workspace = true, features = ["serde"] }
 hyper = { workspace = true, features = ["server"] }
 hyper-util = { workspace = true }
+md5 = { workspace = true }
 native-dialog = { workspace = true }
 paste = { workspace = true }
 path-util = { workspace = true }
+regex = { workspace = true }
+reqwest = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 serde_with = { workspace = true }
@@ -32,10 +34,8 @@ tauri-plugin-single-instance = { workspace = true }
 tauri-plugin-updater = { workspace = true }
 tauri-plugin-window-state = { workspace = true }
 theseus = { workspace = true, features = ["tauri"] }
-regex = { workspace = true }
-reqwest = { workspace = true }
 thiserror = { workspace = true }
-tokio = { workspace = true, features = ["time", "net", "io-util"] }
+tokio = { workspace = true, features = ["io-util", "net", "time"] }
 tracing = { workspace = true }
 tracing-error = { workspace = true }
 url = { workspace = true }
@@ -57,11 +57,11 @@ core-foundation.workspace = true
 core-graphics.workspace = true
 objc2-app-kit = { workspace = true, features = ["NSWindow"] }
 
-[target.'cfg(windows)'.dependencies]
+[target."cfg(windows)".dependencies]
 webview2-com.workspace = true
 windows-core.workspace = true
 
-[target.'cfg(windows)'.dependencies.windows]
+[target."cfg(windows)".dependencies.windows]
 workspace = true
 features = [
   "Win32_Foundation",
