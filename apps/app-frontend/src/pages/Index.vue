@@ -614,7 +614,7 @@ onUnmounted(() => {
 					<div
 						v-for="instance in getInstancesForGroup(group)"
 						:key="instance.id"
-						class="w-56 h-60 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-white/20 hover:border-white/40 rounded-2xl p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-lg relative"
+						class="w-56 h-60 bg-[var(--er-card-bg)] hover:bg-[var(--er-card-hover)] border border-solid border-white/20 hover:border-white/40 rounded-2xl p-2.5 flex flex-col justify-between transition-all duration-200 cursor-pointer shrink-0 group select-none shadow-lg relative"
 						@click="handlePlay(instance)"
 					>
 						<div class="w-full h-36 rounded-xl bg-surface-2 border border-white/10 overflow-hidden relative">
@@ -862,8 +862,8 @@ onUnmounted(() => {
 										v-for="r in [1, 2, 3, 4] as const"
 										:key="r"
 										type="button"
-										class="py-2.5 px-3 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
-										:class="tempRows === r ? 'bg-brand/15 border-2 border-brand text-white font-bold' : 'bg-surface-2 border-2 border-white/10 hover:bg-surface-3 text-secondary hover:text-contrast'"
+										class="py-2.5 px-3 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer border-2 border-solid"
+										:class="tempRows === r ? 'bg-[rgba(172,81,251,0.18)] border-purple-500 text-white font-bold' : 'bg-surface-2 border-white/10 hover:bg-surface-3 text-secondary hover:text-contrast'"
 										@click="tempRows = r"
 									>
 										<span class="text-xs font-bold">{{ r }} {{ isRu ? (r === 1 ? 'ряд' : (r < 5 ? 'ряда' : 'рядов')) : (r === 1 ? 'row' : 'rows') }}</span>
@@ -902,24 +902,24 @@ onUnmounted(() => {
 								<div class="grid grid-cols-3 gap-2">
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="tempFilterType === 'all' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="tempFilterType === 'all' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'all'"
 									>
 										{{ isRu ? 'Все сборки' : 'All instances' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="tempFilterType === 'manual' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="tempFilterType === 'manual' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'manual'"
 									>
 										{{ isRu ? 'Вручную' : 'Manually' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="tempFilterType === 'loader' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="tempFilterType === 'loader' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'loader'"
 									>
 										{{ isRu ? 'Загрузчик' : 'Loader' }}
@@ -953,8 +953,8 @@ onUnmounted(() => {
 										v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
 										:key="l"
 										type="button"
-										class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border-2 cursor-pointer transition-all"
-										:class="tempTargetLoader === l ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border-2 border-solid cursor-pointer transition-all"
+										:class="tempTargetLoader === l ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempTargetLoader = l"
 									>
 										{{ l }}
@@ -1043,24 +1043,24 @@ onUnmounted(() => {
 								<div class="grid grid-cols-3 gap-2">
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="newGroupFilterType === 'all' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="newGroupFilterType === 'all' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'all'"
 									>
 										{{ isRu ? 'Все сборки' : 'All instances' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="newGroupFilterType === 'manual' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="newGroupFilterType === 'manual' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'manual'"
 									>
 										{{ isRu ? 'Вручную' : 'Manually' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
-										:class="newGroupFilterType === 'loader' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 border-solid cursor-pointer transition-all"
+										:class="newGroupFilterType === 'loader' ? 'bg-[rgba(172,81,251,0.18)] text-white border-purple-500 font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'loader'"
 									>
 										{{ isRu ? 'Загрузчик' : 'Loader' }}

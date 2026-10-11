@@ -34,8 +34,8 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 				@click="streamerMode = false"
 			>
 				<div
-					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4"
-					:class="!streamerMode ? 'border-2 border-brand bg-brand/10' : 'border-2 border-white/10 hover:bg-surface-3'"
+					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4 border-2 border-solid"
+					:class="!streamerMode ? 'border-purple-500 bg-[rgba(172,81,251,0.18)]' : 'border-white/10 hover:bg-surface-3'"
 				>
 					<div class="px-5 py-2 rounded-full bg-surface-1 border border-divider flex items-center gap-2.5 text-sm text-contrast">
 						<svg class="w-4 h-4 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -67,8 +67,8 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 				@click="streamerMode = true"
 			>
 				<div
-					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4"
-					:class="streamerMode ? 'border-2 border-brand bg-brand/10' : 'border-2 border-white/10 hover:bg-surface-3'"
+					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4 border-2 border-solid"
+					:class="streamerMode ? 'border-purple-500 bg-[rgba(172,81,251,0.18)]' : 'border-white/10 hover:bg-surface-3'"
 				>
 					<div class="px-5 py-2 rounded-full bg-surface-1 border border-divider flex items-center gap-2.5 text-sm text-contrast">
 						<svg class="w-4 h-4 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

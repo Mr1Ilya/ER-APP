@@ -140,9 +140,9 @@ function closeAddModal() {
 			<div
 				v-for="item in connectionSettings.items"
 				:key="item.id"
-				class="group/conn px-4 py-3.5 rounded-2xl bg-surface-2 border-2 border-white/10 flex items-center justify-between transition-all cursor-pointer hover:bg-surface-3"
+				class="group/conn px-4 py-3.5 rounded-2xl bg-surface-2 border-2 border-solid border-white/10 flex items-center justify-between transition-all cursor-pointer hover:bg-surface-3"
 				:class="{
-					'border-brand bg-brand/10': item.active && !connectionSettings.autoSelect,
+					'!border-purple-500 !bg-[rgba(172,81,251,0.18)]': item.active && !connectionSettings.autoSelect,
 					'opacity-65': connectionSettings.autoSelect && !item.active
 				}"
 				@click="selectConnection(item)"
