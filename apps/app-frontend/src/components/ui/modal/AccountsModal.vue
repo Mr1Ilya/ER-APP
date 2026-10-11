@@ -314,8 +314,8 @@ function isOffline(account: Account) {
 						<div
 							v-for="account in accountList"
 							:key="account.profile.id"
-							class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer"
-							:class="account.profile.id === currentDefaultId ? 'bg-surface-3 border-brand/40 shadow-sm' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+							class="flex items-center justify-between p-3 rounded-2xl transition-all cursor-pointer"
+							:class="account.profile.id === currentDefaultId ? 'bg-purple-500/15 border-2 border-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3'"
 							@click="handleSelectAccount(account)"
 						>
 							<div class="flex items-center gap-3 min-w-0">
@@ -372,7 +372,7 @@ function isOffline(account: Account) {
 						<div class="grid grid-cols-3 gap-2">
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'microsoft' ? 'bg-surface-3 border-brand/50' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								:class="addType === 'microsoft' ? 'bg-purple-500/15 border-2 border-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3'"
 								@click="addType = 'microsoft'"
 							>
 								<div class="flex items-center justify-between w-full">
@@ -389,7 +389,7 @@ function isOffline(account: Account) {
 
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'endrage' ? 'bg-surface-3 border-contrast/40' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								:class="addType === 'endrage' ? 'bg-purple-500/15 border-2 border-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3'"
 								@click="addType = 'endrage'"
 							>
 								<div class="flex items-center justify-between w-full">
@@ -406,7 +406,7 @@ function isOffline(account: Account) {
 
 							<button
 								class="p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
-								:class="addType === 'offline' ? 'bg-surface-3 border-contrast/40' : 'bg-surface-2 border-divider hover:bg-surface-3'"
+								:class="addType === 'offline' ? 'bg-purple-500/15 border-2 border-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3'"
 								@click="addType = 'offline'"
 							>
 								<div class="flex items-center justify-between w-full">

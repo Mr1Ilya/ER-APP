@@ -311,321 +311,329 @@ function handleDrop(targetIndex: number) {
 			</button>
 		</div>
 
-		<div
-			v-if="editingGroup"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto select-none"
-			@click.self="closeGroupSettings"
-		>
-			<div
-				class="w-full max-w-2xl bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
-				@click.stop
-			>
-				<div class="flex items-center justify-between pb-3 border-b border-divider">
-					<div class="flex items-center gap-3">
-						<div class="w-10 h-10 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
-							<svg v-if="editingGroup.icon === 'zap'" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-								<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-							</svg>
-							<svg v-else-if="editingGroup.icon === 'creeper'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-								<path d="M8 8h2v3H8zM14 8h2v3h-2zM10 13h4v4h-4zM8 17h2v2H8zM14 17h2v2h-2z"></path>
-							</svg>
-							<svg v-else-if="editingGroup.icon === 'pin'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<line x1="12" y1="17" x2="12" y2="22"></line>
-								<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-							</svg>
-							<svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-							</svg>
-						</div>
-						<div>
-							<h3 class="text-lg font-bold text-contrast m-0">
-								{{ editingGroup.title }}
-							</h3>
-							<p class="text-xs text-secondary m-0">
-								{{ isRu ? 'Настройка отображения группы на главной' : 'Group display settings on home page' }}
-							</p>
-						</div>
-					</div>
-
-					<button
-						class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
-						:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
-						@click="closeGroupSettings"
+		<Teleport to="body">
+			<Transition name="fade">
+				<div
+					v-if="editingGroup"
+					class="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto select-none"
+					@click.self="closeGroupSettings"
+				>
+					<div
+						class="w-full max-w-2xl bg-bg-raised border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
+						@click.stop
 					>
-						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
-				</div>
-
-				<div class="flex flex-col gap-4">
-					<div class="flex flex-col gap-2">
-						<label class="text-xs font-semibold text-secondary">
-							{{ isRu ? 'Количество рядов для отображения' : 'Number of rows to display' }}
-						</label>
-						<div class="grid grid-cols-4 gap-2.5">
-							<button
-								v-for="r in [1, 2, 3, 4] as const"
-								:key="r"
-								type="button"
-								class="py-2.5 px-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
-								:class="tempRows === r ? 'bg-surface-3 border-brand text-contrast ring-1 ring-brand' : 'bg-surface-2 border-divider hover:bg-surface-3 text-secondary hover:text-contrast'"
-								@click="tempRows = r"
-							>
-								<span class="text-xs font-bold">{{ r }} {{ isRu ? (r === 1 ? 'ряд' : (r < 5 ? 'ряда' : 'рядов')) : (r === 1 ? 'row' : 'rows') }}</span>
-								<span class="text-[10px] text-secondary">
-									{{ r === 1 ? (isRu ? 'в одну строку' : 'single line') : (isRu ? `сетка до ${r}` : `grid up to ${r}`) }}
-								</span>
-							</button>
-						</div>
-					</div>
-
-					<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
-						<h4 class="m-0 text-xs font-bold text-contrast">
-							{{ isRu ? 'Фиксируемая активность' : 'Tracked activity' }}
-						</h4>
-
-						<div class="flex items-center justify-between">
-							<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
-								<Toggle id="group-multiplayer-toggle" v-model="tempMultiplayer" />
-								<span>{{ isRu ? 'В сетевых играх' : 'In multiplayer' }}</span>
-							</div>
-						</div>
-
-						<div class="flex items-center justify-between">
-							<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
-								<Toggle id="group-singleplayer-toggle" v-model="tempSingleplayer" />
-								<span>{{ isRu ? 'В одиночных мирах' : 'In singleplayer' }}</span>
-							</div>
-						</div>
-					</div>
-
-					<div v-if="editingGroup.id.startsWith('custom_') || editingGroup.id === 'pinned'" class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
-						<h4 class="m-0 text-xs font-bold text-contrast">
-							{{ isRu ? 'Содержимое группы' : 'Group content' }}
-						</h4>
-
-						<div class="grid grid-cols-3 gap-2">
-							<button
-								type="button"
-								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="tempFilterType === 'all' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="tempFilterType = 'all'"
-							>
-								{{ isRu ? 'Все сборки' : 'All instances' }}
-							</button>
-							<button
-								type="button"
-								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="tempFilterType === 'manual' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="tempFilterType = 'manual'"
-							>
-								{{ isRu ? 'Вручную' : 'Manually' }}
-							</button>
-							<button
-								type="button"
-								class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="tempFilterType === 'loader' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="tempFilterType = 'loader'"
-							>
-								{{ isRu ? 'Загрузчик' : 'Loader' }}
-							</button>
-						</div>
-
-						<div v-if="tempFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
-							<div
-								v-for="inst in allInstances"
-								:key="inst.id"
-								class="flex items-center justify-between p-2.5 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
-								@click="toggleManualInstanceSelection(inst.id, tempSelectedIds)"
-							>
-								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
-									<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
-								</div>
-								<div
-									class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
-									:class="tempSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
-								>
-									<svg v-if="tempSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-										<polyline points="20 6 9 17 4 12"></polyline>
+						<div class="flex items-center justify-between pb-3 border-b border-divider">
+							<div class="flex items-center gap-3">
+								<div class="w-10 h-10 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
+									<svg v-if="editingGroup.icon === 'zap'" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+										<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+									</svg>
+									<svg v-else-if="editingGroup.icon === 'creeper'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+										<path d="M8 8h2v3H8zM14 8h2v3h-2zM10 13h4v4h-4zM8 17h2v2H8zM14 17h2v2h-2z"></path>
+									</svg>
+									<svg v-else-if="editingGroup.icon === 'pin'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<line x1="12" y1="17" x2="12" y2="22"></line>
+										<path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+									</svg>
+									<svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
 									</svg>
 								</div>
+								<div>
+									<h3 class="text-lg font-bold text-contrast m-0">
+										{{ editingGroup.title }}
+									</h3>
+									<p class="text-xs text-secondary m-0">
+										{{ isRu ? 'Настройка отображения группы на главной' : 'Group display settings on home page' }}
+									</p>
+								</div>
+							</div>
+
+							<button
+								class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
+								:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
+								@click="closeGroupSettings"
+							>
+								<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<line x1="18" y1="6" x2="6" y2="18"></line>
+									<line x1="6" y1="6" x2="18" y2="18"></line>
+								</svg>
+							</button>
+						</div>
+
+						<div class="flex flex-col gap-4">
+							<div class="flex flex-col gap-2">
+								<label class="text-xs font-semibold text-secondary">
+									{{ isRu ? 'Количество рядов для отображения' : 'Number of rows to display' }}
+								</label>
+								<div class="grid grid-cols-4 gap-2.5">
+									<button
+										v-for="r in [1, 2, 3, 4] as const"
+										:key="r"
+										type="button"
+										class="py-2.5 px-3 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
+										:class="tempRows === r ? 'bg-purple-500/15 border-2 border-purple-500 text-white font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3 text-secondary hover:text-contrast'"
+										@click="tempRows = r"
+									>
+										<span class="text-xs font-bold">{{ r }} {{ isRu ? (r === 1 ? 'ряд' : (r < 5 ? 'ряда' : 'рядов')) : (r === 1 ? 'row' : 'rows') }}</span>
+										<span class="text-[10px]" :class="tempRows === r ? 'text-purple-300' : 'text-secondary'">
+											{{ r === 1 ? (isRu ? 'в одну строку' : 'single line') : (isRu ? `сетка до ${r}` : `grid up to ${r}`) }}
+										</span>
+									</button>
+								</div>
+							</div>
+
+							<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
+								<h4 class="m-0 text-xs font-bold text-contrast">
+									{{ isRu ? 'Фиксируемая активность' : 'Tracked activity' }}
+								</h4>
+
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
+										<Toggle id="group-multiplayer-toggle" v-model="tempMultiplayer" />
+										<span>{{ isRu ? 'В сетевых играх' : 'In multiplayer' }}</span>
+									</div>
+								</div>
+
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-2 text-xs font-semibold text-contrast">
+										<Toggle id="group-singleplayer-toggle" v-model="tempSingleplayer" />
+										<span>{{ isRu ? 'В одиночных мирах' : 'In singleplayer' }}</span>
+									</div>
+								</div>
+							</div>
+
+							<div v-if="editingGroup.id.startsWith('custom_') || editingGroup.id === 'pinned'" class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
+								<h4 class="m-0 text-xs font-bold text-contrast">
+									{{ isRu ? 'Содержимое группы' : 'Group content' }}
+								</h4>
+
+								<div class="grid grid-cols-3 gap-2">
+									<button
+										type="button"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="tempFilterType === 'all' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="tempFilterType = 'all'"
+									>
+										{{ isRu ? 'Все сборки' : 'All instances' }}
+									</button>
+									<button
+										type="button"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="tempFilterType === 'manual' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="tempFilterType = 'manual'"
+									>
+										{{ isRu ? 'Вручную' : 'Manually' }}
+									</button>
+									<button
+										type="button"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="tempFilterType === 'loader' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="tempFilterType = 'loader'"
+									>
+										{{ isRu ? 'Загрузчик' : 'Loader' }}
+									</button>
+								</div>
+
+								<div v-if="tempFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
+									<div
+										v-for="inst in allInstances"
+										:key="inst.id"
+										class="flex items-center justify-between p-2.5 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
+										@click="toggleManualInstanceSelection(inst.id, tempSelectedIds)"
+									>
+										<div class="flex items-center gap-2">
+											<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
+											<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
+										</div>
+										<div
+											class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
+											:class="tempSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
+										>
+											<svg v-if="tempSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+												<polyline points="20 6 9 17 4 12"></polyline>
+											</svg>
+										</div>
+									</div>
+								</div>
+
+								<div v-if="tempFilterType === 'loader'" class="flex gap-2">
+									<button
+										v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
+										:key="l"
+										type="button"
+										class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border cursor-pointer transition-all"
+										:class="tempTargetLoader === l ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="tempTargetLoader = l"
+									>
+										{{ l }}
+									</button>
+								</div>
 							</div>
 						</div>
 
-						<div v-if="tempFilterType === 'loader'" class="flex gap-2">
+						<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
 							<button
-								v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
-								:key="l"
 								type="button"
-								class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border cursor-pointer transition-all"
-								:class="tempTargetLoader === l ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="tempTargetLoader = l"
+								class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
+								@click="closeGroupSettings"
 							>
-								{{ l }}
+								{{ isRu ? 'Отмена' : 'Cancel' }}
+							</button>
+							<button
+								type="button"
+								class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all"
+								@click="saveGroupSettings"
+							>
+								{{ isRu ? 'Сохранить' : 'Save' }}
 							</button>
 						</div>
 					</div>
 				</div>
+			</Transition>
+		</Teleport>
 
-				<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
-					<button
-						type="button"
-						class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
-						@click="closeGroupSettings"
+		<Teleport to="body">
+			<Transition name="fade">
+				<div
+					v-if="showCreateModal"
+					class="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto select-none"
+					@click.self="showCreateModal = false"
+				>
+					<div
+						class="w-full max-w-md bg-bg-raised border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
+						@click.stop
 					>
-						{{ isRu ? 'Отмена' : 'Cancel' }}
-					</button>
-					<button
-						type="button"
-						class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all"
-						@click="saveGroupSettings"
-					>
-						{{ isRu ? 'Сохранить' : 'Save' }}
-					</button>
-				</div>
-			</div>
-		</div>
-
-		<div
-			v-if="showCreateModal"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto select-none"
-			@click.self="showCreateModal = false"
-		>
-			<div
-				class="w-full max-w-md bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
-				@click.stop
-			>
-				<div class="flex items-center justify-between pb-3 border-b border-divider">
-					<div class="flex items-center gap-3">
-						<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
-							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-								<line x1="12" y1="5" x2="12" y2="19"></line>
-								<line x1="5" y1="12" x2="19" y2="12"></line>
-							</svg>
-						</div>
-						<div>
-							<h3 class="text-base font-bold text-contrast m-0">
-								{{ isRu ? 'Создать новую группу' : 'Create new group' }}
-							</h3>
-							<p class="text-xs text-secondary m-0">
-								{{ isRu ? 'Группа появится на вашей главной странице' : 'The group will appear on your home page' }}
-							</p>
-						</div>
-					</div>
-
-					<button
-						class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
-						:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
-						@click="showCreateModal = false"
-					>
-						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
-				</div>
-
-				<div class="flex flex-col gap-4">
-					<div class="flex flex-col gap-1.5">
-						<label class="text-xs font-semibold text-secondary">
-							{{ isRu ? 'Название группы' : 'Group title' }}
-						</label>
-						<input
-							v-model="newGroupTitle"
-							type="text"
-							:placeholder="isRu ? 'Например: Избранные сборки' : 'e.g. Favorite Instances'"
-							class="w-full bg-surface-1 border border-divider focus:border-brand rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
-						/>
-					</div>
-
-					<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
-						<label class="text-xs font-semibold text-contrast">{{ isRu ? 'Что будет в группе' : 'Group content' }}</label>
-						<div class="grid grid-cols-3 gap-2">
-							<button
-								type="button"
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="newGroupFilterType === 'all' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="newGroupFilterType = 'all'"
-							>
-								{{ isRu ? 'Все сборки' : 'All instances' }}
-							</button>
-							<button
-								type="button"
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="newGroupFilterType === 'manual' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="newGroupFilterType = 'manual'"
-							>
-								{{ isRu ? 'Вручную' : 'Manually' }}
-							</button>
-							<button
-								type="button"
-								class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-								:class="newGroupFilterType === 'loader' ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="newGroupFilterType = 'loader'"
-							>
-								{{ isRu ? 'Загрузчик' : 'Loader' }}
-							</button>
-						</div>
-
-						<div v-if="newGroupFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1 mt-1">
-							<div
-								v-for="inst in allInstances"
-								:key="inst.id"
-								class="flex items-center justify-between p-2 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
-								@click="toggleManualInstanceSelection(inst.id, newGroupSelectedIds)"
-							>
-								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
-									<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
-								</div>
-								<div
-									class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
-									:class="newGroupSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
-								>
-									<svg v-if="newGroupSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-										<polyline points="20 6 9 17 4 12"></polyline>
+						<div class="flex items-center justify-between pb-3 border-b border-divider">
+							<div class="flex items-center gap-3">
+								<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
+									<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+										<line x1="12" y1="5" x2="12" y2="19"></line>
+										<line x1="5" y1="12" x2="19" y2="12"></line>
 									</svg>
 								</div>
+								<div>
+									<h3 class="text-base font-bold text-contrast m-0">
+										{{ isRu ? 'Создать новую группу' : 'Create new group' }}
+									</h3>
+									<p class="text-xs text-secondary m-0">
+										{{ isRu ? 'Группа появится на вашей главной странице' : 'The group will appear on your home page' }}
+									</p>
+								</div>
+							</div>
+
+							<button
+								class="w-8 h-8 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast flex items-center justify-center transition-colors border-0 cursor-pointer"
+								:title="isRu ? 'Закрыть (Esc)' : 'Close (Esc)'"
+								@click="showCreateModal = false"
+							>
+								<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<line x1="18" y1="6" x2="6" y2="18"></line>
+									<line x1="6" y1="6" x2="18" y2="18"></line>
+								</svg>
+							</button>
+						</div>
+
+						<div class="flex flex-col gap-4">
+							<div class="flex flex-col gap-1.5">
+								<label class="text-xs font-semibold text-secondary">
+									{{ isRu ? 'Название группы' : 'Group title' }}
+								</label>
+								<input
+									v-model="newGroupTitle"
+									type="text"
+									:placeholder="isRu ? 'Например: Избранные сборки' : 'e.g. Favorite Instances'"
+									class="w-full bg-surface-1 border border-divider focus:border-brand rounded-xl px-3.5 py-2.5 text-sm text-contrast placeholder:text-secondary/60 outline-none transition-colors"
+								/>
+							</div>
+
+							<div class="p-4 rounded-2xl bg-surface-2 border border-divider flex flex-col gap-3">
+								<label class="text-xs font-semibold text-contrast">{{ isRu ? 'Что будет в группе' : 'Group content' }}</label>
+								<div class="grid grid-cols-3 gap-2">
+									<button
+										type="button"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="newGroupFilterType === 'all' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="newGroupFilterType = 'all'"
+									>
+										{{ isRu ? 'Все сборки' : 'All instances' }}
+									</button>
+									<button
+										type="button"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="newGroupFilterType === 'manual' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="newGroupFilterType = 'manual'"
+									>
+										{{ isRu ? 'Вручную' : 'Manually' }}
+									</button>
+									<button
+										type="button"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
+										:class="newGroupFilterType === 'loader' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="newGroupFilterType = 'loader'"
+									>
+										{{ isRu ? 'Загрузчик' : 'Loader' }}
+									</button>
+								</div>
+
+								<div v-if="newGroupFilterType === 'manual'" class="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1 mt-1">
+									<div
+										v-for="inst in allInstances"
+										:key="inst.id"
+										class="flex items-center justify-between p-2 rounded-xl bg-surface-1 border border-divider hover:bg-surface-3 transition-colors cursor-pointer"
+										@click="toggleManualInstanceSelection(inst.id, newGroupSelectedIds)"
+									>
+										<div class="flex items-center gap-2">
+											<span class="text-xs font-medium text-contrast">{{ inst.name }}</span>
+											<span class="text-[10px] text-secondary capitalize">({{ inst.loader }} {{ inst.game_version }})</span>
+										</div>
+										<div
+											class="w-4 h-4 rounded border flex items-center justify-center transition-colors"
+											:class="newGroupSelectedIds.includes(inst.id) ? 'bg-brand border-brand text-white' : 'border-divider bg-transparent'"
+										>
+											<svg v-if="newGroupSelectedIds.includes(inst.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+												<polyline points="20 6 9 17 4 12"></polyline>
+											</svg>
+										</div>
+									</div>
+								</div>
+
+								<div v-if="newGroupFilterType === 'loader'" class="flex gap-1.5 mt-1">
+									<button
+										v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
+										:key="l"
+										type="button"
+										class="flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize border cursor-pointer transition-all"
+										:class="newGroupTargetLoader === l ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										@click="newGroupTargetLoader = l"
+									>
+										{{ l }}
+									</button>
+								</div>
 							</div>
 						</div>
 
-						<div v-if="newGroupFilterType === 'loader'" class="flex gap-1.5 mt-1">
+						<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
 							<button
-								v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
-								:key="l"
 								type="button"
-								class="flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize border cursor-pointer transition-all"
-								:class="newGroupTargetLoader === l ? 'bg-surface-4 text-contrast border-brand' : 'bg-surface-1 text-secondary border-divider hover:bg-surface-3'"
-								@click="newGroupTargetLoader = l"
+								class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
+								@click="showCreateModal = false"
 							>
-								{{ l }}
+								{{ isRu ? 'Отмена' : 'Cancel' }}
+							</button>
+							<button
+								type="button"
+								class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+								:disabled="!newGroupTitle.trim()"
+								@click="handleCreateGroup"
+							>
+								{{ isRu ? 'Создать' : 'Create' }}
 							</button>
 						</div>
 					</div>
 				</div>
-
-				<div class="flex items-center justify-end gap-3 pt-2 border-t border-divider">
-					<button
-						type="button"
-						class="px-4 py-2.5 rounded-xl bg-transparent hover:bg-surface-3 text-secondary hover:text-contrast text-xs font-semibold border-0 cursor-pointer transition-colors"
-						@click="showCreateModal = false"
-					>
-						{{ isRu ? 'Отмена' : 'Cancel' }}
-					</button>
-					<button
-						type="button"
-						class="px-6 py-2.5 rounded-xl bg-brand hover:brightness-110 active:scale-95 text-white font-bold text-xs uppercase tracking-wider border-0 cursor-pointer shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-						:disabled="!newGroupTitle.trim()"
-						@click="handleCreateGroup"
-					>
-						{{ isRu ? 'Создать' : 'Create' }}
-					</button>
-				</div>
-			</div>
-		</div>
+			</Transition>
+		</Teleport>
 	</div>
 </template>

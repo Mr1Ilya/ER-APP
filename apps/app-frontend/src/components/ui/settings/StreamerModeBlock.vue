@@ -34,8 +34,8 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 				@click="streamerMode = false"
 			>
 				<div
-					class="w-full h-36 rounded-2xl bg-surface-2 border transition-all flex flex-col items-center justify-center gap-3 p-4"
-					:class="!streamerMode ? 'border-brand shadow-md ring-1 ring-brand bg-surface-3' : 'border-divider hover:bg-surface-3'"
+					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4"
+					:class="!streamerMode ? 'border-2 border-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.3)] bg-purple-500/10' : 'border border-white/10 hover:bg-surface-3'"
 				>
 					<div class="px-5 py-2 rounded-full bg-surface-1 border border-divider flex items-center gap-2.5 text-sm text-contrast">
 						<svg class="w-4 h-4 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -52,7 +52,7 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 				<div class="flex items-center gap-2.5 px-1">
 					<div
 						class="w-4 h-4 rounded-full border flex items-center justify-center transition-colors"
-						:class="!streamerMode ? 'border-brand bg-brand' : 'border-divider bg-transparent'"
+						:class="!streamerMode ? 'border-purple-500 bg-purple-500' : 'border-divider bg-transparent'"
 					>
 						<div v-if="!streamerMode" class="w-1.5 h-1.5 rounded-full bg-white"></div>
 					</div>
@@ -67,8 +67,8 @@ const isRu = computed(() => (i18n.global.locale.value || '').startsWith('ru'))
 				@click="streamerMode = true"
 			>
 				<div
-					class="w-full h-36 rounded-2xl bg-surface-2 border transition-all flex flex-col items-center justify-center gap-3 p-4"
-					:class="streamerMode ? 'border-brand shadow-md ring-1 ring-brand bg-surface-3' : 'border-divider hover:bg-surface-3'"
+					class="w-full h-36 rounded-2xl bg-surface-2 transition-all flex flex-col items-center justify-center gap-3 p-4"
+					:class="streamerMode ? 'border-2 border-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.3)] bg-purple-500/10' : 'border border-white/10 hover:bg-surface-3'"
 				>
 					<div class="px-5 py-2 rounded-full bg-surface-1 border border-divider flex items-center gap-2.5 text-sm text-contrast">
 						<svg class="w-4 h-4 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

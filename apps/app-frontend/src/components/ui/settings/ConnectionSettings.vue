@@ -140,9 +140,9 @@ function closeAddModal() {
 			<div
 				v-for="item in connectionSettings.items"
 				:key="item.id"
-				class="group/conn px-4 py-3.5 rounded-2xl bg-surface-2 border border-divider flex items-center justify-between transition-all cursor-pointer hover:bg-surface-3"
+				class="group/conn px-4 py-3.5 rounded-2xl bg-surface-2 border border-white/10 flex items-center justify-between transition-all cursor-pointer hover:bg-surface-3"
 				:class="{
-					'ring-1 ring-brand border-brand bg-surface-3': item.active && !connectionSettings.autoSelect,
+					'border-2 border-purple-500 bg-purple-500/10 shadow-[0_0_12px_rgba(168,85,247,0.25)]': item.active && !connectionSettings.autoSelect,
 					'opacity-65': connectionSettings.autoSelect && !item.active
 				}"
 				@click="selectConnection(item)"
@@ -203,15 +203,17 @@ function closeAddModal() {
 			<span>{{ isRu ? 'Добавить подключение' : 'Add connection' }}</span>
 		</button>
 
-		<div
-			v-if="showAddModal"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto select-none"
-			@click.self="closeAddModal"
-		>
-			<div
-				class="w-full max-w-md bg-bg-raised border border-divider rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
-				@click.stop
-			>
+		<Teleport to="body">
+			<Transition name="fade">
+				<div
+					v-if="showAddModal"
+					class="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto select-none"
+					@click.self="closeAddModal"
+				>
+					<div
+						class="w-full max-w-md bg-bg-raised border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-contrast my-auto"
+						@click.stop
+					>
 				<div class="flex items-center justify-between pb-3 border-b border-divider">
 					<div class="flex items-center gap-3">
 						<div class="w-9 h-9 rounded-2xl bg-brand/15 text-brand flex items-center justify-center border border-brand/20">
@@ -288,5 +290,7 @@ function closeAddModal() {
 				</div>
 			</div>
 		</div>
+	</Transition>
+</Teleport>
 	</div>
 </template>
