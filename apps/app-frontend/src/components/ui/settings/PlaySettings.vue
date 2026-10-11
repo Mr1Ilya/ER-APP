@@ -373,7 +373,7 @@ function handleDrop(targetIndex: number) {
 										:key="r"
 										type="button"
 										class="py-2.5 px-3 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
-										:class="tempRows === r ? 'bg-purple-500/15 border-2 border-purple-500 text-white font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-2 border border-white/10 hover:bg-surface-3 text-secondary hover:text-contrast'"
+										:class="tempRows === r ? 'bg-brand/15 border-2 border-brand text-white font-bold' : 'bg-surface-2 border-2 border-white/10 hover:bg-surface-3 text-secondary hover:text-contrast'"
 										@click="tempRows = r"
 									>
 										<span class="text-xs font-bold">{{ r }} {{ isRu ? (r === 1 ? 'ряд' : (r < 5 ? 'ряда' : 'рядов')) : (r === 1 ? 'row' : 'rows') }}</span>
@@ -412,24 +412,24 @@ function handleDrop(targetIndex: number) {
 								<div class="grid grid-cols-3 gap-2">
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="tempFilterType === 'all' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="tempFilterType === 'all' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'all'"
 									>
 										{{ isRu ? 'Все сборки' : 'All instances' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="tempFilterType === 'manual' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="tempFilterType === 'manual' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'manual'"
 									>
 										{{ isRu ? 'Вручную' : 'Manually' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-3 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="tempFilterType === 'loader' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-3 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="tempFilterType === 'loader' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempFilterType = 'loader'"
 									>
 										{{ isRu ? 'Загрузчик' : 'Loader' }}
@@ -463,8 +463,8 @@ function handleDrop(targetIndex: number) {
 										v-for="l in ['fabric', 'forge', 'neoforge', 'vanilla']"
 										:key="l"
 										type="button"
-										class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border cursor-pointer transition-all"
-										:class="tempTargetLoader === l ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="flex-1 py-1.5 rounded-xl text-xs font-semibold capitalize border-2 cursor-pointer transition-all"
+										:class="tempTargetLoader === l ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="tempTargetLoader = l"
 									>
 										{{ l }}
@@ -553,24 +553,24 @@ function handleDrop(targetIndex: number) {
 								<div class="grid grid-cols-3 gap-2">
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="newGroupFilterType === 'all' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="newGroupFilterType === 'all' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'all'"
 									>
 										{{ isRu ? 'Все сборки' : 'All instances' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="newGroupFilterType === 'manual' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="newGroupFilterType === 'manual' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'manual'"
 									>
 										{{ isRu ? 'Вручную' : 'Manually' }}
 									</button>
 									<button
 										type="button"
-										class="py-2 px-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all"
-										:class="newGroupFilterType === 'loader' ? 'bg-purple-500/15 text-white border-2 border-purple-500 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' : 'bg-surface-1 text-secondary border border-white/10 hover:bg-surface-3'"
+										class="py-2 px-2 rounded-xl text-xs font-semibold border-2 cursor-pointer transition-all"
+										:class="newGroupFilterType === 'loader' ? 'bg-brand/15 text-white border-brand font-bold' : 'bg-surface-1 text-secondary border-white/10 hover:bg-surface-3'"
 										@click="newGroupFilterType = 'loader'"
 									>
 										{{ isRu ? 'Загрузчик' : 'Loader' }}
