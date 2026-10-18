@@ -15,11 +15,16 @@ pub enum CrashActionType {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct CrashDiagnosis {
+    #[serde(alias = "category")]
     pub problem_type: String,
     pub title: String,
+    #[serde(alias = "description")]
     pub explanation: String,
+    #[serde(alias = "action_type")]
     pub action: CrashActionType,
+    #[serde(alias = "action_payload")]
     pub target: Option<String>,
+    #[serde(alias = "action_label")]
     pub button_label: String,
 }
 
@@ -43,6 +48,12 @@ static RE_UNIX_USER: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"/(?:home|Users)/[^/\r\n]+").unwrap());
 static RE_EMAIL: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b").unwrap());
+static RE_NON_FABRIC: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)non-fabric\s+mod:\s*[\r\n]+\s*-\s*([^\r\n\t]+)").unwrap()
+});
+static RE_FABRIC_SOLUTION: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)A potential solution has been determined:\s*[\r\n]+\s*-\s*Replace mod '([^']+)'").unwrap()
+});
 
 pub fn scrub_log(raw: &str) -> String {
     let t1 = RE_TOKEN.replace_all(raw, "$1***");
@@ -60,6 +71,39 @@ pub fn scrub_log(raw: &str) -> String {
 
 pub fn analyze_crash_log(log_text: &str) -> Option<CrashDiagnosis> {
     let lower = log_text.to_lowercase();
+
+    if let Some(caps) = RE_NON_FABRIC.captures(log_text) {
+        if let Some(m) = caps.get(1) {
+            let mod_name = m.as_str().trim();
+            let clean_name = mod_name.trim_end_matches(".jar");
+            return Some(CrashDiagnosis {
+                problem_type: "non_fabric_mod".to_string(),
+                title: "Несовместимый мод (не для Fabric)".to_string(),
+                explanation: format!(
+                    "В сборку добавлен файл «{mod_name}», созданный для Forge или NeoForge. Fabric не может работать с этим модом."
+                ),
+                action: CrashActionType::DisableMod,
+                target: Some(mod_name.to_string()),
+                button_label: format!("Отключить {clean_name}"),
+            });
+        }
+    }
+
+    if let Some(caps) = RE_FABRIC_SOLUTION.captures(log_text) {
+        if let Some(m) = caps.get(1) {
+            let mod_name = m.as_str().trim();
+            return Some(CrashDiagnosis {
+                problem_type: "incompatible_mod".to_string(),
+                title: "Конфликт модов сборки".to_string(),
+                explanation: format!(
+                    "Мод «{mod_name}» несовместим с текущей версией игры или другими модами сборки."
+                ),
+                action: CrashActionType::DisableMod,
+                target: Some(mod_name.to_string()),
+                button_label: format!("Отключить {mod_name}"),
+            });
+        }
+    }
 
     if lower.contains("outofmemoryerror")
         || lower.contains("insufficient memory for the java runtime")
@@ -106,11 +150,12 @@ pub fn analyze_crash_log(log_text: &str) -> Option<CrashDiagnosis> {
 
     if lower.contains("unsupportedclassversionerror")
         || lower.contains("has been compiled by a more recent version of the java runtime")
+        || lower.contains("unable to call jdk findmainmethod")
     {
         return Some(CrashDiagnosis {
             problem_type: "java_version_mismatch".to_string(),
             title: "Несовместимая версия Java".to_string(),
-            explanation: "Один или несколько модов собраны под более новую версию Java, чем установлена в настройках сборки.".to_string(),
+            explanation: "Сборка или один из модов не совместимы с текущей версией Java. Рекомендуется переключить версию Java в настройках сборки.".to_string(),
             action: CrashActionType::SwitchJava,
             target: Some("21".to_string()),
             button_label: "Переключить на Java 21".to_string(),
@@ -131,4 +176,27 @@ pub fn analyze_crash_log(log_text: &str) -> Option<CrashDiagnosis> {
     }
 
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_non_fabric_mod_detection() {
+        let sample = "[20:43:38] [main] [FabricLoader/WARN]: Found 1 non-fabric mod:\n\t- create-1.20.1-6.0.8.jar\n# Process exited with status: exit code: 1";
+        let diag = analyze_crash_log(sample).expect("Must detect non-fabric mod");
+        assert_eq!(diag.problem_type, "non_fabric_mod");
+        assert_eq!(diag.action, CrashActionType::DisableMod);
+        assert_eq!(diag.target.as_deref(), Some("create-1.20.1-6.0.8.jar"));
+        assert_eq!(diag.button_label, "Отключить create-1.20.1-6.0.8");
+    }
+
+    #[test]
+    fn test_out_of_memory_detection() {
+        let sample = "java.lang.OutOfMemoryError: Java heap space";
+        let diag = analyze_crash_log(sample).expect("Must detect OOM");
+        assert_eq!(diag.problem_type, "out_of_memory");
+        assert_eq!(diag.action, CrashActionType::IncreaseRam);
+    }
 }

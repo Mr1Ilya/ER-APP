@@ -44,6 +44,34 @@ const actionMessage = ref('')
 const showLog = ref(false)
 const copied = ref(false)
 
+function parseDiagnosis(data: any): CrashDiagnosis {
+	let actionType: CrashDiagnosis['action_type'] = 'manual'
+	let actionPayload: string | null = null
+	const act = String(data.action_type || data.action || '').toLowerCase()
+
+	if (act === 'allocate_memory' || act === 'increase_ram') {
+		actionType = 'allocate_memory'
+		actionPayload = String(data.action_payload || data.target || '4096')
+	} else if (act === 'disable_mod') {
+		actionType = 'disable_mod'
+		actionPayload = String(data.action_payload || data.target || '')
+	} else if (act === 'install_fabric_api' || act === 'install_mod') {
+		actionType = 'install_fabric_api'
+	} else if (act === 'open_url' || act === 'driver_warning' || act === 'update_gpu_drivers') {
+		actionType = 'open_url'
+		actionPayload = String(data.action_payload || data.target || 'https://www.nvidia.com/Download/index.aspx')
+	}
+
+	return {
+		category: data.category || data.problem_type || 'Крашлитика AI',
+		title: data.title || 'Обнаружена причина сбоя',
+		description: data.description || data.explanation || 'Рекомендуется применить исправление.',
+		action_type: actionType,
+		action_label: data.action_label || data.button_label || data.buttonLabel || 'Исправить',
+		action_payload: actionPayload,
+	}
+}
+
 async function open(crashPayload: GameCrashPayload) {
 	payload.value = crashPayload
 	actionApplied.value = false
@@ -53,7 +81,7 @@ async function open(crashPayload: GameCrashPayload) {
 	copied.value = false
 
 	if (crashPayload.diagnosis) {
-		diagnosis.value = crashPayload.diagnosis
+		diagnosis.value = parseDiagnosis(crashPayload.diagnosis)
 		analyzing.value = false
 		modal.value?.show()
 		return
@@ -76,30 +104,7 @@ async function open(crashPayload: GameCrashPayload) {
 
 		if (response.ok) {
 			const data = await response.json()
-			let actionType: CrashDiagnosis['action_type'] = 'manual'
-			let actionPayload: string | null = null
-
-			if (data.action === 'increase_ram') {
-				actionType = 'allocate_memory'
-				actionPayload = data.target || '4096'
-			} else if (data.action === 'disable_mod') {
-				actionType = 'disable_mod'
-				actionPayload = data.target || null
-			} else if (data.action === 'install_fabric_api') {
-				actionType = 'install_fabric_api'
-			} else if (data.action === 'open_url' || data.action === 'update_gpu_drivers') {
-				actionType = 'open_url'
-				actionPayload = data.target || 'https://www.nvidia.com/Download/index.aspx'
-			}
-
-			diagnosis.value = {
-				category: data.category || 'Крашлитика AI',
-				title: data.title || 'Обнаружена причина сбоя',
-				description: data.explanation || data.description || 'Рекомендуется применить исправление.',
-				action_type: actionType,
-				action_label: data.buttonLabel || data.action_label || 'Исправить',
-				action_payload: actionPayload,
-			}
+			diagnosis.value = parseDiagnosis(data)
 		} else {
 			diagnosis.value = {
 				category: 'Краш игры',
@@ -139,23 +144,36 @@ async function applyAction() {
 			actionApplied.value = true
 			actionMessage.value = `Выделено ${Math.round(ramMb / 1024)} ГБ ОЗУ`
 		} else if (act === 'disable_mod') {
-			const targetMod = (diagnosis.value.action_payload || '').toLowerCase()
+			const targetRaw = (diagnosis.value.action_payload || '').trim()
+			const targetClean = targetRaw.replace(/\.jar$/i, '').toLowerCase()
 			const projects = await get_projects(payload.value.instance_id).catch(() => ({}))
-			let disabledKey: string | null = null
-			for (const key of Object.keys(projects)) {
-				if (targetMod && key.toLowerCase().includes(targetMod)) {
-					disabledKey = key
+			let candidatePath: string | null = null
+
+			for (const [key, file] of Object.entries(projects)) {
+				const kLower = key.toLowerCase()
+				const pLower = (file?.path || '').toLowerCase()
+				if (
+					targetClean &&
+					(kLower.includes(targetClean) ||
+						pLower.includes(targetClean) ||
+						targetRaw.toLowerCase() === kLower ||
+						targetRaw.toLowerCase() === pLower)
+				) {
+					candidatePath = file?.path || key
 					break
 				}
 			}
-			if (disabledKey) {
-				await toggle_disable_project(payload.value.instance_id, disabledKey, false)
+
+			if (!candidatePath && targetRaw) {
+				candidatePath = targetRaw.startsWith('mods/') ? targetRaw : `mods/${targetRaw}`
+			}
+
+			if (candidatePath) {
+				await toggle_disable_project(payload.value.instance_id, candidatePath, false)
 				actionApplied.value = true
 				actionMessage.value = 'Конфликтный мод отключен'
-			} else if (diagnosis.value.action_payload) {
-				await toggle_disable_project(payload.value.instance_id, diagnosis.value.action_payload, false)
-				actionApplied.value = true
-				actionMessage.value = 'Конфликтный мод отключен'
+			} else {
+				actionMessage.value = 'Мод не найден'
 			}
 		} else if (act === 'install_fabric_api') {
 			await openUrl('https://modrinth.com/mod/fabric-api')
@@ -252,9 +270,13 @@ defineExpose({
 					<span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border border-solid border-purple-500/40 bg-purple-500/20 text-purple-300">
 						{{ diagnosis.category }}
 					</span>
-					<span class="text-xs text-purple-300/80 flex items-center gap-1">
+					<span v-if="diagnosis.action_type !== 'manual'" class="text-xs text-purple-300/80 flex items-center gap-1 font-medium">
 						<SparklesIcon class="w-3.5 h-3.5" />
-						Решение готово
+						Решение в 1 клик
+					</span>
+					<span v-else class="text-xs text-amber-300/80 flex items-center gap-1 font-medium">
+						<WrenchIcon class="w-3.5 h-3.5" />
+						Требуется ручное действие
 					</span>
 				</div>
 
@@ -279,6 +301,16 @@ defineExpose({
 						<button class="flex items-center gap-2 font-semibold" @click="relaunch">
 							<PlayIcon class="w-4 h-4" />
 							<span>Перезапустить игру</span>
+						</button>
+					</ButtonStyled>
+				</div>
+
+				<div v-else class="pt-3 border-t border-solid border-white/10 flex items-center justify-between gap-3">
+					<span class="text-xs text-secondary">Откройте папку игры для проверки или удаления файлов</span>
+					<ButtonStyled type="outlined">
+						<button class="flex items-center gap-1.5 text-xs font-medium" @click="openFolder">
+							<FolderOpenIcon class="w-4 h-4" />
+							<span>Открыть папку игры</span>
 						</button>
 					</ButtonStyled>
 				</div>

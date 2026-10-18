@@ -609,6 +609,12 @@ pub(crate) async fn toggle_disable_project(
         format!("{trimmed}.disabled")
     } else if base.join(trimmed).exists() {
         trimmed.to_string()
+    } else if base.join("mods").join(project_path).exists() {
+        format!("mods/{project_path}")
+    } else if base.join("mods").join(format!("{trimmed}.disabled")).exists() {
+        format!("mods/{trimmed}.disabled")
+    } else if base.join("mods").join(trimmed).exists() {
+        format!("mods/{trimmed}")
     } else {
         return Err(crate::ErrorKind::FSError(format!(
             "Could not find project file for '{project_path}' in instance"
