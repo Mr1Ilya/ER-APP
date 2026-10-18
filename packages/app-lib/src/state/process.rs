@@ -1,4 +1,4 @@
-use crate::event::emit::{emit_instance, emit_process};
+use crate::event::emit::{emit_game_crashed, emit_instance, emit_process};
 use crate::event::{InstancePayloadType, ProcessPayloadType};
 #[cfg(feature = "tauri")]
 use crate::event::{LogEvent, LogPayload};
@@ -904,6 +904,73 @@ impl Process {
                 window.unminimize()?;
                 window.set_focus()?;
             }
+        }
+
+        if !mc_exit_status.success() {
+            let instance_dir = state.directories.instances_dir().join(&instance_path);
+            let crash_dir = instance_dir.join("crash-reports");
+            let mut crash_text = String::new();
+            if crash_dir.is_dir() {
+                if let Ok(entries) = std::fs::read_dir(&crash_dir) {
+                    let mut recent_report = None;
+                    let mut recent_time = std::time::SystemTime::UNIX_EPOCH;
+                    for entry in entries.flatten() {
+                        let path = entry.path();
+                        if path.is_file() {
+                            if let Ok(meta) = entry.metadata() {
+                                if let Ok(modified) = meta.modified() {
+                                    if modified > recent_time {
+                                        recent_time = modified;
+                                        recent_report = Some(path);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if let Some(path) = recent_report {
+                        if let Ok(elapsed) = recent_time.elapsed() {
+                            if elapsed.as_secs() < 30 {
+                                if let Ok(content) = std::fs::read_to_string(path) {
+                                    crash_text = content;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            let log_lines = get_log_buffer(&instance_id);
+            let tail_lines = if log_lines.len() > 150 {
+                log_lines[log_lines.len() - 150..].join("\n")
+            } else {
+                log_lines.join("\n")
+            };
+
+            let combined_raw = if !crash_text.is_empty() {
+                format!("{crash_text}\n\n=== RECENT LOG ===\n{tail_lines}")
+            } else {
+                tail_lines
+            };
+
+            let scrubbed = crate::state::crash_doctor::scrub_log(&combined_raw);
+            let diagnosis = crate::state::crash_doctor::analyze_crash_log(&scrubbed);
+
+            let instance_name = crate::api::instance::get(&instance_id)
+                .await
+                .ok()
+                .flatten()
+                .map(|i| i.instance.name)
+                .unwrap_or_else(|| instance_id.clone());
+
+            let payload = crate::state::crash_doctor::GameCrashPayload {
+                instance_id: instance_id.clone(),
+                instance_name,
+                exit_code: mc_exit_status.code(),
+                diagnosis,
+                scrubbed_log: scrubbed,
+            };
+
+            let _ = emit_game_crashed(payload).await;
         }
 
         if mc_exit_status.success() {

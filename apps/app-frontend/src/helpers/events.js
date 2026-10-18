@@ -135,3 +135,7 @@ export async function notification_listener(callback) {
 export async function log_listener(callback) {
 	return await listen('log', (event) => callback(event.payload))
 }
+
+export async function game_crashed_listener(callback) {
+	return await listen('game_crashed', (event) => callback(event.payload))
+}

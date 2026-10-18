@@ -53,6 +53,7 @@ mod legacy_converter;
 
 pub mod attached_world_data;
 pub mod server_join_log;
+pub mod crash_doctor;
 
 // Global state
 // RwLock on state only has concurrent reads, except for config dir change which takes control of the State

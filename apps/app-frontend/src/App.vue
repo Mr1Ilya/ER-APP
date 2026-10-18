@@ -74,6 +74,7 @@ import MinecraftAuthErrorModal from '@/components/ui/minecraft-auth-error-modal/
 import AccountsModal from '@/components/ui/modal/AccountsModal.vue'
 import AppSettingsModal from '@/components/ui/modal/AppSettingsModal.vue'
 import AuthGrantFlowWaitModal from '@/components/ui/modal/AuthGrantFlowWaitModal.vue'
+import CrashDoctorModal from '@/components/ui/modal/CrashDoctorModal.vue'
 import InstallToPlayModal from '@/components/ui/modal/InstallToPlayModal.vue'
 import ModpackAlreadyInstalledModal from '@/components/ui/modal/ModpackAlreadyInstalledModal.vue'
 import UpdateToPlayModal from '@/components/ui/modal/UpdateToPlayModal.vue'
@@ -89,7 +90,12 @@ import { hide_ads_window, init_ads_window, show_ads_window } from '@/helpers/ads
 import { debugAnalytics, initAnalytics, trackEvent } from '@/helpers/analytics'
 import { check_reachable } from '@/helpers/auth.js'
 import { get_user, get_version } from '@/helpers/cache.js'
-import { command_listener, notification_listener, warning_listener } from '@/helpers/events.js'
+import {
+	command_listener,
+	game_crashed_listener,
+	notification_listener,
+	warning_listener,
+} from '@/helpers/events.js'
 import { install_create_modpack_instance, install_get_modpack_preview } from '@/helpers/install'
 import { list, run } from '@/helpers/instance'
 import { cancelLogin, get as getCreds, login, logout } from '@/helpers/mr_auth.ts'
@@ -588,6 +594,7 @@ watch(stateInitialized, (ready) => {
 const error = useError()
 const errorModal = ref()
 const minecraftAuthErrorModal = ref()
+const crashDoctorModalRef = ref()
 const accountsModal = ref()
 const settingsModal = ref()
 const sidebarCollapsed = ref(localStorage.getItem('endrage_sidebar_collapsed') === 'true')
@@ -779,6 +786,9 @@ provide('accountsCard', accounts)
 
 command_listener(handleCommand)
 notification_listener(handleLiveNotification)
+game_crashed_listener((payload) => {
+	crashDoctorModalRef.value?.open(payload)
+})
 
 async function markLiveNotificationRead(notification) {
 	try {
@@ -1677,6 +1687,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 	/>
 	<InstallToPlayModal ref="installToPlayModal" />
 	<UpdateToPlayModal ref="updateToPlayModal" />
+	<CrashDoctorModal ref="crashDoctorModalRef" />
 </template>
 
 <style lang="scss" scoped>

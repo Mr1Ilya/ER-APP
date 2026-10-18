@@ -241,6 +241,27 @@ pub async fn emit_process(
     Ok(())
 }
 
+#[allow(unused_variables)]
+pub async fn emit_game_crashed(
+    payload: crate::state::crash_doctor::GameCrashPayload,
+) -> crate::Result<()> {
+    #[cfg(feature = "tauri")]
+    {
+        let event_state = crate::EventState::get()?;
+        event_state
+            .app
+            .emit("game_crashed", payload)
+            .map_err(EventError::from)?;
+
+        if let Some(window) = event_state.app.get_window("main") {
+            let _ = window.unminimize();
+            let _ = window.show();
+            let _ = window.set_focus();
+        }
+    }
+    Ok(())
+}
+
 // emit_instance(path, event)
 #[allow(unused_variables)]
 pub async fn emit_instance(
