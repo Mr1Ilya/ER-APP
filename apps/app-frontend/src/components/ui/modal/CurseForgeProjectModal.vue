@@ -128,6 +128,11 @@ function openCurseForgePage() {
 	openUrl(`https://www.curseforge.com/minecraft/modpacks/${project.value.slug}`)
 }
 
+function openAuthorUrl(url?: string) {
+	if (!url) return
+	openUrl(url)
+}
+
 defineExpose({
 	open,
 	hide: () => modal.value?.hide(),
@@ -156,7 +161,19 @@ defineExpose({
 						</span>
 					</div>
 					<div class="flex items-center gap-3 text-xs text-secondary flex-wrap">
-						<span v-if="project.author">by <strong class="text-contrast">{{ project.author }}</strong></span>
+						<span v-if="project.author" class="flex items-center gap-1">
+							<span>by</span>
+							<a
+								v-if="project.author_url"
+								href="javascript:void(0)"
+								class="text-contrast hover:text-purple-400 hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+								@click="openAuthorUrl(project.author_url)"
+							>
+								<span>{{ project.author }}</span>
+								<ExternalIcon class="w-3 h-3 text-secondary" />
+							</a>
+							<strong v-else class="text-contrast">{{ project.author }}</strong>
+						</span>
 						<span v-if="project.downloads" class="flex items-center gap-1">
 							<DownloadIcon class="w-3.5 h-3.5" />
 							{{ (project.downloads / 1000000).toFixed(2) }}M

@@ -939,6 +939,7 @@ async function search(requestParams: string) {
 				description: cf.summary,
 				summary: cf.summary,
 				author: cf.authors?.[0]?.name ?? 'CurseForge',
+				author_url: cf.authors?.[0]?.url ?? (cf.authors?.[0]?.name ? `https://www.curseforge.com/members/${encodeURIComponent(cf.authors[0].name)}/projects` : 'https://www.curseforge.com'),
 				icon_url: cf.logo?.thumbnailUrl ?? cf.logo?.url ?? null,
 				downloads: cf.downloadCount,
 				follows: 0,
