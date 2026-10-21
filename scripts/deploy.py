@@ -122,7 +122,14 @@ def main():
     exe_sig_path = clean_exe_path + ".sig"
 
     pub_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    notes = f"Release v{version}"
+    notes = (
+        f"EndRage APP v{version}:\n"
+        "- Карточка и описание CurseForge: модальное окно с описанием и выбором версий\n"
+        "- Исправлена ошибка «Не указан источник сборки» при загрузке сборок CurseForge\n"
+        "- Корректные ссылки на авторов CurseForge в карточках каталога и окне сведений\n"
+        "- Пропорциональные обложки сборок в библиотеке без сплющивания и черных полос\n"
+        "- Сохранение оригинальных логотипов сборок CurseForge при установке"
+    )
 
     latest_data = {
         "version": version,
@@ -175,6 +182,26 @@ def main():
             release_info = json.loads(resp.read().decode("utf-8"))
     except Exception as e:
         log(f"Could not fetch release tag v{version}: {e}")
+
+    if not release_info:
+        log(f"Creating GitHub Release v{version}...")
+        create_payload = json.dumps({
+            "tag_name": f"v{version}",
+            "target_commitish": "main",
+            "name": f"EndRage APP v{version}",
+            "body": notes,
+            "draft": False,
+            "prerelease": False
+        }).encode("utf-8")
+        create_headers = dict(headers)
+        create_headers["Content-Type"] = "application/json"
+        try:
+            c_req = urllib.request.Request(f"https://api.github.com/repos/{REPO}/releases", data=create_payload, headers=create_headers, method="POST")
+            with urllib.request.urlopen(c_req) as resp:
+                release_info = json.loads(resp.read().decode("utf-8"))
+                log(f"Created GitHub Release: {release_info.get('html_url')}")
+        except Exception as e:
+            log(f"Failed to create GitHub release: {e}")
 
     if release_info:
         release_id = release_info["id"]
