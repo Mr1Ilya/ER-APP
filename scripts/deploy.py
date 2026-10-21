@@ -88,6 +88,12 @@ def main():
         with open(source_exe, "rb") as src, open(clean_exe_path, "wb") as dst:
             dst.write(src.read())
 
+    app_exe_name = f"EndRage.APP_{version}_x64-setup.exe"
+    app_exe_path = os.path.join(bundle_dir, app_exe_name)
+    if app_exe_path != source_exe:
+        with open(source_exe, "rb") as src, open(app_exe_path, "wb") as dst:
+            dst.write(src.read())
+
     zip_name = f"EndRage.Launcher_{version}_x64-setup.nsis.zip"
     zip_path = os.path.join(bundle_dir, zip_name)
     exe_in_zip = f"EndRage Launcher_{version}_x64-setup.exe"
@@ -121,6 +127,15 @@ def main():
     subprocess.run(exe_sig_cmd, shell=True, capture_output=True, text=True)
     exe_sig_path = clean_exe_path + ".sig"
 
+    app_sig_cmd = [
+        "pnpm", "--filter", "@erteam/app", "tauri", "signer", "sign",
+        "-f", KEY_PATH,
+        "-p", KEY_PASS,
+        app_exe_path
+    ]
+    subprocess.run(app_sig_cmd, shell=True, capture_output=True, text=True)
+    app_sig_path = app_exe_path + ".sig"
+
     pub_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     notes = (
         f"EndRage APP v{version}:\n"
@@ -148,9 +163,11 @@ def main():
         json.dump(latest_data, f, indent=2, ensure_ascii=False)
 
     log("Uploading to releases.end-rage.ru via SCP...")
-    upload_files = [zip_path, sig_path, latest_json_path, clean_exe_path]
+    upload_files = [zip_path, sig_path, latest_json_path, clean_exe_path, app_exe_path]
     if os.path.exists(exe_sig_path):
         upload_files.append(exe_sig_path)
+    if os.path.exists(app_sig_path):
+        upload_files.append(app_sig_path)
 
     scp_cmd = ["scp", "-o", "BatchMode=yes"] + upload_files + [f"{REMOTE_HOST}:{REMOTE_DIR}/"]
     res = subprocess.run(scp_cmd, capture_output=True, text=True)
@@ -210,7 +227,10 @@ def main():
             zip_name: zip_path,
             f"{zip_name}.sig": sig_path,
             "latest.json": latest_json_path,
-            clean_exe_name: clean_exe_path
+            clean_exe_name: clean_exe_path,
+            f"{clean_exe_name}.sig": exe_sig_path,
+            app_exe_name: app_exe_path,
+            f"{app_exe_name}.sig": app_sig_path
         }
 
         for fname, fpath in gh_assets.items():
