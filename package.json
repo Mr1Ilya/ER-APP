@@ -26,7 +26,8 @@
     "icons:add": "pnpm --filter @erteam/assets icons:add",
     "changelog:collect": "node scripts/run.mjs collect-changelog",
     "changelog:combine-for-app": "node scripts/run.mjs build-theseus-release-notes",
-    "scripts": "node scripts/run.mjs"
+    "scripts": "node scripts/run.mjs",
+    "release:win": "python scripts/deploy.py"
   },
   "devDependencies": {
     "@clack/prompts": "^1.0.0",

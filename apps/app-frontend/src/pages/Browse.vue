@@ -34,6 +34,7 @@ import type { LocationQuery } from 'vue-router'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 import ContextMenu from '@/components/ui/ContextMenu.vue'
+import CurseForgeProjectModal from '@/components/ui/modal/CurseForgeProjectModal.vue'
 import i18n from '@/i18n.config'
 import { useAppServerBrowse } from '@/composables/browse/use-app-server-browse'
 import {
@@ -43,6 +44,7 @@ import {
 	get_version_many,
 } from '@/helpers/cache.js'
 import {
+	getCurseForgeFileDownloadUrl,
 	getCurseForgeModpackFiles,
 	installCurseForgeModpack,
 	searchCurseForgeModpacks,
@@ -75,6 +77,7 @@ const debugLog = useDebugLogger('Browse')
 const router = useRouter()
 const route = useRoute()
 const themeStore = useTheming()
+const cfModalRef = ref<InstanceType<typeof CurseForgeProjectModal> | null>(null)
 const serverSetupModalRef = ref<InstanceType<typeof CreationFlowModal> | null>(null)
 const serverInstallContent = createServerInstallContent({ serverSetupModalRef })
 provideServerInstallContent(serverInstallContent)
@@ -826,7 +829,9 @@ function getCardActions(
 						await installCurseForgeModpack({
 							modId: cfId,
 							fileId: latestFile.id,
+							downloadUrl: getCurseForgeFileDownloadUrl(latestFile),
 							customName: projectResult.title,
+							iconUrl: projectResult.icon_url,
 						})
 						await router.push('/library')
 					} catch (err) {
@@ -1134,23 +1139,8 @@ provideBrowseManager({
 	...searchState,
 	getProjectLink: (result: any) => {
 		if (result.source === 'curseforge') {
-			return async () => {
-				setProjectInstalling(result.project_id, true)
-				try {
-					const files = await getCurseForgeModpackFiles(result.cf_id)
-					const latestFile = files[0]
-					if (!latestFile) throw new Error(isRu.value ? 'Файлы сборки не найдены' : 'No pack files found')
-					await installCurseForgeModpack({
-						modId: result.cf_id,
-						fileId: latestFile.id,
-						customName: result.title,
-					})
-					await router.push('/library')
-				} catch (err) {
-					handleError(err as Error)
-				} finally {
-					setProjectInstalling(result.project_id, false)
-				}
+			return () => {
+				cfModalRef.value?.open(result)
 			}
 		}
 		return {
@@ -1257,5 +1247,6 @@ function handleGoBack() {
 			@browse-modpacks="() => {}"
 			@create="handleServerModpackFlowCreate"
 		/>
+		<CurseForgeProjectModal ref="cfModalRef" />
 	</div>
 </template>

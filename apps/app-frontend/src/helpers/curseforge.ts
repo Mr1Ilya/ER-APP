@@ -2,7 +2,7 @@ import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
 import { mkdir, readFile, writeFile } from '@tauri-apps/plugin-fs'
 import JSZip from 'jszip'
 import { install_create_instance, type InstanceLoader } from './install'
-import { get_full_path, list } from './instance'
+import { edit_icon, get_full_path, list } from './instance'
 
 export const CURSEFORGE_API_KEY = '$2a$10$bL4bIL5pUWqfcO7KQtnMReakwtfHbNKh6v1uTpKlzhwoueEJQnPnm'
 export const CURSEFORGE_API_BASE = 'https://api.curseforge.com/v1'
@@ -120,6 +120,16 @@ export async function getCurseForgeModDetails(modId: number): Promise<CurseForge
 	}
 }
 
+export async function getCurseForgeDescription(modId: number): Promise<string> {
+	try {
+		const data = await cfRequest<{ data: string }>(`/mods/${modId}/description`)
+		return data.data || ''
+	} catch (err) {
+		console.error('Failed to get CurseForge description:', err)
+		return ''
+	}
+}
+
 export function getCurseForgeFileDownloadUrl(file: { id: number; fileName: string; downloadUrl?: string | null }): string {
 	if (file.downloadUrl) return file.downloadUrl
 	const part1 = Math.floor(file.id / 1000)
@@ -146,12 +156,24 @@ export interface InstallCurseForgeModpackOptions {
 	zipData?: ArrayBuffer | Uint8Array
 	zipFile?: File
 	downloadUrl?: string
+	modId?: number
+	fileId?: number
+	iconUrl?: string | null
 	customName?: string
 	onProgress?: (status: string, current?: number, total?: number) => void
 }
 
 export async function installCurseForgeModpack(options: InstallCurseForgeModpackOptions): Promise<string> {
 	const { onProgress } = options
+
+	if (!options.downloadUrl && !options.filePath && !options.zipData && !options.zipFile && options.modId) {
+		onProgress?.('Поиск файлов сборки...')
+		const files = await getCurseForgeModpackFiles(options.modId)
+		const targetFile = options.fileId ? files.find((f) => f.id === options.fileId) : files[0]
+		if (targetFile) {
+			options.downloadUrl = getCurseForgeFileDownloadUrl(targetFile)
+		}
+	}
 
 	let zipBytes: ArrayBuffer | Uint8Array
 
@@ -222,6 +244,18 @@ export async function installCurseForgeModpack(options: InstallCurseForgeModpack
 
 	if (!instanceId || !fullPath) {
 		throw new Error('Не удалось получить путь к создаваемому профилю')
+	}
+
+	if (options.iconUrl) {
+		try {
+			const iconRes = await tauriFetch(options.iconUrl)
+			if (iconRes.ok) {
+				const iconBytes = await iconRes.arrayBuffer()
+				const iconFilePath = `${fullPath}\\icon.png`
+				await writeFile(iconFilePath, new Uint8Array(iconBytes))
+				await edit_icon(instanceId, iconFilePath).catch(() => {})
+			}
+		} catch (_) {}
 	}
 
 	// Unpack overrides

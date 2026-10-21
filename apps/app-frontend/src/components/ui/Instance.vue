@@ -159,12 +159,13 @@ onUnmounted(() => unlisten())
 			@click="seeInstance"
 			@mouseenter="checkProcess"
 		>
-			<Avatar
-				size="48px"
-				:src="getInstanceCover(instance)"
-				:tint-by="instance.id"
-				alt="Mod card"
-			/>
+			<div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-surface-3 border border-solid border-white/10 relative">
+				<img
+					:src="getInstanceCover(instance)"
+					class="w-full h-full object-cover object-center"
+					alt="Cover"
+				/>
+			</div>
 			<div class="h-full flex items-center font-bold text-contrast leading-normal">
 				<span class="line-clamp-2">{{ instance.name }}</span>
 			</div>
@@ -217,13 +218,12 @@ onUnmounted(() => unlisten())
 			@click="seeInstance"
 			@mouseenter="checkProcess"
 		>
-			<div class="relative flex items-center justify-center">
-				<Avatar
-					size="48px"
+			<div class="relative w-14 h-12 rounded-xl overflow-hidden shrink-0 bg-surface-3 border border-solid border-white/10 flex items-center justify-center">
+				<img
 					:src="getInstanceCover(instance)"
-					:tint-by="instance.id"
-					alt="Mod card"
-					:class="`transition-all ${modLoading || installing ? `brightness-[0.25] scale-[0.85]` : `group-hover:brightness-75`}`"
+					class="w-full h-full object-cover object-center transition-all duration-300"
+					:class="modLoading || installing ? 'brightness-[0.25] scale-[0.85]' : 'group-hover:brightness-75 group-hover:scale-105'"
+					alt="Cover"
 				/>
 				<div class="absolute inset-0 flex items-center justify-center">
 					<ButtonStyled v-if="playing" size="large" color="red" circular>
