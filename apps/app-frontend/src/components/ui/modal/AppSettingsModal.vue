@@ -5,7 +5,6 @@ import {
 	GaugeIcon,
 	HomeIcon,
 	LanguagesIcon,
-	ModrinthIcon,
 	PaintbrushIcon,
 	RefreshCwIcon,
 	SettingsIcon,
@@ -13,6 +12,7 @@ import {
 	ToggleRightIcon,
 	WorldIcon,
 } from '@erteam/assets'
+import EndRageIcon from '@/assets/end_rage_icon.svg?component'
 import {
 	commonMessages,
 	commonSettingsMessages,
@@ -242,7 +242,7 @@ const messages = defineMessages({
 							}"
 							@click="devModeCount"
 						>
-							<ModrinthIcon class="w-6 h-6" />
+							<EndRageIcon class="w-6 h-6 rounded-md overflow-hidden" />
 						</button>
 						<div class="max-w-[200px]">
 							<p class="m-0 font-medium text-contrast">EndRage Launcher {{ version }}</p>

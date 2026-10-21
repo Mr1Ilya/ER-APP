@@ -42,6 +42,11 @@ import {
 	get_search_results_v3,
 	get_version_many,
 } from '@/helpers/cache.js'
+import {
+	getCurseForgeModpackFiles,
+	installCurseForgeModpack,
+	searchCurseForgeModpacks,
+} from '@/helpers/curseforge'
 import { instance_listener } from '@/helpers/events.js'
 import {
 	get as getInstance,
@@ -799,6 +804,41 @@ function getCardActions(
 	const isModpack = projectResult.project_types?.includes('modpack')
 	const shouldUseInstallIcon = !!instance.value || isModpack
 
+	if ((projectResult as any).source === 'curseforge') {
+		return [
+			{
+				key: 'install',
+				label: isInstalling
+					? (isRu.value ? 'Установка...' : 'Installing...')
+					: (isRu.value ? 'Установить' : 'Install'),
+				icon: isInstalling ? SpinnerIcon : PlusIcon,
+				iconClass: isInstalling ? 'animate-spin' : undefined,
+				disabled: isInstalling,
+				color: 'brand',
+				type: 'outlined',
+				onClick: async () => {
+					setProjectInstalling(projectResult.project_id, true)
+					try {
+						const cfId = (projectResult as any).cf_id
+						const files = await getCurseForgeModpackFiles(cfId)
+						const latestFile = files[0]
+						if (!latestFile) throw new Error(isRu.value ? 'Файлы сборки не найдены' : 'No pack files found')
+						await installCurseForgeModpack({
+							modId: cfId,
+							fileId: latestFile.id,
+							customName: projectResult.title,
+						})
+						await router.push('/library')
+					} catch (err) {
+						handleError(err as Error)
+					} finally {
+						setProjectInstalling(projectResult.project_id, false)
+					}
+				},
+			},
+		]
+	}
+
 	return [
 		{
 			key: 'install',
@@ -880,6 +920,33 @@ async function search(requestParams: string) {
 	debugLog('searching v3', requestParams)
 	const isServer = projectType.value === 'server'
 
+	let cfHits: any[] = []
+	if (projectType.value === 'modpack') {
+		try {
+			const queryParam = new URLSearchParams(requestParams).get('query') || ''
+			const cfMods = await searchCurseForgeModpacks(queryParam, 20)
+			cfHits = cfMods.map((cf) => ({
+				project_id: `cf_${cf.id}`,
+				project_type: 'modpack',
+				slug: cf.slug,
+				title: cf.name,
+				name: cf.name,
+				description: cf.summary,
+				summary: cf.summary,
+				author: cf.authors?.[0]?.name ?? 'CurseForge',
+				icon_url: cf.logo?.thumbnailUrl ?? cf.logo?.url ?? null,
+				downloads: cf.downloadCount,
+				follows: 0,
+				categories: cf.latestFilesIndexes?.map((x) => x.gameVersion).filter(Boolean).slice(0, 3) ?? [],
+				source: 'curseforge',
+				cf_id: cf.id,
+				installed: false,
+			}))
+		} catch (e) {
+			console.error('Failed to search CurseForge modpacks in Browse', e)
+		}
+	}
+
 	const rawResults = await queryClient.fetchQuery({
 		queryKey: ['search', 'v3', requestParams],
 		queryFn: () =>
@@ -892,6 +959,14 @@ async function search(requestParams: string) {
 	})
 
 	if (!rawResults) {
+		if (cfHits.length > 0) {
+			return {
+				projectHits: cfHits,
+				serverHits: [],
+				total_hits: cfHits.length,
+				per_page: 20,
+			}
+		}
 		return {
 			projectHits: [],
 			serverHits: [],
@@ -911,12 +986,13 @@ async function search(requestParams: string) {
 		}
 	}
 
-	const hits = rawResults.result.hits.map((hit) => {
+	const hits = (rawResults.result.hits ?? []).map((hit) => {
 		const mapped = {
 			...hit,
 			title: hit.name,
 			description: hit.summary,
-		} as unknown as Labrinth.Search.v2.ResultSearchProject & { installed?: boolean }
+			source: 'modrinth',
+		} as unknown as Labrinth.Search.v2.ResultSearchProject & { installed?: boolean; source?: string }
 
 		if (instance.value || isServerContext.value) {
 			const installedIds = instance.value
@@ -928,11 +1004,22 @@ async function search(requestParams: string) {
 		return mapped
 	})
 
+	let combinedHits: any[] = hits
+	if (cfHits.length > 0) {
+		const merged: any[] = []
+		const maxLen = Math.max(hits.length, cfHits.length)
+		for (let i = 0; i < maxLen; i++) {
+			if (i < hits.length) merged.push(hits[i])
+			if (i < cfHits.length) merged.push(cfHits[i])
+		}
+		combinedHits = merged
+	}
+
 	return {
-		projectHits: hits,
+		projectHits: combinedHits,
 		serverHits: [],
-		total_hits: rawResults.result.total_hits,
-		per_page: rawResults.result.hits_per_page,
+		total_hits: (rawResults.result.total_hits ?? hits.length) + cfHits.length,
+		per_page: rawResults.result.hits_per_page ?? 20,
 	}
 }
 
@@ -1045,10 +1132,32 @@ provideBrowseManager({
 	tags,
 	projectType,
 	...searchState,
-	getProjectLink: (result: Labrinth.Search.v2.ResultSearchProject) => ({
-		path: `/project/${result.project_id ?? result.slug}`,
-		query: getProjectBrowseQuery(),
-	}),
+	getProjectLink: (result: any) => {
+		if (result.source === 'curseforge') {
+			return async () => {
+				setProjectInstalling(result.project_id, true)
+				try {
+					const files = await getCurseForgeModpackFiles(result.cf_id)
+					const latestFile = files[0]
+					if (!latestFile) throw new Error(isRu.value ? 'Файлы сборки не найдены' : 'No pack files found')
+					await installCurseForgeModpack({
+						modId: result.cf_id,
+						fileId: latestFile.id,
+						customName: result.title,
+					})
+					await router.push('/library')
+				} catch (err) {
+					handleError(err as Error)
+				} finally {
+					setProjectInstalling(result.project_id, false)
+				}
+			}
+		}
+		return {
+			path: `/project/${result.project_id ?? result.slug}`,
+			query: getProjectBrowseQuery(),
+		}
+	},
 	getServerProjectLink: (result: Labrinth.Search.v3.ResultSearchProject) => ({
 		path: `/project/${result.slug ?? result.project_id}`,
 		query: getProjectBrowseQuery(),

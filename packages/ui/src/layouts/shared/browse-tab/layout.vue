@@ -245,6 +245,7 @@ const messages = defineMessages({
 					:link="ctx.getProjectLink(result)"
 					:title="result.title"
 					:icon-url="result.icon_url"
+					:source="result.source"
 					:author="{
 						name: result.organization == null ? result.author : result.organization,
 						link:

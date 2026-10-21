@@ -131,17 +131,12 @@ loading_listener(async (e) => {
 
 .cube-bg {
 	position: absolute;
-
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-
-	width: 180vw;
-	height: 180vh;
-	opacity: 0.8;
-	background: #16181c url('@/assets/loading/cube.png') center no-repeat;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	opacity: 0.9;
+	background: #000000 url('@/assets/loading/cube.png') center no-repeat;
 	background-size: contain;
-
 	z-index: 9996;
 }
 

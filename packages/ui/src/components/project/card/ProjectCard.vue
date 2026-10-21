@@ -34,6 +34,22 @@
 							<div class="flex flex-col gap-1">
 								<div class="flex gap-2 items-center">
 									<ProjectCardTitle :title="title" compact />
+									<span
+										v-if="source === 'curseforge'"
+										class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-orange-500/15 text-orange-400 border border-solid border-orange-500/30 shrink-0"
+										title="CurseForge"
+									>
+										<CurseForgeIcon class="w-3.5 h-3.5" />
+										<span>CurseForge</span>
+									</span>
+									<span
+										v-else-if="source === 'modrinth'"
+										class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-solid border-emerald-500/30 shrink-0"
+										title="Modrinth"
+									>
+										<ModrinthIcon class="w-3.5 h-3.5" />
+										<span>Modrinth</span>
+									</span>
 									<ProjectCardAuthor v-if="author" :author="author" />
 									<ProjectStatusBadge v-if="status" :status="status" class="text-sm" />
 								</div>
@@ -118,6 +134,22 @@
 			<div class="flex flex-col gap-2 grid-project-card-list__info">
 				<div class="flex gap-2 items-center">
 					<ProjectCardTitle :title="title" />
+					<span
+						v-if="source === 'curseforge'"
+						class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-orange-500/15 text-orange-400 border border-solid border-orange-500/30 shrink-0"
+						title="CurseForge"
+					>
+						<CurseForgeIcon class="w-3.5 h-3.5" />
+						<span>CurseForge</span>
+					</span>
+					<span
+						v-else-if="source === 'modrinth'"
+						class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-solid border-emerald-500/30 shrink-0"
+						title="Modrinth"
+					>
+						<ModrinthIcon class="w-3.5 h-3.5" />
+						<span>Modrinth</span>
+					</span>
 					<ProjectCardAuthor v-if="author" :author="author" />
 					<ProjectStatusBadge v-if="status" :status="status" />
 				</div>
@@ -197,6 +229,7 @@
 </template>
 
 <script setup lang="ts">
+import { CurseForgeIcon, ModrinthIcon } from '@erteam/assets'
 import type { ProjectStatus } from '@erteam/utils'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
@@ -260,6 +293,7 @@ const props = defineProps<{
 	environment?: ProjectCardEnvironmentProps
 	status?: ProjectStatus
 	maxTags?: number
+	source?: 'modrinth' | 'curseforge'
 }>()
 
 const baseCardStyle =
